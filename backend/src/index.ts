@@ -20,8 +20,6 @@ wss.on("connection", (client: any) => {
     parsedMessageArr.forEach((parsedMessage) => {
       const { messageType, objectType, id, changes, object } = parsedMessage;
 
-      console.log("Set");
-
       if (messageType === "set") {
         storage.set(objectType, id, changes);
       } else if (messageType === "add") {
