@@ -14,30 +14,31 @@ const storage = new BackendState();
 wss.on("connection", (client: any) => {
   console.log("Client connected");
 
-  client.on("message", (message: string) => {
-    const parsedMessage = JSON.parse(message);
+  client.send(JSON.stringify(storage.getFullStorage())); // DOES NOT WORK. HOW TO IMPLEMENT BETTER?
 
-    // Handle different types of messages
-    if (parsedMessage.type === "set") {
-      storage.set(
-        parsedMessage.objectType,
-        parsedMessage.id,
-        parsedMessage.changes
-      );
-    } else if (parsedMessage.type === "add") {
-      storage.add(parsedMessage.objectType, parsedMessage.object);
-    } else if (parsedMessage.type === "remove") {
-      storage.remove(parsedMessage.objectType, parsedMessage.id);
+  client.on("message", (message: string) => {
+    const parsedMessageArr: any[] = JSON.parse(message);
+
+    for (let i = 0; i < parsedMessageArr.length; i++) {
+      let parsedMessage = parsedMessageArr[i];
+
+      // Handle different types of messages
+      if (parsedMessage.messageType === "set") {
+        storage.set(
+          parsedMessage.objectType,
+          parsedMessage.id,
+          parsedMessage.changes
+        );
+      } else if (parsedMessage.messageType === "add") {
+        storage.add(parsedMessage.objectType, parsedMessage.object);
+      } else if (parsedMessage.messageType === "remove") {
+        storage.remove(parsedMessage.objectType, parsedMessage.id);
+      }
     }
 
-    // Send only the changes to all clients
-    const changedData = storage.getChangedObjects();
     wss.clients.forEach((client) => {
-      client.send(JSON.stringify(changedData));
+      client.send(JSON.stringify(parsedMessageArr));
     });
-
-    // Clear the changes after sending
-    storage.clearChanges();
   });
 
   // Initially send the full storage when a client connects
