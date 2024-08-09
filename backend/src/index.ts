@@ -1,3 +1,13 @@
+// index.ts (back-end)
+
+import {
+  Message,
+  Message_Arr,
+  Payload_Add,
+  Payload_Remove,
+  Payload_Set,
+} from "./CommunicationInterfaces";
+
 import BackendState from "./storage";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
@@ -15,17 +25,17 @@ wss.on("connection", (client: any) => {
   console.log("Client connected");
 
   client.on("message", (message: string) => {
-    const parsedMessageArr: any[] = JSON.parse(message);
+    const parsedMessageArr: Message_Arr = JSON.parse(message);
 
-    parsedMessageArr.forEach((parsedMessage) => {
-      const { messageType, objectType, id, changes, object } = parsedMessage;
+    parsedMessageArr.messageArr.forEach((parsedMessage: Message) => {
+      const messageType = parsedMessage.messageType;
 
       if (messageType === "set") {
-        storage.set(objectType, id, changes);
+        storage.set(parsedMessage.payload as Payload_Set);
       } else if (messageType === "add") {
-        storage.add(objectType, object);
+        storage.add(parsedMessage.payload as Payload_Add);
       } else if (messageType === "remove") {
-        storage.remove(objectType, id);
+        storage.remove(parsedMessage.payload as Payload_Remove);
       }
     });
 
