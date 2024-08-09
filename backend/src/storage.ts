@@ -21,7 +21,15 @@ class BackendState {
   }
 
   getFullStorage() {
-    return this.data;
+    let objArr = [];
+
+    for (const [key, value] of Object.entries(this.data)) {
+      for (const v of value) {
+        objArr.push({ messageType: "add", objectType: key, object: v });
+      }
+    }
+
+    return objArr;
   }
 }
 

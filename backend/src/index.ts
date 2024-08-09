@@ -14,34 +14,28 @@ const storage = new BackendState();
 wss.on("connection", (client: any) => {
   console.log("Client connected");
 
-  client.send(JSON.stringify(storage.getFullStorage())); // DOES NOT WORK. HOW TO IMPLEMENT BETTER?
-
   client.on("message", (message: string) => {
     const parsedMessageArr: any[] = JSON.parse(message);
 
-    for (let i = 0; i < parsedMessageArr.length; i++) {
-      let parsedMessage = parsedMessageArr[i];
+    parsedMessageArr.forEach((parsedMessage) => {
+      const { messageType, objectType, id, changes, object } = parsedMessage;
 
-      // Handle different types of messages
-      if (parsedMessage.messageType === "set") {
-        storage.set(
-          parsedMessage.objectType,
-          parsedMessage.id,
-          parsedMessage.changes
-        );
-      } else if (parsedMessage.messageType === "add") {
-        storage.add(parsedMessage.objectType, parsedMessage.object);
-      } else if (parsedMessage.messageType === "remove") {
-        storage.remove(parsedMessage.objectType, parsedMessage.id);
+      console.log("Set");
+
+      if (messageType === "set") {
+        storage.set(objectType, id, changes);
+      } else if (messageType === "add") {
+        storage.add(objectType, object);
+      } else if (messageType === "remove") {
+        storage.remove(objectType, id);
       }
-    }
+    });
 
     wss.clients.forEach((client) => {
       client.send(JSON.stringify(parsedMessageArr));
     });
   });
 
-  // Initially send the full storage when a client connects
   client.send(JSON.stringify(storage.getFullStorage()));
 });
 
