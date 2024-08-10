@@ -1,6 +1,6 @@
 import {
-  Message,
-  Message_Arr,
+  Message_Arr_Recieve,
+  Message_Recieve,
   Payload_Add,
   Payload_Remove,
   Payload_Set,
@@ -9,13 +9,30 @@ import {
 // In-memory storage for simplicity; replace with a database in production
 class BackendState {
   public data: Record<string, any[]> = {};
+  public change_payloads: Message_Arr_Recieve = {
+    messageArr: [],
+  };
 
   set(payload: Payload_Set) {
     const existing = this.data[payload.objectType]?.find(
       (item) => item.id === payload.objectId
     );
+
     if (existing) {
+      // Change internal state
       existing[payload.propertyName] = payload.propertyValue;
+
+      // Create payload to send to front-end.
+      let message: Message_Recieve;
+
+      message = {
+        messageType: "set",
+        payload,
+      };
+
+      this.change_payloads.messageArr.push(message);
+    } else {
+      console.log("Fatal error. Object note found.");
     }
   }
 
@@ -24,17 +41,36 @@ class BackendState {
       this.data[payload.objectType] = [];
     }
     this.data[payload.objectType].push(payload.object);
+
+    // Create payload to send to front-end.
+    let message: Message_Recieve;
+
+    message = {
+      messageType: "add",
+      payload,
+    };
+
+    this.change_payloads.messageArr.push(message);
   }
 
   remove(payload: Payload_Remove) {
     this.data[payload.objectType] = this.data[payload.objectType].filter(
       (item) => item.id !== payload.objectId
     );
+
+    // Create payload to send to front-end.
+    let message: Message_Recieve;
+
+    message = {
+      messageType: "remove",
+      payload,
+    };
+
+    this.change_payloads.messageArr.push(message);
   }
 
-  getFullStorage(): Message_Arr {
-    let objArr = [];
-    let message: Message;
+  get_full_storage(): Message_Arr_Recieve {
+    let message: Message_Recieve;
 
     for (const [key, value] of Object.entries(this.data)) {
       for (const v of value) {
@@ -46,16 +82,17 @@ class BackendState {
           },
         };
 
-        objArr.push(message);
+        this.change_payloads.messageArr.push(message);
       }
     }
 
-    // Create Message Array.
-    let message_arr: Message_Arr = {
-      messageArr: objArr,
-    };
+    return this.change_payloads;
+  }
 
-    return message_arr;
+  clearChanges(): void {
+    this.change_payloads = {
+      messageArr: [],
+    };
   }
 }
 

@@ -1,8 +1,17 @@
-export interface Message_Arr {
-  messageArr: Message[];
+// Send Interfaces
+
+export interface Message_Action_Send {
+  function: string;
+  args: any[];
 }
 
-export interface Message {
+// Receive Interfaces
+
+export interface Message_Arr_Recieve {
+  messageArr: Message_Recieve[];
+}
+
+export interface Message_Recieve {
   messageType: string;
   payload: Payload_Add | Payload_Set | Payload_Remove;
 }
