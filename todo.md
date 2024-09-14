@@ -1,3 +1,3 @@
 TODO:
 
-4.) Share Object Types Between Front/Back-End.
+1. Need to share the function/arg definitions between the two.

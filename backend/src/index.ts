@@ -5,12 +5,12 @@ import {
   Payload_Add,
   Payload_Remove,
   Payload_Set,
-} from "./CommunicationInterfaces";
+} from "./shared/Communication/Communication_Interfaces";
 
 import BackendState from "./storage";
-import { Bee } from "./DataModels/Bee";
-import { BeeFarm } from "./DataModels/BeeFarm";
-import { BeeHive } from "./DataModels/BeeHive";
+import { Bee } from "./shared/Data_Models/Bee";
+import { BeeFarm } from "./shared/Data_Models/Bee_Farm";
+import { BeeHive } from "./shared/Data_Models/Bee_Hive";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import express from "express";

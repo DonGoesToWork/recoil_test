@@ -1,1 +1,0 @@
-Shared classes go here.
