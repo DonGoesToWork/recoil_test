@@ -1,8 +1,15 @@
 // Send Interfaces
 
+export interface Pre_Message_Action_Send {
+  object_class: string; // points to set of functions related to poarticular object, exists purely for optimization
+  function_name: string;
+}
+
 export interface Message_Action_Send {
-  function: string;
-  args: any[];
+  server_state_ref: string; // a client can only submit changes when it is on the latest server state ref, otherwise, the request is rejected
+  object_class: string; // points to set of functions related to poarticular object, exists purely for optimization
+  function_name: string;
+  [key: string]: string; // can have any number of additional string parameters
 }
 
 // Receive Interfaces
@@ -23,7 +30,7 @@ export interface Payload_Add {
 
 export interface Payload_Set {
   objectType: string;
-  objectId: string;
+  id: string;
   propertyName: string;
   propertyValue: any;
 }

@@ -1,16 +1,13 @@
 // index.ts (back-end)
 
 import {
-  Message_Action_Send,
-  Payload_Add,
-  Payload_Remove,
-  Payload_Set,
-} from "./shared/Communication/Communication_Interfaces";
+  Class_Function,
+  Object_Class_Function_Map,
+  Register_Objects,
+} from "./Data_Models/ObjectRegistration/ObjerctRegistration";
 
-import BackendState from "./storage";
-import { Bee } from "./shared/Data_Models/Bee";
-import { BeeFarm } from "./shared/Data_Models/Bee_Farm";
-import { BeeHive } from "./shared/Data_Models/Bee_Hive";
+import Backend_State from "./Data_Models/Backend_State/Backend_State";
+import { Message_Action_Send } from "./shared/Communication/Communication_Interfaces";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import express from "express";
@@ -21,84 +18,50 @@ const PORT = 5000;
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
-const storage = new BackendState();
+// Create our main state object.
+const state = new Backend_State();
 
-const do_action = (action: string, args: any[]) => {
-  if (action === "add_bee") {
-    const newBee: Bee = {
-      id: `bee-${Date.now()}`,
-      name: `Abc`,
-      hiveId: args[0],
-    };
+// Initialize references to all object class functions.
+let object_class_function_map: Object_Class_Function_Map = {};
+Register_Objects(object_class_function_map);
 
-    const payload: Payload_Add = {
-      objectType: "Bee",
-      object: newBee,
-    };
-
-    storage.add(payload);
-  } else if (action === "add_bee_hive") {
-    const newHive: BeeHive = {
-      id: `hive-${Date.now()}`,
-      name: `Default Hive`,
-      beeIds: [],
-      farmId: args[0],
-    };
-
-    const payload: Payload_Add = {
-      objectType: "BeeHive",
-      object: newHive,
-    };
-
-    storage.add(payload);
-  } else if (action === "add_bee_farm") {
-    const newFarm: BeeFarm = {
-      id: `farm-${Date.now()}`,
-      name: `Default Farm`,
-      hiveIds: [],
-    };
-
-    const payload: Payload_Add = {
-      objectType: "BeeFarm",
-      object: newFarm,
-    };
-
-    storage.add(payload);
-  } else if (action === "set_bee_name") {
-    const payload: Payload_Set = {
-      objectType: "Bee",
-      objectId: args[0],
-      propertyName: "name",
-      propertyValue: args[1],
-    };
-
-    storage.set(payload);
-  } else if (action === "remove_bee") {
-    const payload: Payload_Remove = {
-      objectType: "Bee",
-      objectId: args[0],
-    };
-
-    storage.remove(payload);
-  }
-};
+let random_server_state_ref = "0";
 
 wss.on("connection", (client: any) => {
   console.log("Client connected");
 
   client.on("message", (message: string) => {
     const message_action: Message_Action_Send = JSON.parse(message);
-    do_action(message_action.function, message_action.args);
 
+    // * Get and call class function after ensuring that it exists.
+    let class_function: Class_Function =
+      object_class_function_map[message_action.object_class];
+
+    if (class_function === undefined || class_function === null) {
+      console.log(
+        "[Error] Bad Object Transmitted. Make sure object is regsitered in ObjectRegistration and you added back-end checks switch-cases!: ",
+        message_action.object_class
+      );
+      return;
+    }
+
+    // Randomize server state. (Must always randomize before making changes)
+    random_server_state_ref = "1"; // TODO -> Randomize
+
+    // Call class function
+    class_function(message_action, state);
+
+    // Send changes to all other clients.
     wss.clients.forEach((client) => {
-      client.send(JSON.stringify(storage.change_payloads));
+      client.send(JSON.stringify(state.change_payloads));
     });
 
-    storage.clearChanges();
+    state.clearChanges(); // Always clear changes post-transmission.
   });
 
-  client.send(JSON.stringify(storage.get_full_storage()));
-  storage.clearChanges();
+  // Send full storage to newly connected clients.
+  client.send(JSON.stringify(state.get_full_storage()));
+  state.clearChanges(); // Always clear changes post-transmission.
 });
 
 server.listen(PORT, () => {

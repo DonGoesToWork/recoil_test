@@ -4,10 +4,10 @@ import {
   Payload_Add,
   Payload_Remove,
   Payload_Set,
-} from "./shared/Communication/Communication_Interfaces";
+} from "../../shared/Communication/Communication_Interfaces";
 
 // In-memory storage for simplicity; replace with a database in production
-class BackendState {
+class Backend_State {
   public data: Record<string, any[]> = {};
   public change_payloads: Message_Arr_Recieve = {
     messageArr: [],
@@ -15,7 +15,7 @@ class BackendState {
 
   set(payload: Payload_Set) {
     const existing = this.data[payload.objectType]?.find(
-      (item) => item.id === payload.objectId
+      (item) => item.id === payload.id
     );
 
     if (existing) {
@@ -32,7 +32,7 @@ class BackendState {
 
       this.change_payloads.messageArr.push(message);
     } else {
-      console.log("Fatal error. Object note found.");
+      console.log("Fatal error. Object not found.");
     }
   }
 
@@ -96,4 +96,4 @@ class BackendState {
   }
 }
 
-export default BackendState;
+export default Backend_State;
