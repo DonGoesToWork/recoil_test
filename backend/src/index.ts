@@ -39,7 +39,7 @@ wss.on("connection", (client: any) => {
 
     if (class_function === undefined || class_function === null) {
       console.log(
-        "[Error] Bad Object Transmitted. Make sure object is regsitered in ObjectRegistration and you added back-end checks switch-cases!: ",
+        "[Error] Bad Object Transmitted. Make sure object is registered in ObjectRegistration.ts and you added back-end checks switch-cases!: ",
         message_action.object_class
       );
       return;

@@ -1,7 +1,7 @@
 import {
   Bee_Hive,
-  FN_add_bee_hive,
-  IA_add_bee_hive,
+  FN_bee_add_hive,
+  IA_bee_add_hive,
 } from "../shared/Data_Models/Bee_Hive";
 import {
   Payload_Add,
@@ -14,7 +14,7 @@ let add_bee_hive = (
   message_action: Pre_Message_Action_Send,
   state: Backend_State
 ): void => {
-  let data = message_action as IA_add_bee_hive;
+  let data = message_action as IA_bee_add_hive;
 
   const newHive: Bee_Hive = {
     id: `hive-${Date.now()}`,
@@ -37,7 +37,7 @@ export let BC_Bee_Hive = (
   state: Backend_State
 ): void => {
   switch (message_action.function_name) {
-    case FN_add_bee_hive:
+    case FN_bee_add_hive:
       add_bee_hive(message_action, state);
       return;
   }

@@ -9,9 +9,9 @@ export interface Bee_Hive {
   farm_id: string; // Reference to the farm it belongs to
 }
 
-export const FN_add_bee_hive: string = "add_bee_hive";
+export const FN_bee_add_hive: string = "add_bee_hive";
 
-export interface IA_add_bee_hive extends Pre_Message_Action_Send {
+export interface IA_bee_add_hive extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
   farm_id: string;

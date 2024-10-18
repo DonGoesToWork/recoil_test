@@ -8,9 +8,9 @@ export interface Bee_Farm {
   hive_ids: string[]; // Array of IDs that refer to Beehives
 }
 
-export const FN_add_bee_farm: string = "add_bee_farm";
+export const FN_bee_add_farm: string = "add_bee_farm";
 
-export interface IA_add_bee_farm extends Pre_Message_Action_Send {
+export interface IA_bee_add_farm extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
 }

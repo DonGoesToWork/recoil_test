@@ -1,4 +1,4 @@
-import { Bee_Farm, FN_add_bee_farm } from "../shared/Data_Models/Bee_Farm";
+import { Bee_Farm, FN_bee_add_farm } from "../shared/Data_Models/Bee_Farm";
 import {
   Payload_Add,
   Pre_Message_Action_Send,
@@ -27,7 +27,7 @@ export let BC_Bee_Farm = (
   state: Backend_State
 ): void => {
   switch (message_action.function_name) {
-    case FN_add_bee_farm:
+    case FN_bee_add_farm:
       add_bee_farm(state);
       return;
   }

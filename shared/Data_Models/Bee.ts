@@ -9,26 +9,30 @@ export interface Bee {
   hive_id: string; // Reference to the hive it belongs to
 }
 
+export const PROP_id: string = "id";
+export const PROP_name: string = "name";
+export const PROP_hive_id: string = "hive_id";
+
 // Function
-export const FN_add_bee: string = "add_bee";
-export const FN_remove_bee: string = "remove_bee";
-export const FN_set_bee_name: string = "set_bee_name";
+export const FN_bee_add: string = "add_bee";
+export const FN_bee_remove: string = "remove_bee";
+export const FN_bee_set_name: string = "set_bee_name";
 
 // IA = Interface Args
 
-export interface IA_add_bee extends Pre_Message_Action_Send {
+export interface IA_bee_add extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
   hive_id: string;
 }
 
-export interface IA_remove_bee extends Pre_Message_Action_Send {
+export interface IA_bee_remove extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
   bee_id: string;
 }
 
-export interface IA_set_bee_name extends Pre_Message_Action_Send {
+export interface IA_bee_set_name extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
   bee_id: string;

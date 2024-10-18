@@ -1,2 +1,0 @@
-cd "E:\Web Dev\2024_Projects\recoil_test\scripts"
-.\start_frontend.ps1
