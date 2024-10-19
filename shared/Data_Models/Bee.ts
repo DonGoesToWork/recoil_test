@@ -1,24 +1,51 @@
+import { CLASS_NAME_BEE } from "./Class_Names";
+import { CLASS_NAME_BEE_HIVE } from "./Class_Names";
+import { Data_Model_Base } from "./Data_Model_Base";
 import { Pre_Message_Action_Send } from "../Communication/Communication_Interfaces";
 
-// Class
-export const CN_Bee: string = "Bee";
+// Interface Type(s) - Class definition as plain JS objects.
 
-export interface Bee {
-  id: string;
-  name: string;
-  hive_id: string; // Reference to the hive it belongs to
+export interface IT_Bee extends Data_Model_Base {
+  class_name: string;
+  parent: string;
+  children: string[];
+  properties: {
+    id: string;
+    name: string;
+    hive_id: string;
+  };
+  functions: {
+    add: string;
+    remove: string;
+    set_name: string;
+  };
 }
 
-export const PROP_id: string = "id";
-export const PROP_name: string = "name";
-export const PROP_hive_id: string = "hive_id";
+export const Bee: IT_Bee = {
+  class_name: CLASS_NAME_BEE,
+  parent: CLASS_NAME_BEE_HIVE,
+  children: [],
+  properties: {
+    id: "id",
+    name: "name",
+    hive_id: "hive_id",
+  },
+  functions: {
+    add: "bee_add",
+    remove: "bee_remove",
+    set_name: "bee_set_name",
+  },
+};
 
-// Function
-export const FN_bee_add: string = "add_bee";
-export const FN_bee_remove: string = "remove_bee";
-export const FN_bee_set_name: string = "set_bee_name";
+// Interface Object(s)
 
-// IA = Interface Args
+export interface IO_Bee {
+  id: string;
+  name: string;
+  hive_id: string;
+}
+
+// Interface Argument(s) - data sent to back-end for function calls.
 
 export interface IA_bee_add extends Pre_Message_Action_Send {
   object_class: string;

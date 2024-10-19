@@ -4,9 +4,9 @@ import {
   Class_Function,
   Object_Class_Function_Map,
   Register_Objects,
-} from "./Data_Models/ObjectRegistration/ObjerctRegistration";
+} from "./Objerct_Registration";
 
-import Backend_State from "./Data_Models/Backend_State/Backend_State";
+import Backend_State from "./static_internal_logic/Backend_State";
 import { Message_Action_Send } from "./shared/Communication/Communication_Interfaces";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
@@ -32,6 +32,12 @@ wss.on("connection", (client: any) => {
 
   client.on("message", (message: string) => {
     const message_action: Message_Action_Send = JSON.parse(message);
+
+    console.log(
+      "Message received: ",
+      message_action,
+      object_class_function_map
+    );
 
     // * Get and call class function after ensuring that it exists.
     let class_function: Class_Function =

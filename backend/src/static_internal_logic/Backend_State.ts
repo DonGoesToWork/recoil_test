@@ -4,7 +4,7 @@ import {
   Payload_Add,
   Payload_Remove,
   Payload_Set,
-} from "../../shared/Communication/Communication_Interfaces";
+} from "../shared/Communication/Communication_Interfaces";
 
 // In-memory storage for simplicity; replace with a database in production
 class Backend_State {

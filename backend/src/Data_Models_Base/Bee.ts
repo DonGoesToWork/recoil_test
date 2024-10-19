@@ -1,12 +1,9 @@
 import {
   Bee,
-  CN_Bee,
-  FN_bee_add,
-  FN_bee_remove,
-  FN_bee_set_name,
   IA_bee_add,
   IA_bee_remove,
   IA_bee_set_name,
+  IO_Bee,
 } from "../shared/Data_Models/Bee";
 import {
   Payload_Add,
@@ -15,7 +12,7 @@ import {
   Pre_Message_Action_Send,
 } from "../shared/Communication/Communication_Interfaces";
 
-import Backend_State from "./Backend_State/Backend_State";
+import Backend_State from "../static_internal_logic/Backend_State";
 
 let add_bee = (
   message_action: Pre_Message_Action_Send,
@@ -23,28 +20,28 @@ let add_bee = (
 ): void => {
   let data = message_action as IA_bee_add;
 
-  const newBee: Bee = {
+  const newBee: IO_Bee = {
     id: `bee-${Date.now()}`,
     name: `Abc`,
     hive_id: data.hive_id,
   };
 
   const payload: Payload_Add = {
-    objectType: CN_Bee,
+    objectType: Bee.class_name,
     object: newBee,
   };
 
   state.add(payload);
 };
 
-let remove_bee = (
+export let remove_bee = (
   message_action: Pre_Message_Action_Send,
   state: Backend_State
 ): void => {
   let data = message_action as IA_bee_remove;
 
   const payload: Payload_Remove = {
-    objectType: CN_Bee,
+    objectType: Bee.class_name,
     objectId: data.bee_id,
   };
 
@@ -58,9 +55,9 @@ let set_bee_name = (
   let data: IA_bee_set_name = message_action as IA_bee_set_name;
 
   const payload: Payload_Set = {
-    objectType: CN_Bee,
+    objectType: Bee.class_name,
     id: data.bee_id,
-    propertyName: "name",
+    propertyName: Bee.properties.name,
     propertyValue: data.new_name,
   };
 
@@ -73,13 +70,13 @@ export let BC_Bee = (
   state: Backend_State
 ): void => {
   switch (message_action.function_name) {
-    case FN_bee_remove:
+    case Bee.functions.remove:
       remove_bee(message_action, state);
       return;
-    case FN_bee_add:
+    case Bee.functions.add:
       add_bee(message_action, state);
       return;
-    case FN_bee_set_name:
+    case Bee.functions.set_name:
       set_bee_name(message_action, state);
       return;
   }
