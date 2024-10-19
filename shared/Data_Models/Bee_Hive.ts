@@ -22,7 +22,6 @@ export interface IT_Bee_Hive extends Data_Model_Base {
   };
   functions: {
     add: string;
-    remove: string;
   };
 }
 
@@ -38,7 +37,6 @@ export const Bee_Hive: IT_Bee_Hive = {
   },
   functions: {
     add: "add_bee_hive",
-    remove: "remove_bee_hive",
   },
 };
 
@@ -57,10 +55,4 @@ export interface IA_bee_hive_add extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
   farm_id: string;
-}
-
-export interface IA_bee_hive_remove extends Pre_Message_Action_Send {
-  object_class: string;
-  function_name: string;
-  hive_id: string;
 }
