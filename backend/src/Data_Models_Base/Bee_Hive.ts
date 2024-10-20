@@ -23,26 +23,8 @@ let add_bee_hive = (message_action: Pre_Message_Action_Send, state: Backend_Stat
   state.add(payload);
 };
 
-// let remove_bee_hive = (
-//   message_action: Pre_Message_Action_Send,
-//   state: Backend_State
-// ): void => {
-//   let parent_data = Bee_Hive.parent_data;
-//   let child_data = Bee_Hive.children_data;
+// Register all back-end checks
 
-//   let data = message_action as IA_Object_Remove;
-
-//   const payload: Payload_Remove = {
-//     objectType: Bee_Hive.class_name,
-//     objectId: data.id,
-//   };
-
-//   state.add(payload);
-
-//   let child_class = child_data[0].class_name;
-// };
-
-// * Register all back-end checks.
 export let BC_Bee_Hive = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   switch (message_action.function_name) {
     case Bee_Hive.functions.add:

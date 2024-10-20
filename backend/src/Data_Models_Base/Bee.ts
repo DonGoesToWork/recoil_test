@@ -20,17 +20,6 @@ let add_bee = (message_action: Pre_Message_Action_Send, state: Backend_State): v
   state.add(payload);
 };
 
-// export let remove_bee = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
-//   let data = message_action as IA_bee_remove;
-
-//   const payload: Payload_Remove = {
-//     objectType: Bee.class_name,
-//     objectId: data.bee_id,
-//   };
-
-//   state.remove(payload);
-// };
-
 let set_bee_name = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let data: IA_bee_set_name = message_action as IA_bee_set_name;
 
@@ -44,12 +33,10 @@ let set_bee_name = (message_action: Pre_Message_Action_Send, state: Backend_Stat
   state.set(payload);
 };
 
-// * Register all back-end checks.
+// Register all back-end checks.
+
 export let BC_Bee = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   switch (message_action.function_name) {
-    // case Bee.functions.remove:
-    //   remove_bee(message_action, state);
-    //   return;
     case Bee.functions.add:
       add_bee(message_action, state);
       return;

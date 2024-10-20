@@ -18,7 +18,8 @@ let add_bee_farm = (state: Backend_State): void => {
   state.add(payload);
 };
 
-// * Register all back-end checks.
+// Register all back-end checks
+
 export let BC_Bee_Farm = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   switch (message_action.function_name) {
     case Bee_Farm.functions.add:

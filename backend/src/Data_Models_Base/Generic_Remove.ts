@@ -5,8 +5,6 @@ import { Data_Model_Base } from "../shared/Data_Models/Data_Model_Base";
 import { GLOBAL_CLASS_MAP } from "../shared/Data_Models/Global_Class_Map";
 import { IA_Object_Remove } from "../shared/Data_Models/Generic_Remove";
 
-// todo replace 'id' with static var.
-
 // Delete from parents.
 let remove_from_parent = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
   // Var inits
@@ -57,7 +55,6 @@ let remove_children_recursively = (state: Backend_State, base_object: Data_Model
 
   child_class_names.forEach((child_class_name: string) => {
     let children_objects = state.data[child_class_name];
-
     console.log("1 - ", child_class_name, children_objects);
 
     // Recursively remove children

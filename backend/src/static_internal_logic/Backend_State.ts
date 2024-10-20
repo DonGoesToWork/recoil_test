@@ -1,10 +1,4 @@
-import {
-  Message_Arr_Recieve,
-  Message_Recieve,
-  Payload_Add,
-  Payload_Remove,
-  Payload_Set,
-} from "../shared/Communication/Communication_Interfaces";
+import { Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Remove, Payload_Set } from "../shared/Communication/Communication_Interfaces";
 
 // In-memory storage for simplicity; replace with a database in production
 class Backend_State {
@@ -14,9 +8,7 @@ class Backend_State {
   };
 
   set(payload: Payload_Set) {
-    const existing = this.data[payload.objectType]?.find(
-      (item) => item.id === payload.id
-    );
+    const existing = this.data[payload.objectType]?.find((item) => item.id === payload.id);
 
     if (existing) {
       // Change internal state
@@ -54,9 +46,7 @@ class Backend_State {
   }
 
   remove(payload: Payload_Remove) {
-    this.data[payload.objectType] = this.data[payload.objectType].filter(
-      (item) => item.id !== payload.objectId
-    );
+    this.data[payload.objectType] = this.data[payload.objectType].filter((item) => item.id !== payload.objectId);
 
     // Create payload to send to front-end.
     let message: Message_Recieve;
