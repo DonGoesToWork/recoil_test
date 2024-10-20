@@ -1,28 +1,18 @@
-import {
-  Bee_Hive,
-  IA_bee_hive_add,
-  IA_bee_hive_remove,
-  IO_Bee_Hive,
-} from "../shared/Data_Models/Bee_Hive";
-import {
-  Payload_Add,
-  Payload_Remove,
-  Pre_Message_Action_Send,
-} from "../shared/Communication/Communication_Interfaces";
+import { Bee_Hive, IA_bee_hive_add, IO_Bee_Hive } from "../shared/Data_Models/Bee_Hive";
+import { Payload_Add, Payload_Remove, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
 
 import Backend_State from "../static_internal_logic/Backend_State";
 
-let add_bee_hive = (
-  message_action: Pre_Message_Action_Send,
-  state: Backend_State
-): void => {
+// import { IA_Object_Remove } from "../shared/Data_Models/Generic_Remove";
+
+let add_bee_hive = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let data = message_action as IA_bee_hive_add;
 
   const newHive: IO_Bee_Hive = {
     id: `hive-${Date.now()}`,
     name: `Default Hive`,
     bee_ids: [],
-    farm_id: data.farm_id,
+    parent_id: data.parent_id,
   };
 
   const payload: Payload_Add = {
@@ -33,53 +23,30 @@ let add_bee_hive = (
   state.add(payload);
 };
 
-let remove_bee_hive = (
-  message_action: Pre_Message_Action_Send,
-  state: Backend_State
-): void => {
-  // Remove hive
-  let data = message_action as IA_bee_hive_remove;
+// let remove_bee_hive = (
+//   message_action: Pre_Message_Action_Send,
+//   state: Backend_State
+// ): void => {
+//   let parent_data = Bee_Hive.parent_data;
+//   let child_data = Bee_Hive.children_data;
 
-  const payload: Payload_Remove = {
-    objectType: Bee_Hive.class_name,
-    objectId: data.hive_id,
-  };
+//   let data = message_action as IA_Object_Remove;
 
-  state.remove(payload);
+//   const payload: Payload_Remove = {
+//     objectType: Bee_Hive.class_name,
+//     objectId: data.id,
+//   };
 
-  // Remove from class
-  // state.remove__from_type_lists(CN_Bee_Hive, data.hive_id);
+//   state.add(payload);
 
-  // // delete from parents
-  // state.remove_from_parent(CN_Bee_Farm, data.hive_id);
-
-  // // delete children
-  // state.remove_children(CN_Bee, data.hive_id);
-
-  // Remove every bee from the the hive.
-  // state.data[CN_Bee].forEach((bee: Bee) => {
-  //   if (bee.hive_id === data.hive_id) {
-  //     const payload: Payload_Remove = {
-  //       objectType: CN_Bee,
-  //       objectId: bee.id,
-  //     };
-
-  //     state.remove(payload);
-  //   }
-  // });
-};
+//   let child_class = child_data[0].class_name;
+// };
 
 // * Register all back-end checks.
-export let BC_Bee_Hive = (
-  message_action: Pre_Message_Action_Send,
-  state: Backend_State
-): void => {
+export let BC_Bee_Hive = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   switch (message_action.function_name) {
     case Bee_Hive.functions.add:
       add_bee_hive(message_action, state);
-      return;
-    case Bee_Hive.functions.remove:
-      remove_bee_hive(message_action, state);
       return;
   }
 };

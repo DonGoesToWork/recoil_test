@@ -1,29 +1,15 @@
-import {
-  Bee,
-  IA_bee_add,
-  IA_bee_remove,
-  IA_bee_set_name,
-  IO_Bee,
-} from "../shared/Data_Models/Bee";
-import {
-  Payload_Add,
-  Payload_Remove,
-  Payload_Set,
-  Pre_Message_Action_Send,
-} from "../shared/Communication/Communication_Interfaces";
+import { Bee, IA_bee_add, IA_bee_set_name, IO_Bee } from "../shared/Data_Models/Bee";
+import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
 
 import Backend_State from "../static_internal_logic/Backend_State";
 
-let add_bee = (
-  message_action: Pre_Message_Action_Send,
-  state: Backend_State
-): void => {
+let add_bee = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let data = message_action as IA_bee_add;
 
   const newBee: IO_Bee = {
     id: `bee-${Date.now()}`,
     name: `Abc`,
-    hive_id: data.hive_id,
+    parent_id: data.parent_id,
   };
 
   const payload: Payload_Add = {
@@ -34,24 +20,18 @@ let add_bee = (
   state.add(payload);
 };
 
-export let remove_bee = (
-  message_action: Pre_Message_Action_Send,
-  state: Backend_State
-): void => {
-  let data = message_action as IA_bee_remove;
+// export let remove_bee = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+//   let data = message_action as IA_bee_remove;
 
-  const payload: Payload_Remove = {
-    objectType: Bee.class_name,
-    objectId: data.bee_id,
-  };
+//   const payload: Payload_Remove = {
+//     objectType: Bee.class_name,
+//     objectId: data.bee_id,
+//   };
 
-  state.remove(payload);
-};
+//   state.remove(payload);
+// };
 
-let set_bee_name = (
-  message_action: Pre_Message_Action_Send,
-  state: Backend_State
-): void => {
+let set_bee_name = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let data: IA_bee_set_name = message_action as IA_bee_set_name;
 
   const payload: Payload_Set = {
@@ -65,14 +45,11 @@ let set_bee_name = (
 };
 
 // * Register all back-end checks.
-export let BC_Bee = (
-  message_action: Pre_Message_Action_Send,
-  state: Backend_State
-): void => {
+export let BC_Bee = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   switch (message_action.function_name) {
-    case Bee.functions.remove:
-      remove_bee(message_action, state);
-      return;
+    // case Bee.functions.remove:
+    //   remove_bee(message_action, state);
+    //   return;
     case Bee.functions.add:
       add_bee(message_action, state);
       return;

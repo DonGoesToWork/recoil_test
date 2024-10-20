@@ -7,8 +7,6 @@ import { Pre_Message_Action_Send } from "../Communication/Communication_Interfac
 
 export interface IT_Bee_Farm extends Data_Model_Base {
   class_name: string;
-  parent: string;
-  children: string[];
   properties: {
     id: string;
     name: string;
@@ -21,8 +19,8 @@ export interface IT_Bee_Farm extends Data_Model_Base {
 
 export const Bee_Farm: IT_Bee_Farm = {
   class_name: CLASS_NAME_BEE_FARM,
-  parent: "",
-  children: [CLASS_NAME_BEE_HIVE],
+  parent_data: null,
+  child_class_name_list: [CLASS_NAME_BEE_HIVE],
   properties: {
     id: "id",
     name: "name",
