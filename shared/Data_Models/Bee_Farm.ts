@@ -22,13 +22,13 @@ export const Bee_Farm: IT_Bee_Farm = {
   class_name: CLASS_NAME_BEE_FARM,
   parent_data: {
     class_name: CLASS_NAME_FARMER,
-    id_list_name: "hive_ids",
+    id_list_name: "farm_ids",
   },
   child_class_name_list: [CLASS_NAME_BEE_HIVE],
   properties: {
     id: "id",
     name: "name",
-    parent_id: "farmer_id",
+    parent_id: "parent_id",
     hive_ids: "hive_ids",
   },
   functions: {

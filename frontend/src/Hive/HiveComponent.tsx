@@ -81,7 +81,6 @@ const HiveComponent: React.FC = () => {
   };
 
   console.log("STATE: ", state); // todo - fix removing bees to not dangle
-  console.log("wow");
 
   // Show loading until we are connected with ws.
   if (!connected) {

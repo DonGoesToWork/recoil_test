@@ -35,7 +35,8 @@ wss.on("connection", (client: any) => {
 
     // For 'remove function' calls, route all of them to the removal function.
     if (message_action.function_name === DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME) {
-      console.log("Removal", state);
+      console.log("Removal Q", state);
+      console.log("Removal P", state.data.Farmer[0]);
       remove_full(message_action, state);
     }
 

@@ -6,6 +6,7 @@ import { Pre_Message_Action_Send } from "../Communication/Communication_Interfac
 // Interface Type(s) - Class definition as plain JS objects.
 
 export interface IT_Bee_Hive extends Data_Model_Base {
+  class_name: string;
   properties: {
     id: string;
     name: string;

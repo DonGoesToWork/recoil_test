@@ -53,26 +53,37 @@ let remove_children_recursively = (state: Backend_State, base_object: Data_Model
     return;
   }
 
+  console.log("TTT - ", child_class_names);
+
   child_class_names.forEach((child_class_name: string) => {
     let children_objects = state.data[child_class_name];
-    console.log("1 - ", child_class_name, children_objects);
+    console.log("1A - ", child_class_name, children_objects);
+
+    if (children_objects == undefined || children_objects == null) {
+      console.log("Children blank.");
+      return;
+    }
 
     // Recursively remove children
     children_objects.forEach((child: any) => {
-      console.log("2 - ", child.parent_id);
+      console.log("2B - ", child.parent_id);
 
       // Skip non-children.
       if (child.parent_id !== object_id) {
-        console.log("3 - Rejected: ", child.class_name);
+        console.log("3C - Rejected: ", child.class_name);
         return;
       }
 
       // Remove children recursively.
       remove_children_recursively(state, child, child.id);
 
+      console.log("TTT - 2", child_class_names);
       // Delete this object.
       remove_object(state, child_class_name, child.id);
     });
+
+    console.log("Haha, no children objects.... F");
+    console.log("TTT - 3", child_class_names);
   });
 };
 
