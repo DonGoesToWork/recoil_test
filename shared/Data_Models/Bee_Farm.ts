@@ -1,4 +1,4 @@
-import { CLASS_NAME_BEE_FARM, CLASS_NAME_BEE_HIVE } from "./Class_Names";
+import { CLASS_NAME_BEE_FARM, CLASS_NAME_BEE_HIVE, CLASS_NAME_FARMER } from "./Class_Names";
 
 import { Data_Model_Base } from "./Data_Model_Base";
 import { Pre_Message_Action_Send } from "../Communication/Communication_Interfaces";
@@ -10,6 +10,7 @@ export interface IT_Bee_Farm extends Data_Model_Base {
   properties: {
     id: string;
     name: string;
+    parent_id: string;
     hive_ids: string;
   };
   functions: {
@@ -19,11 +20,15 @@ export interface IT_Bee_Farm extends Data_Model_Base {
 
 export const Bee_Farm: IT_Bee_Farm = {
   class_name: CLASS_NAME_BEE_FARM,
-  parent_data: null,
+  parent_data: {
+    class_name: CLASS_NAME_FARMER,
+    id_list_name: "hive_ids",
+  },
   child_class_name_list: [CLASS_NAME_BEE_HIVE],
   properties: {
     id: "id",
     name: "name",
+    parent_id: "farmer_id",
     hive_ids: "hive_ids",
   },
   functions: {
@@ -37,6 +42,7 @@ export interface IO_Bee_Farm {
   id: string;
   name: string;
   hive_ids: string[];
+  parent_id: string; // Reference to the farm it belongs to
 }
 
 // Interface Argument(s) - data sent to back-end for function calls.
@@ -44,4 +50,5 @@ export interface IO_Bee_Farm {
 export interface IA_bee_add_farm extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
+  parent_id: string; // Reference to the farm it belongs to
 }

@@ -31,10 +31,11 @@ wss.on("connection", (client: any) => {
   client.on("message", (message: string) => {
     const message_action: Message_Action_Send = JSON.parse(message);
 
-    // console.log("Message received: ", message_action, object_class_function_map);
+    console.log("Message received: ", message_action, object_class_function_map);
 
     // For 'remove function' calls, route all of them to the removal function.
-    if (message_action.function_name == DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME) {
+    if (message_action.function_name === DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME) {
+      console.log("Removal", state);
       remove_full(message_action, state);
     }
 
