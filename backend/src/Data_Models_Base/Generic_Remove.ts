@@ -49,47 +49,33 @@ let remove_children_recursively = (state: Backend_State, base_object: Data_Model
 
   // If no children, then delete the object.
   if (child_class_names == undefined || child_class_names == null || child_class_names.length == 0) {
-    console.log("Children blank.");
     return;
   }
 
-  console.log("TTT - ", child_class_names);
-
   child_class_names.forEach((child_class_name: string) => {
     let children_objects = state.data[child_class_name];
-    console.log("1A - ", child_class_name, children_objects);
 
     if (children_objects == undefined || children_objects == null) {
-      console.log("Children blank.");
       return;
     }
 
     // Recursively remove children
     children_objects.forEach((child: any) => {
-      console.log("2B - ", child.parent_id);
-
       // Skip non-children.
       if (child.parent_id !== object_id) {
-        console.log("3C - Rejected: ", child.class_name);
         return;
       }
 
       // Remove children recursively.
-      remove_children_recursively(state, child, child.id);
+      remove_children_recursively(state, GLOBAL_CLASS_MAP[child_class_name], child.id);
 
-      console.log("TTT - 2", child_class_names);
       // Delete this object.
       remove_object(state, child_class_name, child.id);
     });
-
-    console.log("Haha, no children objects.... F");
-    console.log("TTT - 3", child_class_names);
   });
 };
 
 let remove_object = (state: Backend_State, object_class_name: string, object_id: string): void => {
-  console.log("X - Removing: ", object_id);
-
   const payload: Payload_Remove = {
     objectType: object_class_name,
     objectId: object_id,
