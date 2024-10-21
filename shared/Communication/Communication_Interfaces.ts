@@ -20,7 +20,7 @@ export interface Message_Arr_Recieve {
 
 export interface Message_Recieve {
   messageType: string;
-  payload: Payload_Add | Payload_Set | Payload_Remove;
+  payload: Payload_Add | Payload_Set | Payload_Delete;
 }
 
 export interface Payload_Add {
@@ -35,7 +35,7 @@ export interface Payload_Set {
   propertyValue: any;
 }
 
-export interface Payload_Remove {
+export interface Payload_Delete {
   objectType: string;
   objectId: string;
 }

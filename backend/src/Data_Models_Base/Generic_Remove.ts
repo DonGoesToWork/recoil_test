@@ -1,4 +1,4 @@
-import { Payload_Remove, Payload_Set, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
+import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
 
 import Backend_State from "../static_internal_logic/Backend_State";
 import { Data_Model_Base } from "../shared/Data_Models/Data_Model_Base";
@@ -6,7 +6,7 @@ import { GLOBAL_CLASS_MAP } from "../shared/Data_Models/Global_Class_Map";
 import { IA_Object_Remove } from "../shared/Data_Models/Generic_Remove";
 
 // Delete from parents.
-let remove_from_parent = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
+let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
   // Var inits
   let parent_data = base_object.parent_data;
 
@@ -43,7 +43,7 @@ let remove_from_parent = (state: Backend_State, base_object: Data_Model_Base, ob
   });
 };
 
-let remove_children_recursively = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
+let delete_children_recursively = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
   // Var inits
   let child_class_names: string[] = base_object.child_class_name_list;
 
@@ -59,7 +59,7 @@ let remove_children_recursively = (state: Backend_State, base_object: Data_Model
       return;
     }
 
-    // Recursively remove children
+    // Recursively delete children
     children_objects.forEach((child: any) => {
       // Skip non-children.
       if (child.parent_id !== object_id) {
@@ -67,31 +67,31 @@ let remove_children_recursively = (state: Backend_State, base_object: Data_Model
       }
 
       // Remove children recursively.
-      remove_children_recursively(state, GLOBAL_CLASS_MAP[child_class_name], child.id);
+      delete_children_recursively(state, GLOBAL_CLASS_MAP[child_class_name], child.id);
 
       // Delete this object.
-      remove_object(state, child_class_name, child.id);
+      delete_object(state, child_class_name, child.id);
     });
   });
 };
 
-let remove_object = (state: Backend_State, object_class_name: string, object_id: string): void => {
-  const payload: Payload_Remove = {
+let delete_object = (state: Backend_State, object_class_name: string, object_id: string): void => {
+  const payload: Payload_Delete = {
     objectType: object_class_name,
     objectId: object_id,
   };
 
-  state.remove(payload);
+  state.delete(payload);
 };
 
-// removes parent, children and base object
-export let remove_full = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+// deletes parent, children and base object
+export let delete_full = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let base_object_name = message_action.object_class;
   let base_object: Data_Model_Base = GLOBAL_CLASS_MAP[base_object_name];
   let data = message_action as IA_Object_Remove;
   let base_object_id = data.id;
 
-  remove_from_parent(state, base_object, base_object_id);
-  remove_children_recursively(state, base_object, base_object_id);
-  remove_object(state, base_object.class_name, base_object_id);
+  delete_from_parent(state, base_object, base_object_id);
+  delete_children_recursively(state, base_object, base_object_id);
+  delete_object(state, base_object.class_name, base_object_id);
 };

@@ -1,4 +1,4 @@
-import { Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Remove, Payload_Set } from "../shared/Communication/Communication_Interfaces";
+import { Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set } from "../shared/Communication/Communication_Interfaces";
 
 // In-memory storage for simplicity; replace with a database in production
 class Backend_State {
@@ -45,14 +45,14 @@ class Backend_State {
     this.change_payloads.messageArr.push(message);
   }
 
-  remove(payload: Payload_Remove) {
+  delete(payload: Payload_Delete) {
     this.data[payload.objectType] = this.data[payload.objectType].filter((item) => item.id !== payload.objectId);
 
     // Create payload to send to front-end.
     let message: Message_Recieve;
 
     message = {
-      messageType: "remove",
+      messageType: "delete",
       payload,
     };
 

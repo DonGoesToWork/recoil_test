@@ -2,7 +2,7 @@ import { Bee, IO_Bee } from "../shared/Data_Models/Bee";
 import { Bee_Farm, IO_Bee_Farm } from "../shared/Data_Models/Bee_Farm";
 import { Bee_Hive, IO_Bee_Hive } from "../shared/Data_Models/Bee_Hive";
 import { Farmer, IO_Farmer } from "../shared/Data_Models/Farmer";
-import { Message_Action_Send, Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Remove, Payload_Set, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
+import { Message_Action_Send, Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
 import React, { useEffect, useState } from "react";
 import { add_bee, remove_bee, set_bee_name } from "../Data_Models/Bee";
 import { add_bee_farm, remove_bee_farm } from "../Data_Models/Bee_Farm";
@@ -63,8 +63,8 @@ const HiveComponent: React.FC = () => {
           if (!isDuplicate) {
             newState[payload_add.objectType].push(payload_add.object);
           }
-        } else if (messageType === "remove") {
-          const payload_remove = parsedMessage.payload as Payload_Remove;
+        } else if (messageType === "delete") {
+          const payload_remove = parsedMessage.payload as Payload_Delete;
 
           newState[payload_remove.objectType] = newState[payload_remove.objectType].filter((item) => item.id !== payload_remove.objectId);
         }
