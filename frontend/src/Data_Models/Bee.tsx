@@ -1,6 +1,5 @@
 import { Bee, IA_bee_add, IA_bee_set_name } from "../shared/Data_Models/Bee";
 
-import { Bee_Hive } from "../shared/Data_Models/Bee_Hive";
 import { GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT } from "../shared/Data_Models/Generic_Remove";
 import { iMessage_Sender } from "../Hive/HiveComponent";
 

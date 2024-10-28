@@ -1,5 +1,5 @@
-import { Bee_Hive } from "./Bee_Hive";
-import { CLASS_NAME_BEE } from "./Class_Names";
+import { CLASS_NAME_BEE, CLASS_NAME_BEE_HIVE } from "./Class_Names";
+
 import { Data_Model_Base } from "./Data_Model_Base";
 import { Pre_Message_Action_Send } from "../Communication/Communication_Interfaces";
 
@@ -21,7 +21,7 @@ export interface IT_Bee extends Data_Model_Base {
 export const Bee: IT_Bee = {
   class_name: CLASS_NAME_BEE,
   parent_data: {
-    class_name: Bee_Hive.class_name,
+    class_name: CLASS_NAME_BEE_HIVE,
     id_list_name: "bee_ids",
   },
   child_class_name_list: [],

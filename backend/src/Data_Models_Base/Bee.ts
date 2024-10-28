@@ -33,8 +33,6 @@ let set_bee_name = (message_action: Pre_Message_Action_Send, state: Backend_Stat
   state.set(payload);
 };
 
-// Register all back-end checks.
-
 export let BC_Bee = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   switch (message_action.function_name) {
     case Bee.functions.add:
