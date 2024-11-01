@@ -174,7 +174,7 @@ app.post("/export", (req, res) => {
   let backend_dm_shared_files_path = root_project_path + "\\backend\\src\\z_generated\\Shared_Data_Models\\";
   let backend_shared_files_path = root_project_path + "\\backend\\src\\z_generated\\Shared_Misc\\";
 
-  let object_registration_file_path = root_project_path + "\\backend\\src\\Object_Registration.ts";
+  let object_registration_file_path = root_project_path + "\\backend\\src\\";
 
   // Clear generated folders.
   fs.rmSync(root_project_path + "\\frontend\\src\\z_generated", { recursive: true, force: true });
@@ -192,14 +192,14 @@ app.post("/export", (req, res) => {
   ensure_exists(backend_dm_shared_files_path);
   copy_folder_to_folder(output_paths.shared_data_model, backend_dm_shared_files_path);
 
-  ensure_exists(object_registration_file_path);
-  copy_folder_to_folder(output_paths.object_registration, object_registration_file_path);
-
   ensure_exists(frontend_shared_files_path);
   copy_folder_to_folder(output_paths.output_static_shared, frontend_shared_files_path);
 
   ensure_exists(backend_shared_files_path);
   copy_folder_to_folder(output_paths.output_static_shared, backend_shared_files_path);
+
+  // Copy object registration last.
+  copy_folder_to_folder(output_paths.object_registration, object_registration_file_path);
 
   // All files written successfully, send success return code to client with 200.
   res.sendStatus(200);
