@@ -1,0 +1,33 @@
+.pagination {
+  width: 100%;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  min-width: 600px;
+}
+
+.pagination button {
+  padding: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pagination .disabled {
+  opacity: 0.5; /* Grayed out appearance */
+  cursor: not-allowed; /* Change cursor to indicate unclickable */
+}
+
+.pagination .page_span {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px;
+}
+
+.pagination .left_button {
+  margin-right: 10px;
+}
+
+.pagination .right_button {
+  margin-left: 10px;
+}

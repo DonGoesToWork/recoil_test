@@ -1,0 +1,14 @@
+Shared:
+- Add Data Model entry
+- Update parent/child fields based on data model relations.
+- Add Class_Names.ts entry.
+- Add Global_Class_Map entry.
+
+Front:
+
+- Add front-end Data Model file that calls IA functions.
+- Use in component. (Not generating)
+
+Backend:
+- Add back-end Data model file that calls payload methods.
+- Add objection_Registration.ts entry.
