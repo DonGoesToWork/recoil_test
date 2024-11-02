@@ -1,10 +1,10 @@
 // index.ts (back-end)
 
-import { Class_Function, Object_Class_Function_Map, Register_Objects } from "./Objerct_Registration";
+import { Class_Function, Object_Class_Function_Map, Register_Objects } from "./Object_Registration";
 
 import Backend_State from "./static_internal_logic/Backend_State";
-import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "./shared/Data_Models/Generic_Remove";
-import { Message_Action_Send } from "./shared/Communication/Communication_Interfaces";
+import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "./utils/IA_Remove";
+import { Message_Action_Send } from "./z_generated/Shared_Misc/Communication_Interfaces";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import { delete_full } from "./Data_Models_Base/Generic_Remove";
@@ -39,7 +39,14 @@ wss.on("connection", (client: any) => {
     }
 
     // * Get and call class function after ensuring that it exists.
-    let class_function: Class_Function = object_class_function_map[message_action.object_class];
+    let class_function_list: { [key: string]: Class_Function } = object_class_function_map[message_action.object_class];
+
+    if (class_function_list === undefined || class_function_list === null) {
+      console.log("[Error] Bad Object Transmitted. Make sure object is registered in ObjectRegistration.ts and you added back-end checks switch-cases!: ", message_action.object_class);
+      return;
+    }
+
+    let class_function: Class_Function = class_function_list[message_action.function_name];
 
     if (class_function === undefined || class_function === null) {
       console.log("[Error] Bad Object Transmitted. Make sure object is registered in ObjectRegistration.ts and you added back-end checks switch-cases!: ", message_action.object_class);

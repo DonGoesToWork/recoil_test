@@ -3,12 +3,14 @@
 import { Note } from "./Note";
 import Preview_Back_DM_Lib from "./Preview_Back_DM_Lib";
 import Preview_Front_DM_Lib from "./Preview_Front_DM_Lib";
+import Preview_Global_Class_Map_Lib from "./Preview_Global_Class_Map";
 import Preview_Object_Registration_DM_Lib from "./Preview_Object_Registration_DM_Lib";
 import Preview_Shared_DM_Lib from "./Preview_Shared_DM_Lib";
 
 interface Client_Message {
   object_file_data: Object_File_Data[];
   object_registration_contents: string;
+  global_class_map_contents: string;
   notes: Note[];
 }
 
@@ -54,6 +56,7 @@ export const exportNotes = (notes: Note[]) => {
       shared_data_model: new Preview_Shared_DM_Lib(note).finalContent,
     })),
     object_registration_contents: new Preview_Object_Registration_DM_Lib(notes).finalContent,
+    global_class_map_contents: new Preview_Global_Class_Map_Lib(notes).finalContent,
     notes: notes,
   };
 

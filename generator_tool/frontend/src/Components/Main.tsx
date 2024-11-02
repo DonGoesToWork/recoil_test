@@ -1,22 +1,18 @@
-import './main.css';
-import React, { useState, useEffect } from 'react';
-import { generateUniqueId } from '../Utils/utils';
-import Preview_Shared_DM_Lib from '../Data/Preview_Shared_DM_Lib';
-import {
-  getBeeFarmNote,
-  getBeeHiveNote,
-  getBeeNote,
-  getFarmerNote,
-  getPlayerNote,
-  Note,
-} from '../Data/Note';
-import Preview_Front_DM_Lib from '../Data/Preview_Front_DM_Lib';
-import Preview_Back_DM_Lib from '../Data/Preview_Back_DM_Lib';
-import NoteList from './Notes/NoteList';
-import NoteForm from './Notes/NoteForm';
-import Tabs from './Tabs';
-import { useToast } from './Toast/ToastContainer';
-import Preview_Singles_DM_Lib from '../Data/Preview_Object_Registration_DM_Lib';
+import "./main.css";
+
+import { Note, getBeeFarmNote, getBeeHiveNote, getBeeNote, getFarmerNote, getPlayerNote } from "../Data/Note";
+import React, { useEffect, useState } from "react";
+
+import NoteForm from "./Notes/NoteForm";
+import NoteList from "./Notes/NoteList";
+import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
+import Preview_Front_DM_Lib from "../Data/Preview_Front_DM_Lib";
+import Preview_Global_Class_Map_Lib from "../Data/Preview_Global_Class_Map";
+import Preview_Shared_DM_Lib from "../Data/Preview_Shared_DM_Lib";
+import Preview_Singles_DM_Lib from "../Data/Preview_Object_Registration_DM_Lib";
+import Tabs from "./Tabs";
+import { generateUniqueId } from "../Utils/utils";
+import { useToast } from "./Toast/ToastContainer";
 
 export interface selectNoteProps {
   setOutputText: Function;
@@ -41,8 +37,11 @@ const update_output = (select_note_data: selectNoteProps) => {
     case 3:
       setOutputText(new Preview_Singles_DM_Lib(notes).finalContent);
       break;
+    case 4:
+      setOutputText(new Preview_Global_Class_Map_Lib(notes).finalContent);
+      break;
     default:
-      setOutputText('');
+      setOutputText("");
       break;
   }
 };
@@ -50,24 +49,14 @@ const update_output = (select_note_data: selectNoteProps) => {
 const App: React.FC = () => {
   const firstId = generateUniqueId();
 
-  const [notes, setNotes] = useState<Note[]>([
-    getBeeNote(firstId),
-    getBeeHiveNote(generateUniqueId()),
-    getBeeFarmNote(generateUniqueId()),
-    getFarmerNote(generateUniqueId()),
-    getPlayerNote(generateUniqueId()),
-  ]);
+  const [notes, setNotes] = useState<Note[]>([getBeeNote(firstId), getBeeHiveNote(generateUniqueId()), getBeeFarmNote(generateUniqueId()), getFarmerNote(generateUniqueId()), getPlayerNote(generateUniqueId())]);
   const [selectedNoteId, setSelectedNoteId] = useState<string>(firstId);
-  const [outputText, setOutputText] = useState<string>(
-    new Preview_Shared_DM_Lib(notes[0]).finalContent
-  );
+  const [outputText, setOutputText] = useState<string>(new Preview_Shared_DM_Lib(notes[0]).finalContent);
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const { addToast } = useToast();
 
   // Track the selected note
-  const selectedNote: Note = notes.find(
-    (note) => note.id === selectedNoteId
-  ) as Note;
+  const selectedNote: Note = notes.find((note) => note.id === selectedNoteId) as Note;
 
   // Effect to update output text when notes, selectedTab, or selectedNote change
   useEffect(() => {
@@ -81,24 +70,18 @@ const App: React.FC = () => {
     }
   }, [notes, selectedTab, selectedNote]);
 
-  const updateNote = (
-    field: string,
-    value: string,
-    selectedNoteId: string
-  ): void => {
+  const updateNote = (field: string, value: string, selectedNoteId: string): void => {
     if (selectedNoteId !== null) {
-      value = value.replace(new RegExp(' ', 'g'), '_');
+      value = value.replace(new RegExp(" ", "g"), "_");
 
-      const updatedNotes = notes.map((note) =>
-        note.id === selectedNoteId ? { ...note, [field]: value } : note
-      );
+      const updatedNotes = notes.map((note) => (note.id === selectedNoteId ? { ...note, [field]: value } : note));
       setNotes(updatedNotes);
     }
   };
 
   const deleteNote = (): boolean => {
     if (notes.length === 1) {
-      addToast('Error: Unable to delete final object.', 'error', 5000);
+      addToast("Error: Unable to delete final object.", "error", 5000);
       console.log("Can't delete last object.");
       return false;
     }
@@ -120,28 +103,14 @@ const App: React.FC = () => {
       </header>
       <div className="notes-container">
         <div className="notes-container-note-list">
-          <NoteList
-            notes={notes}
-            selectedNoteId={selectedNoteId}
-            setSelectedNoteId={setSelectedNoteId}
-            setNotes={setNotes}
-          />
+          <NoteList notes={notes} selectedNoteId={selectedNoteId} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} />
         </div>
         <div className="notes-container-note-form">
-          <NoteForm
-            selectedNote={selectedNote}
-            updateNote={updateNote}
-            deleteNote={deleteNote}
-          />
+          <NoteForm selectedNote={selectedNote} updateNote={updateNote} deleteNote={deleteNote} />
         </div>
         <div className="output-container">
           <Tabs selectedTab={selectedTab} handleTabChange={handleTabChange} />
-          <textarea
-            className="output-text"
-            value={outputText}
-            readOnly
-            wrap="off"
-          />
+          <textarea className="output-text" value={outputText} readOnly wrap="off" />
         </div>
       </div>
     </div>

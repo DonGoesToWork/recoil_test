@@ -8,8 +8,8 @@ export default class Preview_Shared_DM_Lib extends BaseGenerator {
   }
 
   getImportsDefinitions(): string {
-    return `import { Data_Model_Base } from "./Data_Model_Base";
-import { Pre_Message_Action_Send } from "../Communication/Communication_Interfaces";`;
+    return `import { Data_Model_Base } from "../Shared_Misc/Data_Model_Base";
+import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";`;
   }
 
   getInterfaceTypeSection(): string {

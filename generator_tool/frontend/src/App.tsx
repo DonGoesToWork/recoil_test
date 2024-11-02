@@ -1,6 +1,7 @@
-import './App.css';
-import Main from './Components/Main';
-import { ToastProvider } from './Components/Toast/ToastContainer';
+import "./App.css";
+
+import Main from "./Components/Main";
+import { ToastProvider } from "./Components/Toast/ToastContainer";
 
 const App: React.FC = () => {
   return (

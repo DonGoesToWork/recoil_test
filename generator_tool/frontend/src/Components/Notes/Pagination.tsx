@@ -1,5 +1,6 @@
-import React from 'react';
-import './Pagination.css';
+import "./Pagination.css";
+
+import React from "react";
 
 interface PaginationProps {
   totalNotes: number;
@@ -8,12 +9,7 @@ interface PaginationProps {
   setCurrentPage: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
-  totalNotes,
-  notesPerPage,
-  currentPage,
-  setCurrentPage,
-}) => {
+const Pagination: React.FC<PaginationProps> = ({ totalNotes, notesPerPage, currentPage, setCurrentPage }) => {
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
   // Function to handle setting page safely within bounds
@@ -30,11 +26,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const get_minus_button = (val: number) => {
     return (
       <span className="left_button">
-        <button
-          onClick={() => handleSetPage(currentPage - val)}
-          disabled={currentPage <= val}
-          className={currentPage <= val ? 'disabled' : ''}
-        >
+        <button onClick={() => handleSetPage(currentPage - val)} disabled={currentPage <= val} className={currentPage <= val ? "disabled" : ""}>
           -{val}
         </button>
       </span>
@@ -44,11 +36,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const get_plus_button = (val: number) => {
     return (
       <span className="right_button">
-        <button
-          onClick={() => handleSetPage(currentPage + val)}
-          disabled={currentPage + val > totalPages}
-          className={currentPage + val > totalPages ? 'disabled' : ''}
-        >
+        <button onClick={() => handleSetPage(currentPage + val)} disabled={currentPage + val > totalPages} className={currentPage + val > totalPages ? "disabled" : ""}>
           +{val}
         </button>
       </span>

@@ -1,9 +1,9 @@
-import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
+import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 import Backend_State from "../static_internal_logic/Backend_State";
-import { Data_Model_Base } from "../shared/Data_Models/Data_Model_Base";
-import { GLOBAL_CLASS_MAP } from "../shared/Data_Models/Global_Class_Map";
-import { IA_Object_Remove } from "../shared/Data_Models/Generic_Remove";
+import { Data_Model_Base } from "../z_generated/Shared_Misc/Data_Model_Base";
+import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
+import { IA_Object_Remove } from "../utils/IA_Remove";
 
 // Delete from parents.
 let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {

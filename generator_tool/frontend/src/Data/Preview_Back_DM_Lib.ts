@@ -9,12 +9,12 @@ export default class Preview_Back_DM_Lib extends BaseGenerator {
   }
 
   getImportStatements(): string {
-    return `import { ${this.note.object_name}, ${this.generateInterfaceImports()}, IO_${this.note.object_name} } from "../shared/Data_Models/${this.note.object_name}";
-import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../shared/Communication/Communication_Interfaces";
+    return `import { ${this.note.object_name}, ${this.generateInterfaceImports()}, IO_${this.note.object_name} } from "../Shared_Data_Models/${this.note.object_name}";
+import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 
-import Backend_State from "../static_internal_logic/Backend_State";
-import { Object_Class_Function_Map } from "../Object_Registration";
-import { generate_unique_id } from "../static_internal_logic/utils.ts"; // todo implement
+import Backend_State from "../../static_internal_logic/Backend_State";
+import { Object_Class_Function_Map } from "../../Object_Registration";
+import { generate_unique_id } from "../../utils/utils";
 `;
   }
 
@@ -24,13 +24,9 @@ import { generate_unique_id } from "../static_internal_logic/utils.ts"; // todo 
 
   generateAddFunction(): string {
     let upl: string[] | "" = this.user_property_list.length == 0 ? "" : this.user_property_list.map((property) => `${property.toLocaleLowerCase()}: data.${property.toLocaleLowerCase()}`);
-
     let bpl: string[] | "" = this.user_property_list_raw.length == 0 ? "" : this.user_property_list_raw.map((property) => `${property.toLocaleLowerCase()}: ''`);
-
     let bppl: string[] | "" = this.base_property_list.length == 0 ? "" : this.base_property_list.map((property) => `${property.toLocaleLowerCase()}: ''`);
-
     let gpl: string[] | "" = this.child_property_list.length == 0 ? "" : this.child_property_list.map((property) => `${property.toLocaleLowerCase()}: []`);
-
     let combo_arr: string[] = [...upl, ...bppl, ...bpl, ...gpl];
     let combo: string = "";
 
@@ -40,13 +36,14 @@ import { generate_unique_id } from "../static_internal_logic/utils.ts"; // todo 
       combo = `\n${this.tab_indent}${this.tab_indent}${combo_arr.join(",\n    ")},`;
     }
 
+    let parent_id = this.has_parent() ? `\n${this.tab_indent}${this.tab_indent}parent_id: data.parent_id,` : "";
+
     return `
 let create_new_${this.note.object_name.toLocaleLowerCase()} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let data = message_action as IA_${this.note.object_name.toLocaleLowerCase()}_create_new;
 
   const new_${this.note.object_name.toLocaleLowerCase()}: IO_${this.note.object_name} = {
-    id: generate_unique_id(), // todo implement${combo}
-    parent_id: data.parent_id
+    id: generate_unique_id(), // todo implement${combo}${parent_id}
   };
 
   const payload: Payload_Add = {

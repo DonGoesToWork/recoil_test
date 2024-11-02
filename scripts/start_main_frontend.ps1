@@ -5,7 +5,7 @@ function GetRealPath() {
     return $realPath.Trim()
 }
 
-$directory = Join-Path (GetRealPath) "frontend"
+$directory = Join-Path (GetRealPath) "\main_project\frontend"
 
 if (Test-Path -Path $directory) {
     Push-Location $directory

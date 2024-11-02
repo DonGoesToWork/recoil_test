@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import './Toast.css'; // Importing the CSS
+import "./Toast.css"; // Importing the CSS
+
+import React, { useEffect, useState } from "react";
 
 interface ToastProps {
   id: number;
   message: string;
-  type?: 'success' | 'error' | 'info';
+  type?: "success" | "error" | "info";
   duration?: number;
   onClose: (id: number) => void;
 }
 
-const Toast: React.FC<ToastProps> = ({
-  id,
-  message,
-  type = 'info',
-  duration = 3000,
-  onClose,
-}) => {
+const Toast: React.FC<ToastProps> = ({ id, message, type = "info", duration = 3000, onClose }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
