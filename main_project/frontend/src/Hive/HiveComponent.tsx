@@ -98,13 +98,13 @@ const HiveComponent: React.FC = () => {
     <div>
       <h1>Let's Grow!</h1>
 
-      <button onClick={() => create_new_farmer(__SM__, "john")}>Add Farmer</button>
+      <button onClick={() => create_new_farmer(__SM__)}>Add Farmer</button>
       {state[Farmer.class_name]?.map((farmer: IO_Farmer) => (
         <div key={farmer.id}>
           <h2>{farmer.name}</h2>
           <h3>{farmer.id}</h3>
           <button onClick={() => remove_farmer(__SM__, farmer.id)}>Remove Farmer</button>💩
-          <button onClick={() => create_new_bee_farm(__SM__, "farm", farmer.id)}>Add Bee Farm</button>
+          <button onClick={() => create_new_bee_farm(__SM__, farmer.id)}>Add Bee Farm</button>
           {state[Bee_Farm.class_name]
             ?.filter((farm: IO_Bee_Farm) => farm.parent_id === farmer.id)
             .map((farm: IO_Bee_Farm) => (
@@ -112,7 +112,7 @@ const HiveComponent: React.FC = () => {
                 <h2>{farm.name}</h2>
                 <h3>{farm.id}</h3>
                 <button onClick={() => remove_bee_farm(__SM__, farm.id)}>Remove Farm</button>💩
-                <button onClick={() => create_new_bee_hive(__SM__, "hive", farm.id)}>Add Hive</button>
+                <button onClick={() => create_new_bee_hive(__SM__, farm.id)}>Add Hive</button>
                 {state[Bee_Hive.class_name]
                   ?.filter((hive: IO_Bee_Hive) => hive.parent_id === farm.id)
                   .map((hive: IO_Bee_Hive) => (
@@ -120,7 +120,7 @@ const HiveComponent: React.FC = () => {
                       <h3>{hive.name}</h3>
                       <h3>{hive.id}</h3>
                       <button onClick={() => remove_bee_hive(__SM__, hive.id)}>Remove Hive</button>💩
-                      <button onClick={() => create_new_bee(__SM__, "bee", hive.id)}>Add Bee</button>
+                      <button onClick={() => create_new_bee(__SM__, hive.id)}>Add Bee</button>
                       {state[Bee.class_name]
                         ?.filter((bee: IO_Bee) => bee.parent_id === hive.id)
                         .map((bee: IO_Bee) => (

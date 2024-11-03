@@ -1,6 +1,6 @@
 import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
-import Backend_State from "../static_internal_logic/Backend_State";
+import Backend_State from "./Backend_State";
 import { Data_Model_Base } from "../z_generated/Shared_Misc/Data_Model_Base";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
 import { IA_Object_Remove } from "../utils/IA_Remove";
@@ -84,8 +84,8 @@ let delete_object = (state: Backend_State, object_class_name: string, object_id:
   state.delete(payload);
 };
 
-// deletes parent, children and base object
-export let delete_full = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+// deletes parent, children and base object - only method that should be called directly in this file
+export let delete_object_and_relations = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let base_object_name = message_action.object_class;
   let base_object: Data_Model_Base = GLOBAL_CLASS_MAP[base_object_name];
   let data = message_action as IA_Object_Remove;

@@ -24,12 +24,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ selectedNote, updateNote, deleteNot
       <h3>Objects that this object logically includes.</h3>
       <textarea className="note-content" value={selectedNote.child_list} onChange={(e) => updateNote("child_list", e.target.value, selectedNote.id)} placeholder="Write one (1) child object per line..." />
 
-      <label>User Configured Property List</label>
-      <h3>Syncing Properties That Init. Generated Non-'user_input' variants.</h3>
-      <textarea className="note-content" value={selectedNote.user_property_list} onChange={(e) => updateNote("user_property_list", e.target.value, selectedNote.id)} placeholder="Write one (1) property per line..." />
-
       <label>Property List</label>
-      <h3>Properties that Exist and Sync Across Clients.</h3>
+      <h3>Properties that Exist On Object and Sync Across Clients.</h3>
       <textarea className="note-content" value={selectedNote.property_list} onChange={(e) => updateNote("property_list", e.target.value, selectedNote.id)} placeholder="Write one (1) property per line..." />
 
       <label>Date</label>

@@ -20,19 +20,19 @@ import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces
 // Interface (Type) for Complete Class Definition w/ Full Metadata.
 
 export interface IT_${this.note.object_name} extends Data_Model_Base {
-  class_name: string,
+  class_name: string;
   parent_data: {
-    class_name: string,
-    id_list_name: string,
-  } | null,
-  child_class_name_list: string[],
+    class_name: string;
+    id_list_name: string;
+  } | null;
+  child_class_name_list: string[];
   properties: {
-${this.combined_property_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: string`).join("\n")}
-  },
+${this.combined_property_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: string;`).join("\n")}
+  };
   functions: {
-${this.tab_indent}${this.tab_indent}create_new: string,
-${this.combined_property_list_no_gen.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: string`).join(",\n")}
-  },
+${this.tab_indent}${this.tab_indent}create_new: string;
+${this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: string;`).join("\n")}
+  };
 }
 `;
     return template;
@@ -43,16 +43,16 @@ ${this.combined_property_list_no_gen.map((x) => `${this.tab_indent}${this.tab_in
     const childClassNames = this.note.child_list
       .split(this.delimeter_child_split)
       .filter((x) => x !== "")
-      .map((x) => `\'${x}\'`)
+      .map((x) => `\"${x}\"`)
       .join(", ");
 
     const objectFunctionList = this.combined_property_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: "${x.toLocaleLowerCase()}",`).join("\n");
-    const functionList = this.combined_property_list_no_gen.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: 'set_${this.note.object_name.toLocaleLowerCase()}_${x.toLocaleLowerCase()}',`).join("\n");
+    const functionList = this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: "set_${this.name_as_lower}_${x.toLocaleLowerCase()}",`).join("\n");
 
     const parent_data = this.has_parent()
       ? `,\n${this.tab_indent}parent_data: {
-    class_name: \'${this.note.parent}\',
-    id_list_name: '${noteTitle.toLocaleLowerCase()}_ids',
+    class_name: \"${this.note.parent}\",
+    id_list_name: "${noteTitle.toLocaleLowerCase()}_ids",
   }`
       : `,\n${this.tab_indent}parent_data: null`;
 
@@ -60,22 +60,21 @@ ${this.combined_property_list_no_gen.map((x) => `${this.tab_indent}${this.tab_in
 // Complete Class Definition w/ Full Metadata.
 
 export const ${noteTitle}: IT_${noteTitle} = {
-  class_name: \'${this.note.object_name}\'${parent_data},
+  class_name: \"${this.note.object_name}\"${parent_data},
   child_class_name_list: [${childClassNames}],
   properties: {
 ${objectFunctionList}
   },
   functions: {
-    create_new: 'create_new_${noteTitle.toLocaleLowerCase()}',
+    create_new: "create_new_${noteTitle.toLocaleLowerCase()}",
 ${functionList}
   },
-}
+};
 `;
   }
 
   getObjectInterface() {
     // Do this custom process to extract show child_property_list items as string[]
-    let custom_list = [...this.user_property_list_raw, ...this.user_base_property_list, "id"];
     let child_str = this.child_property_list.length == 0 ? "" : `\n${this.child_property_list.map((x) => `${this.tab_indent}${x.toLocaleLowerCase()}: string[];`).join("\n")}`;
     let parent_str = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
 
@@ -83,15 +82,12 @@ ${functionList}
 // Class Definition w/o Metadata Properties or Methods
 
 export interface IO_${this.note.object_name} {
-  ${custom_list.map((x) => `${x.toLocaleLowerCase()}: string;`).join(`\n${this.tab_indent}`)}${child_str}${parent_str}
+  ${[...this.base_property_list, "id"].map((x) => `${x.toLocaleLowerCase()}: string;`).join(`\n${this.tab_indent}`)}${child_str}${parent_str}
 }`;
   }
 
   getInterfacesForIAs() {
-    let user_properties = this.user_property_list.length >= 0 ? this.user_property_list.map((x: string) => `\n${this.tab_indent}${x}: string`) : "";
-
     let parent_note = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
-
     let dataModelEntry = `
 
 // Interface Argument(s) - Back-End Function Interfaces.
@@ -99,19 +95,19 @@ export interface IO_${this.note.object_name} {
 
     // Add interface (always the same)
     dataModelEntry += `
-export interface IA_${this.note.object_name.toLocaleLowerCase()}_create_new extends Pre_Message_Action_Send {
-  object_class: string;${user_properties}
+export interface IA_${this.name_as_lower}_create_new extends Pre_Message_Action_Send {
+  object_class: string;
   function_name: string;${parent_note}
 }
 `;
 
     // Dynamically generate set interfaces.
-    this.combined_property_list_no_gen.forEach((property) => {
+    this.base_property_list.forEach((property) => {
       dataModelEntry += `
-export interface IA_${this.note.object_name.toLocaleLowerCase()}_set_${property.toLocaleLowerCase()} extends Pre_Message_Action_Send {
+export interface IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()} extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
-  ${this.note.object_name.toLocaleLowerCase()}_id: string;
+  ${this.name_as_lower}_id: string;
   new_${property.toLocaleLowerCase()}: string;
 }
 `;

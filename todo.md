@@ -32,3 +32,54 @@ Notes:
 // let card = state['eventcards'].find((eventcard) => eventcard.id === id);
 // card.process();
 //
+
+Sample Interaction
+
+<!--
+let change_multiple_hive_names_to_ted = (state: Backend_State, bee_hive_ids: string[]): void => {
+  // todo implement
+  return;
+};
+// Sample contents:
+
+// For every bee hive in state at bee_hive_id, change property_name to property_value.
+// bee_hive_ids.forEach((bee_hive_id: string) => {
+//     set_bee_hive_name_direct(state, bee_hive_id, "Ted");
+//   });
+ff
+-->
+
+Sample Inventory Item Operations
+
+<!--
+let add_inventory_item = (state: Backend_State, inventory_id: string) => {
+  if (inventory_is_full(state, inventory_id)) {
+    return;
+  }
+
+  create_new_item(state, ...other args, inventory_id); // state, args, parent_id
+}
+
+// Generate this (Add max-size constraint to array fields to configure in UI?)
+
+let inventory_is_full = (state: Backend_State, inventory_id: string)=> {
+  let inventory = get_inventory(state, inventory_id);
+  return (inventory.length >= 10);
+}
+
+// Generate this (Add max-size constraint to array fields to configure in UI?)
+
+let inventory_get_free_spot = (state: Backend_State, inventory_id: string)=> {
+  let inventory_item_ids_arr = state["inventory"].item_ids;
+
+  return (inventory.length >= 10);
+}
+
+// Generate this
+
+let get_items = (state: Backend_State, inventory_id: string) => {
+  return state["inventory"].item_ids;
+}
+
+
+-->

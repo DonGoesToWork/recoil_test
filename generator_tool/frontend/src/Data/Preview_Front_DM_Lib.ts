@@ -16,7 +16,7 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
   }
 
   generateInterfaceImports(): string {
-    return [`IA_${this.note.object_name.toLocaleLowerCase()}_create_new`, ...this.combined_property_list_no_gen.map((property) => `IA_${this.note.object_name.toLocaleLowerCase()}_set_${property}`)].join(", ");
+    return [`IA_${this.name_as_lower}_create_new`, ...this.base_property_list.map((property) => `IA_${this.name_as_lower}_set_${property}`)].join(", ");
   }
 
   generateAddFunction(): string {
@@ -29,18 +29,12 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
       parent_note = `,\n${this.tab_indent}${this.tab_indent}parent_id: ${this.note.parent.toLocaleLowerCase()}_id,`;
     }
 
-    let props = this.user_property_list.map((x) => `,\n${this.tab_indent}${this.tab_indent}${x}: _${x}`);
-
-    if (this.user_property_list.length != 0) {
-      input_args = this.user_property_list.map((x) => `, _${x.toLocaleLowerCase()}: string`).join("");
-    }
-
     // Front-End - generateAddFunction() - We only pass the 'user_input' properties to the back-end and let it generate the rest.
     return `
-export let create_new_${this.note.object_name.toLocaleLowerCase()} = (function_send_message: Function${input_args}${parent_arg}): void => {
-  let data: IA_${this.note.object_name.toLocaleLowerCase()}_create_new = {
+export let create_new_${this.name_as_lower} = (function_send_message: Function${input_args}${parent_arg}): void => {
+  let data: IA_${this.name_as_lower}_create_new = {
     object_class: ${this.note.object_name}.class_name,
-    function_name: ${this.note.object_name}.functions.create_new${props}${parent_note}    
+    function_name: ${this.note.object_name}.functions.create_new${parent_note}    
   };
 
   function_send_message(data);
@@ -50,7 +44,7 @@ export let create_new_${this.note.object_name.toLocaleLowerCase()} = (function_s
 
   generateRemoveFunction(): string {
     return `
-export let remove_${this.note.object_name.toLocaleLowerCase()} = (function_send_message: I_Message_Sender, ${this.note.parent.toLocaleLowerCase()}_id: string): void => {
+export let remove_${this.name_as_lower} = (function_send_message: I_Message_Sender, ${this.note.parent.toLocaleLowerCase()}_id: string): void => {
   function_send_message(GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT(${this.note.object_name}.class_name, ${this.note.parent.toLocaleLowerCase()}_id));
 };
 `;
@@ -59,14 +53,15 @@ export let remove_${this.note.object_name.toLocaleLowerCase()} = (function_send_
   generateSetFunctions(): string {
     return (
       "\n" +
-      this.combined_property_list_no_gen
+      this.base_property_list
+        .map((property) => property.toLocaleLowerCase())
         .map(
-          (property) => `export let set_${this.note.object_name.toLocaleLowerCase()}_${property.toLocaleLowerCase()} = (function_send_message: Function, ${this.note.object_name.toLocaleLowerCase()}_id: string, new_${property.toLocaleLowerCase()}: string): void => {
-  let data: IA_${this.note.object_name.toLocaleLowerCase()}_set_${property.toLocaleLowerCase()} = {
+          (property) => `export let set_${this.name_as_lower}_${property} = (function_send_message: Function, ${this.name_as_lower}_id: string, new_${property}: string): void => {
+  let data: IA_${this.name_as_lower}_set_${property} = {
     object_class: ${this.note.object_name}.class_name,
-    function_name: ${this.note.object_name}.functions.set_${property.toLocaleLowerCase()},
-    ${this.note.object_name.toLocaleLowerCase()}_id: ${this.note.object_name.toLocaleLowerCase()}_id,
-    new_${property.toLocaleLowerCase()}: new_${property.toLocaleLowerCase()},
+    function_name: ${this.note.object_name}.functions.set_${property},
+    ${this.name_as_lower}_id: ${this.name_as_lower}_id,
+    new_${property}: new_${property},
   };
 
   function_send_message(data);

@@ -7,7 +7,7 @@ import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "./utils/IA_Remove"
 import { Message_Action_Send } from "./z_generated/Shared_Misc/Communication_Interfaces";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
-import { delete_full } from "./Data_Models_Base/Generic_Remove";
+import { delete_object_and_relations } from "./static_internal_logic/Generic_Remove";
 import express from "express";
 
 const app = express();
@@ -35,7 +35,7 @@ wss.on("connection", (client: any) => {
 
     // For 'delete function' calls, route all of them to the removal function.
     if (message_action.function_name === DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME) {
-      delete_full(message_action, state);
+      delete_object_and_relations(message_action, state);
     }
 
     // * Get and call class function after ensuring that it exists.

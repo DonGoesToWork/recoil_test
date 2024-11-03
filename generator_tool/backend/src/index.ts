@@ -73,7 +73,6 @@ export type Note = {
   object_name: string;
   parent: string;
   child_list: string;
-  user_property_list: string;
   property_list: string;
   date: string; // Add a date field
 };
