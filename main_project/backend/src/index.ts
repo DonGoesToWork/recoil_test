@@ -38,8 +38,12 @@ wss.on("connection", (client: any) => {
       delete_object_and_relations(message_action, state);
     }
 
+    console.log("A: ", object_class_function_map, message_action.object_class, object_class_function_map[message_action.object_class]);
+
     // * Get and call class function after ensuring that it exists.
     let class_function_list: { [key: string]: Class_Function } = object_class_function_map[message_action.object_class];
+
+    console.log("B:", class_function_list, class_function_list.length);
 
     if (class_function_list === undefined || class_function_list === null) {
       console.log("[Error] Bad Object Transmitted. Make sure object is registered in ObjectRegistration.ts and you added back-end checks switch-cases!: ", message_action.object_class);

@@ -35,12 +35,9 @@ import { generate_unique_id } from "../../utils/utils";
     }
 
     let parent_id = this.has_parent() ? `\n${this.tab_indent}${this.tab_indent}parent_id: _parent_id,` : "";
-    let property_import_list = this.has_parent()
-      ? `, ${this.add_parent_id(this.base_property_list)
-          .map((x) => `_${x}: string`)
-          .join(", ")}`
-      : "";
 
+    let bpi_w_parent = this.add_parent_id(this.base_property_list);
+    let property_import_list = bpi_w_parent.length != 0 ? `, ${bpi_w_parent.map((x) => `_${x}: string`).join(", ")}` : "";
     let func_callback = `, _func_callback?: (state: Backend_State, new_${this.name_as_lower}: IO_${this.note.object_name}) => void`;
 
     return `
@@ -49,7 +46,7 @@ export let create_new_${this.name_as_lower} = (state: Backend_State${property_im
     id: generate_unique_id(),${combo}${parent_id}
   };
 
-  if (_func_callback) _func_callback(state, new_bee_hive);
+  if (_func_callback) _func_callback(state, new_${this.name_as_lower});
   
   const payload: Payload_Add = {
     objectType: ${this.note.object_name}.class_name,
@@ -128,11 +125,11 @@ let ia_set_${this.name_as_lower}_${property} = (message_action: Pre_Message_Acti
   }
 
   generateBackendSwitchFunction(): string {
-    let combo = this.base_property_list.length == 0 ? "" : `\n${this.base_property_list.map((property) => `${this.tab_indent}state_object_array['ia_set_${this.name_as_lower}_${property.toLocaleLowerCase()}'] = ia_set_${this.name_as_lower}_${property};`).join("\n")}`;
+    let combo = this.base_property_list.length == 0 ? "" : `\n${this.base_property_list.map((property) => `${this.tab_indent}x['${this.note.object_name}']['ia_set_${this.name_as_lower}_${property.toLocaleLowerCase()}'] = ia_set_${this.name_as_lower}_${property};`).join("\n")}`;
 
     return `\n\nexport let Register_${this.note.object_name} = (x: Object_Class_Function_Map): void => {
-  let state_object_array = x['${this.note.object_name}'];
-  state_object_array['ia_${this.name_as_lower}_create_new'] = ia_create_new_${this.name_as_lower};${combo}
+  x['${this.note.object_name}'] = {};
+  x['${this.note.object_name}']['ia_${this.name_as_lower}_create_new'] = ia_create_new_${this.name_as_lower};${combo}
 };
 `;
   }
