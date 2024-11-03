@@ -14,7 +14,6 @@ import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Mis
 
 import Backend_State from "../../static_internal_logic/Backend_State";
 import { Object_Class_Function_Map } from "../../Object_Registration";
-import { create_new_${this.name_as_lower}_final_operations } from "../../x_managed/${this.note.object_name}";
 import { generate_unique_id } from "../../utils/utils";
 `;
   }
@@ -36,17 +35,22 @@ import { generate_unique_id } from "../../utils/utils";
     }
 
     let parent_id = this.has_parent() ? `\n${this.tab_indent}${this.tab_indent}parent_id: _parent_id,` : "";
+    let property_import_list = this.has_parent()
+      ? `, ${this.add_parent_id(this.base_property_list)
+          .map((x) => `_${x}: string`)
+          .join(", ")}`
+      : "";
+
+    let func_callback = `, _func_callback?: (state: Backend_State, new_${this.name_as_lower}: IO_${this.note.object_name}) => void`;
 
     return `
-export let create_new_${this.name_as_lower} = (state: Backend_State, ${this.add_parent_id(this.base_property_list)
-      .map((x) => `_${x}: string`)
-      .join(", ")}): void => {
+export let create_new_${this.name_as_lower} = (state: Backend_State${property_import_list}${func_callback}): void => {
   const new_${this.name_as_lower}: IO_${this.note.object_name} = {
     id: generate_unique_id(),${combo}${parent_id}
   };
 
-  create_new_bee_hive_final_operations(state, new_bee_hive);
-
+  if (_func_callback) _func_callback(state, new_bee_hive);
+  
   const payload: Payload_Add = {
     objectType: ${this.note.object_name}.class_name,
     object: new_${this.name_as_lower},
@@ -78,8 +82,6 @@ let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Se
   const new_${this.name_as_lower}: IO_${this.note.object_name} = {
     id: generate_unique_id(),${combo}${parent_id}
   };
-
-  create_new_bee_hive_final_operations(state, new_bee_hive);
 
   const payload: Payload_Add = {
     objectType: ${this.note.object_name}.class_name,

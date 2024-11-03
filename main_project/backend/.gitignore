@@ -1,3 +1,4 @@
 /src/z_generated/
 /node_modules/
 /dist/
+/src/Object_Registration.ts

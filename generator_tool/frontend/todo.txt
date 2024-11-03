@@ -1,10 +1,9 @@
 To actually finish project:
 
 High Priority TODO:
+- Generate Sample Interactions Files in Interactions Folder.
 - Implement recent changes to support:
-  - class direct/non-direct operations
-  - 'x_managed' folder to create the managed class object files with support for 'create_new_bee_hive_final_operations' function behavior
-  - Auto-generate Interactions Folder entry. (Create file if one doesn't exist.)
+- class direct/non-direct operations
 
 
 OLn front-end, need to actually handle numbers?
