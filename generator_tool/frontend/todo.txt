@@ -2,8 +2,6 @@ To actually finish project:
 
 High Priority TODO:
 - Generate Sample Interactions Files in Interactions Folder.
-- Implement recent changes to support:
-- class direct/non-direct operations
 
 
 OLn front-end, need to actually handle numbers?
