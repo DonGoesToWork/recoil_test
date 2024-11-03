@@ -31,29 +31,22 @@ wss.on("connection", (client: any) => {
   client.on("message", (message: string) => {
     const message_action: Message_Action_Send = JSON.parse(message);
 
-    // console.log("Message received: ", message_action, object_class_function_map);
-
     // For 'delete function' calls, route all of them to the removal function.
     if (message_action.function_name === DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME) {
       delete_object_and_relations(message_action, state);
     }
 
-    console.log("A: ", object_class_function_map, message_action.object_class, object_class_function_map[message_action.object_class]);
-
-    // * Get and call class function after ensuring that it exists.
     let class_function_list: { [key: string]: Class_Function } = object_class_function_map[message_action.object_class];
 
-    console.log("B:", class_function_list, class_function_list.length);
-
     if (class_function_list === undefined || class_function_list === null) {
-      console.log("[Error] Bad Object Transmitted. Make sure object is registered in ObjectRegistration.ts and you added back-end checks switch-cases!: ", message_action.object_class);
+      console.log("[Error 1] Bad Object Transmitted. Object Class is Invalid.", message_action.object_class);
       return;
     }
 
     let class_function: Class_Function = class_function_list[message_action.function_name];
 
     if (class_function === undefined || class_function === null) {
-      console.log("[Error] Bad Object Transmitted. Make sure object is registered in ObjectRegistration.ts and you added back-end checks switch-cases!: ", message_action.object_class);
+      console.log("[Error 2] Bad Object Transmitted. Function name is invalid.", message_action.function_name);
       return;
     }
 

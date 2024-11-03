@@ -47,7 +47,7 @@ ${this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${
       .join(", ");
 
     const objectFunctionList = this.combined_property_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: "${x.toLocaleLowerCase()}",`).join("\n");
-    const functionList = this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: "set_${this.name_as_lower}_${x.toLocaleLowerCase()}",`).join("\n");
+    const functionList = this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: "ia_set_${this.name_as_lower}_${x.toLocaleLowerCase()}",`).join("\n");
 
     const parent_data = this.has_parent()
       ? `,\n${this.tab_indent}parent_data: {
@@ -66,7 +66,7 @@ export const ${noteTitle}: IT_${noteTitle} = {
 ${objectFunctionList}
   },
   functions: {
-    create_new: "create_new_${noteTitle.toLocaleLowerCase()}",
+    create_new: "ia_${noteTitle.toLocaleLowerCase()}_create_new",
 ${functionList}
   },
 };

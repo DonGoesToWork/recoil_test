@@ -71,13 +71,10 @@ const HiveComponent: React.FC = () => {
   };
 
   const __SM__: I_Message_Sender = (update: Pre_Message_Action_Send): void => {
-    // Add server state ref.
     let finalUpdate: Message_Action_Send = update as Message_Action_Send;
-    finalUpdate["server_state_ref"] = server_state_ref;
+    finalUpdate["server_state_ref"] = server_state_ref; // Add server state ref.
     wsClient?.sendMessage(JSON.stringify(update)); // Send update
   };
-
-  console.log("STATE: ", state); // todo - fix removing bees to not dangle
 
   // Show loading until we are connected with ws.
   if (!connected) {
