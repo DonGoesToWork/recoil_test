@@ -1,84 +1,76 @@
 class WebSocketClient {
   private ws: WebSocket | undefined;
-  private reconnectInterval: number;
-  private isReconnecting: boolean = false; // Flag to prevent multiple concurrent reconnect attempts
+  private reconnectInterval: number = 1000;
+  private reconnectCount: number = 0;
+  private reconnectIntervalId: NodeJS.Timeout | null = null;
 
-  constructor(
-    url: string,
-    onMessage: (message: string) => void,
-    setConnected: (connected: boolean) => void,
-    setWsClient: (client: WebSocketClient) => void = () => {},
-    reconnectInterval: number = 1000 // Retry every second by default
-  ) {
-    this.reconnectInterval = reconnectInterval;
-    this.connect(url, onMessage, setConnected, setWsClient);
+  constructor(private url: string, private onMessage: (message: string) => void, private setConnected: (connected: boolean) => void) {
+    this.connect();
   }
 
-  private connect(url: string, onMessage: (message: string) => void, setConnected: (connected: boolean) => void, setWsClient: (client: WebSocketClient) => void) {
-    this.ws = new WebSocket(url);
+  private connect() {
+    // Only attempt to connect if ws is undefined or fully closed
+    if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
+      console.log("WebSocket connection already in progress or open. Skipping connect attempt.");
+      return;
+    }
+
+    this.ws = new WebSocket(this.url);
 
     this.ws.onopen = () => {
       console.log("Connected to WebSocket server");
-      setConnected(true);
-      this.isReconnecting = false; // Connection is successful, reset the reconnect flag
+      this.setConnected(true);
+      this.clearReconnectInterval(); // Stop further reconnect attempts
+      this.reconnectCount = 0; // Reset count on successful connection
     };
 
     this.ws.onmessage = (event) => {
-      onMessage(event.data);
+      this.onMessage(event.data);
     };
 
     this.ws.onclose = () => {
-      console.log(`Disconnected from WebSocket server. Reconnecting in ${this.reconnectInterval / 1000} seconds...`);
-      setConnected(false);
-      this.scheduleReconnect(url, onMessage, setConnected, setWsClient); // Schedule reconnection attempts
+      console.log("Disconnected. Scheduling reconnection attempts...");
+      this.setConnected(false);
+      this.scheduleReconnect();
     };
 
     this.ws.onerror = (error) => {
       console.error("WebSocket encountered an error: ", error);
-
-      if (this.ws === undefined) {
-        return;
-      }
-
-      this.ws.close(); // Explicitly close the connection on error to trigger reconnection
+      this.ws?.close(); // Close to trigger `onclose` and initiate reconnect
     };
   }
 
-  private scheduleReconnect(url: string, onMessage: (message: string) => void, setConnected: (connected: boolean) => void, setWsClient: (client: WebSocketClient) => void) {
-    if (this.isReconnecting) {
-      return; // If already reconnecting, don't schedule another one
+  private scheduleReconnect() {
+    if (this.reconnectIntervalId) {
+      // Already scheduled, so skip scheduling again
+      return;
     }
 
-    this.isReconnecting = true;
+    // Schedule periodic reconnection attempts
+    this.reconnectIntervalId = setInterval(() => {
+      this.reconnectCount++;
+      console.log(`Attempting to reconnect to WebSocket... (Attempt ${this.reconnectCount})`);
 
-    setTimeout(() => {
-      console.log("Attempting to reconnect to WebSocket...");
-
-      const newClient = new WebSocketClient(url, onMessage, setConnected, setWsClient, this.reconnectInterval);
-      if (newClient.getState() !== WebSocket.OPEN) {
-        console.log("Reconnection failed. Will retry...");
-        this.isReconnecting = false; // Allow retrying if it fails
-      } else {
-        console.log("Reconnection successful.");
-        setWsClient(newClient); // Successfully replace the WebSocketClient instance
+      // Attempt reconnection only if the WebSocket is fully closed
+      if (!this.ws || this.ws.readyState === WebSocket.CLOSED) {
+        this.connect();
       }
     }, this.reconnectInterval);
   }
 
-  getState(): number {
-    if (this.ws === undefined) {
-      return -1;
+  private clearReconnectInterval() {
+    if (this.reconnectIntervalId) {
+      clearInterval(this.reconnectIntervalId);
+      this.reconnectIntervalId = null;
     }
+  }
 
-    return this.ws.readyState;
+  getState(): number {
+    return this.ws?.readyState ?? -1;
   }
 
   sendMessage(message: string): void {
-    if (this.ws === undefined) {
-      return;
-    }
-
-    if (this.ws.readyState === WebSocket.OPEN) {
+    if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(message);
     } else {
       console.error("WebSocket is not open. Message not sent.");
@@ -86,11 +78,8 @@ class WebSocketClient {
   }
 
   close(): void {
-    if (this.ws === undefined) {
-      return;
-    }
-
-    this.ws.close();
+    this.clearReconnectInterval();
+    this.ws?.close();
   }
 }
 
