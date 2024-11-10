@@ -12,6 +12,7 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.1",
     "@types/node": "^14.18.63",
     "connect-livereload": "^0.6.1",
