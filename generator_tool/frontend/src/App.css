@@ -4,5 +4,47 @@ html {
   margin: 0;
   padding: 0;
   font-family: "Arial", sans-serif;
-  background-color: #f4f4f4;
+  background-color: #e9e9e9;
+}
+
+.my-card {
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 10px;
+}
+
+.my-card:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.4);
+}
+
+h1 {
+  margin: 2px;
+  padding: 2px;
+}
+
+h3 {
+  font-size: 12px;
+  text-align: center;
+  color: #797979;
+  margin-top: -5px;
+  margin-bottom: 4px;
+}
+
+div {
+  border-radius: 5px;
+}
+
+button {
+  background-color: #1783ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 20px;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #1571db;
+  color: rgb(245, 245, 245);
 }

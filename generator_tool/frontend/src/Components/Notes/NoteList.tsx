@@ -2,41 +2,35 @@ import "./NoteList.css";
 
 import { Note, getDefaultNote } from "../../Data/Note";
 import React, { useMemo, useState } from "react";
-import { exportNotes, importNotes } from "../../Data/TransmitLib";
+import { exportNotes } from "../../Data/TransmitLib";
 
 import NoteGrid from "./NoteGrid";
 import Pagination from "./Pagination";
 import SearchBar from "./SearchBar";
+import { notesPerPage } from "./NotesPerPage";
 
 interface NoteListProps {
   notes: Note[];
   selectedNoteId: string | null;
   setSelectedNoteId: (id: string) => void;
   setNotes: (notes: Note[]) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
-const NoteList: React.FC<NoteListProps> = ({ notes, selectedNoteId, setSelectedNoteId, setNotes }) => {
+const NoteList: React.FC<NoteListProps> = ({ notes, selectedNoteId, setSelectedNoteId, setNotes, currentPage, setCurrentPage }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
 
-  // TODO, auto decrement page when deleting the last note on a page (the 'notesPerPage' increment of a page)
-  const notesPerPage = 9;
-
-  // Add new note
   const addNote = () => {
     const newNote: Note = getDefaultNote();
     setNotes([...notes, newNote]);
     setSelectedNoteId(newNote.id);
-  };
+    let finalPage = Math.floor((notes.length / 9)) + 1;
 
-  const addNote1000 = () => {
-    let note_list: any = [];
-
-    for (var i = 0; i < 1000; i++) {
-      note_list.push(getDefaultNote());
+    // Always advance to final page when not on it.
+    if (currentPage != finalPage) {
+      setCurrentPage(finalPage);
     }
-    setNotes([...notes, ...note_list]);
-    setSelectedNoteId(note_list[0].id);
   };
 
   // Filter notes based on the search query
@@ -52,42 +46,26 @@ const NoteList: React.FC<NoteListProps> = ({ notes, selectedNoteId, setSelectedN
 
   return (
     <div className="notes-list-container">
-      <div>
-        <button
-          className="add-note-btn"
-          onClick={() => {
-            // DAR TODO - Confirmation Modal before allowing import.
-            let notes: Note[] | null = importNotes();
-
-            if (notes != null) {
-              setNotes(notes);
-            }
-          }}
-        >
-          Import
-        </button>
-        <button className="add-note-btn" onClick={addNote}>
-          Add Class
-        </button>
-        <button className="add-note-btn" onClick={addNote1000}>
-          Add Class x1000
-        </button>
-        <button
-          className="add-note-btn"
-          onClick={() => {
-            // DAR TODO - Confirmation Modal before allowing export.
-            exportNotes(notes);
-          }}
-        >
-          Export
-        </button>
-      </div>
-
+    <div className="notes-list-container-buttons">
+      <button className="add-note-btn" onClick={addNote}>
+        📝 Add New
+      </button>
+      <button
+        className="add-note-btn"
+        onClick={() => {
+          // DAR TODO - Confirmation Modal before allowing export.
+          exportNotes(notes);
+        }}
+      >
+        📂 Export
+      </button>
+    </div>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <NoteGrid notes={paginatedNotes} selectedNoteId={selectedNoteId} setSelectedNoteId={setSelectedNoteId} />
 
       <Pagination totalNotes={filteredNotes.length} notesPerPage={notesPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+
     </div>
   );
 };

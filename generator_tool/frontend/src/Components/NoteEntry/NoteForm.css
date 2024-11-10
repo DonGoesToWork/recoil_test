@@ -1,0 +1,54 @@
+/* NoteForm Component styles */
+.note-view-parent {
+  height: 100%;
+}
+
+.note-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.note-title,
+.note-content,
+.note-date {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 4px;
+}
+
+.note-content {
+  /* height: 150px; TODO REINSTATE */
+  resize: none;
+  font-size: 16px;
+}
+
+.delete-note-btn {
+  background-color:#F21139;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.delete-note-btn:hover {
+  background-color: rgb(255, 135, 135);
+}
+
+textarea.small {
+  height: 75px;
+}
+
+textarea.large {
+  height: 300px;
+}

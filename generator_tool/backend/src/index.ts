@@ -1,5 +1,9 @@
 // index.ts (back-end)
 
+/***************************
+ * Imports & Server Setup
+ **************************/
+
 import { createServer } from "http";
 import express from "express";
 
@@ -14,7 +18,10 @@ app.use(express.json()); // This middleware parses JSON in req.body
 
 const server = createServer(app);
 
-// Create Variables
+/*************************
+ * Variables
+ ************************/
+
 const root_project_path = "E:\\Web Dev\\2024_Projects\\lootquest8\\";
 
 let output_paths = {
@@ -41,6 +48,10 @@ let main_project_paths = {
   object_registration_file: root_project_path + "\\main_project\\backend\\src\\",
 };
 
+/*************************
+ * TYPES
+ ************************/
+
 const state: Client_Message = {
   // Main state object
   object_file_data: [],
@@ -48,24 +59,6 @@ const state: Client_Message = {
   global_class_map_contents: "",
   notes: [],
 };
-
-let ensure_exists = (dir: string) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-};
-
-let create_folders = () => {
-  for (const [key, value] of Object.entries(output_paths)) {
-    ensure_exists(value);
-  }
-};
-
-create_folders();
-
-/*******************
- * TYPES
- ******************/
 
 // Define a type for the Note structure
 export type Note = {
@@ -90,6 +83,20 @@ interface Object_File_Data {
   frontend_data_model: string;
   shared_data_model: string;
 }
+
+let ensure_exists = (dir: string) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
+
+let create_folders = () => {
+  for (const [key, value] of Object.entries(output_paths)) {
+    ensure_exists(value);
+  }
+};
+
+create_folders();
 
 // Recieve and handle '/import' requests.
 app.get("/import", (req, res) => {

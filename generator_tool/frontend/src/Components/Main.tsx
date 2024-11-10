@@ -3,7 +3,6 @@ import "./main.css";
 import { Note, getBeeFarmNote, getBeeHiveNote, getBeeNote, getFarmerNote, getPlayerNote } from "../Data/Note";
 import React, { useEffect, useState } from "react";
 
-import NoteForm from "./Notes/NoteForm";
 import NoteList from "./Notes/NoteList";
 import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
 import Preview_Front_DM_Lib from "../Data/Preview_Front_DM_Lib";
@@ -13,6 +12,11 @@ import Preview_Singles_DM_Lib from "../Data/Preview_Object_Registration_DM_Lib";
 import Tabs from "./Tabs";
 import { generateUniqueId } from "../Utils/utils";
 import { useToast } from "./Toast/ToastContainer";
+import { notesPerPage } from "./Notes/NotesPerPage";
+import ManagePage from "./Manage/ManagePage";
+import NoteForm from "./NoteEntry/NoteForm";
+import SnippetPage from "./Snippets/SnippetPage";
+import Sidebar from "./Sidebar/Sidebar";
 
 export interface selectNoteProps {
   setOutputText: Function;
@@ -53,6 +57,9 @@ const App: React.FC = () => {
   const [selectedNoteId, setSelectedNoteId] = useState<string>(firstId);
   const [outputText, setOutputText] = useState<string>(new Preview_Shared_DM_Lib(notes[0]).finalContent);
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [thirdColumnView, setThirdColumnView] = useState(4); // in prod, we use 5
+
   const { addToast } = useToast();
 
   // Track the selected note
@@ -86,9 +93,23 @@ const App: React.FC = () => {
       return false;
     }
 
+    // get index of selectedNote to select the note before it on delete...
     const filteredNotes = notes.filter((note) => note.id !== selectedNoteId);
-    setSelectedNoteId(filteredNotes[0].id);
+    let removeNoteIndex = notes.findIndex((note) => note.id === selectedNoteId);
+    let setSelectedNoteIdIndex = removeNoteIndex-1;
+
+    if (setSelectedNoteIdIndex < 0) { // cap at 0.
+      setSelectedNoteIdIndex = 0;
+    }
+
+    setSelectedNoteId(filteredNotes[setSelectedNoteIdIndex].id);
     setNotes(filteredNotes);
+
+    // Decrement page whenever we delete the last note of a page (excluding the first page).
+    if (currentPage == Math.ceil(notes.length / notesPerPage) && notes.length % notesPerPage == 1) {
+      setCurrentPage(currentPage - 1);
+    }
+
     return true;
   };
 
@@ -96,24 +117,95 @@ const App: React.FC = () => {
     setSelectedTab(tabIndex);
   };
 
-  return (
-    <div className="app-container">
-      <header>
-        <h1>(Custom) Full Stack Object Code Generator</h1>
-      </header>
-      <div className="notes-container">
-        <div className="notes-container-note-list">
-          <NoteList notes={notes} selectedNoteId={selectedNoteId} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} />
-        </div>
-        <div className="notes-container-note-form">
-          <NoteForm selectedNote={selectedNote} updateNote={updateNote} deleteNote={deleteNote} />
-        </div>
-        <div className="output-container">
-          <Tabs selectedTab={selectedTab} handleTabChange={handleTabChange} />
-          <textarea className="output-text" value={outputText} readOnly wrap="off" />
-        </div>
+  let item1;
+  let item2;
+  let noteList = <div>
+    <NoteList notes={notes} selectedNoteId={selectedNoteId} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+  </div>;
+  let noteForm = <div>
+    <NoteForm selectedNote={selectedNote} updateNote={updateNote} deleteNote={deleteNote} />
+  </div>;
+
+  let thirdColumnCounter = 0;
+
+  switch (thirdColumnView) {
+    case thirdColumnCounter++:
+      item1 = <div className="notes-container-col-view2 my-card">
+        {noteList}
+      </div>;
+      item2 = <div className="notes-container-col-view3 my-card">
+        {noteForm}
+      </div>;
+      break;
+    case thirdColumnCounter++:
+      item1 = <div className="notes-container-col-view my-card">
+        <ManagePage notes={notes} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} />;
       </div>
-    </div>
+      break;
+    case thirdColumnCounter++:
+      item1 = <div className="notes-container-col-view my-card">
+        <SnippetPage notes={notes} selectedNoteId={selectedNoteId} />
+        </div>;
+      break;
+    case thirdColumnCounter++:
+      item1 = <div className="notes-container-col-view my-card">
+      <h1>Preview</h1>
+      <p>Show Data Preview Only</p>
+      <Tabs selectedTab={selectedTab} handleTabChange={handleTabChange} />
+      <textarea className="output-text" value={outputText} readOnly wrap="off" />
+    </div>;
+    break;
+    case thirdColumnCounter++:
+      item1 = <div className="notes-container-col-view my-card">
+          <h1>Dev View 🧙🏼‍♂️🔥👏🏼⚡✨</h1>
+          <div className="dev-view-grid">
+            <div className="my-card">
+            {noteList}
+            </div>
+            <div className="my-card">
+            {noteForm}
+            </div>
+            <div className="my-card">
+              <div className="output-container">
+                <Tabs selectedTab={selectedTab} handleTabChange={handleTabChange} />
+                <textarea className="output-text" value={outputText} readOnly wrap="off" />
+              </div>
+            </div>
+            <div className="my-card">
+              <SnippetPage notes={notes} selectedNoteId={selectedNoteId} />
+            </div>
+          </div>
+        </div>;
+      break;
+    case thirdColumnCounter++:
+      item1 = <div className="notes-container-col-view2 my-card">
+        <h1>Help</h1>
+      </div>
+      break;
+    case thirdColumnCounter++:
+      item1 = <div className="notes-container-col-view my-card">
+        <h1>About</h1>
+        <p>Project Zero made by Donald Abdullah-Robinson for the purposes of evolving the web development ecosystem.</p>
+        <p>Github: TODO</p>
+      </div>;
+      break;
+    default:
+      item1 = noteForm;
+      break;
+  }
+
+  return (
+    <div>
+      <header>
+        <h1>ZER0</h1>
+      </header>
+        <span className="notes-container">
+          <Sidebar thirdColumnView={thirdColumnView} setThirdColumnView={setThirdColumnView}/>
+          {item1 !== undefined && item1}
+          {item2 !== undefined && item2}
+        </span>
+      {/* End of Notes Container */}
+  </div>
   );
 };
 

@@ -12,7 +12,6 @@
   border: 1px solid #ddd;
   padding: 15px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .note-item.selected {
