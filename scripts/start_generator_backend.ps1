@@ -1,4 +1,4 @@
-﻿$command = "npm run start"
+﻿$command = "npm run dev"
 
 function GetRealPath() {
     $realPath = Get-Content -Path "project_path.txt" -First 1
