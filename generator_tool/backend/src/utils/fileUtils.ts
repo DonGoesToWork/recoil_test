@@ -4,17 +4,17 @@ import fs from "node:fs";
 import { output_paths } from "../config";
 import { state } from "../types";
 
-export const ensureExists = (dir: string) => {
+export const ensure_exists = (dir: string) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 };
 
-export const createFolders = () => {
-  Object.values(output_paths).forEach(ensureExists);
+export const create_folders = () => {
+  Object.values(output_paths).forEach(ensure_exists);
 };
 
-export const writeFile = (res: any, filePath: string, contents: string) => {
+export const write_file = (res: any, filePath: string, contents: string) => {
   fs.writeFile(filePath, contents, (err) => {
     if (err) {
       console.error(err);
@@ -23,7 +23,9 @@ export const writeFile = (res: any, filePath: string, contents: string) => {
   });
 };
 
-export const loadNotes = () => {
+export const load_notes = () => {
+  console.log("Loading notes from: ", output_paths.notes);
+
   fs.readdir(output_paths.notes, (err, files) => {
     if (err) {
       console.error(err);
@@ -41,7 +43,7 @@ export const loadNotes = () => {
   });
 };
 
-export const copyFolderToFolder = (src: string, dest: string) => {
+export const copy_folder_to_folder = (src: string, dest: string) => {
   fs.readdir(src, (err, files) => {
     if (err) {
       console.error(err);

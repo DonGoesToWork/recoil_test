@@ -1,20 +1,22 @@
-// src/app.ts
+// src/server.ts
 
-import connectLivereload from "connect-livereload"; // Import the middleware
-import cors from "cors";
-import exportRoutes from "./routes/export";
-import express from "express";
-import importRoutes from "./routes/import";
+import { create_folders, load_notes } from "./utils/fileUtils";
 
-const app = express();
+import app from "./app";
+import { createServer } from "http";
 
-app.use(connectLivereload()); // Use LiveReload middleware here
-app.use(cors({ origin: "*" }));
-app.use(express.json());
+const PORT = 5002;
+const server = createServer(app);
 
-// Routes
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log("Server is loading existing class objects from files.");
 
-app.use("/import", importRoutes);
-app.use("/export", exportRoutes);
+  // Must create folders first.
+  create_folders();
 
-export default app;
+  // Load Note Data from files in notes_output_path.
+  load_notes();
+
+  console.log("Successfully completed loading class objects from files.");
+});

@@ -1,6 +1,6 @@
 // src/config.ts
 
-const root_project_path = "E:\\Web Dev\\2024_Projects\\lootquest8\\";
+export const root_project_path = "E:\\Web Dev\\2024_Projects\\lootquest8\\";
 
 export const output_paths = {
   base: `${root_project_path}\\generator_tool\\output\\`,
