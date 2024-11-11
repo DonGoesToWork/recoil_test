@@ -106,6 +106,40 @@ melee_heal_on_hit_percent`,
   };
 };
 
+export const getInventoryNote = (id?: string): Note => {
+  let finalId = id === undefined ? getUniqueId() : id;
+
+  return {
+    id: finalId,
+    object_name: "Inventory",
+    parent: "Player",
+    child_list: `Item`,
+    property_list: `name
+description
+type
+image_path`,
+    date: getCurrentDate(),
+  };
+};
+
+export const getItemNote = (id?: string): Note => {
+  let finalId = id === undefined ? getUniqueId() : id;
+
+  return {
+    id: finalId,
+    object_name: "Item",
+    parent: "Inventory",
+    child_list: ``,
+    property_list: `name
+description
+type
+image_path
+flag_quest_item
+flag_cursed`,
+    date: getCurrentDate(),
+  };
+};
+
 export const getDefaultNote = (id?: string): Note => {
   let finalId = id === undefined ? getUniqueId() : id;
 
@@ -116,7 +150,6 @@ export const getDefaultNote = (id?: string): Note => {
     child_list: `${getRandomWord()}
 ${getRandomWord()}
 ${getRandomWord()}`,
-    user_property_list: getRandomWord(),
     property_list: `${getRandomWord()}
 ${getRandomWord()}
 ${getRandomWord()}

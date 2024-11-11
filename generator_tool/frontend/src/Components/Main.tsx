@@ -1,22 +1,22 @@
 import "./main.css";
 
-import { Note, getBeeFarmNote, getBeeHiveNote, getBeeNote, getFarmerNote, getPlayerNote } from "../Data/Note";
+import { Note, getBeeFarmNote, getBeeHiveNote, getBeeNote, getFarmerNote, getInventoryNote, getItemNote, getPlayerNote } from "../Data/Note";
 import React, { useEffect, useState } from "react";
 
+import ManagePage from "./Manage/ManagePage";
+import NoteForm from "./NoteEntry/NoteForm";
 import NoteList from "./Notes/NoteList";
 import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
 import Preview_Front_DM_Lib from "../Data/Preview_Front_DM_Lib";
 import Preview_Global_Class_Map_Lib from "../Data/Preview_Global_Class_Map";
 import Preview_Shared_DM_Lib from "../Data/Preview_Shared_DM_Lib";
 import Preview_Singles_DM_Lib from "../Data/Preview_Object_Registration_DM_Lib";
+import Sidebar from "./Sidebar/Sidebar";
+import SnippetPage from "./Snippets/SnippetPage";
 import Tabs from "./Tabs";
 import { generateUniqueId } from "../Utils/utils";
-import { useToast } from "./Toast/ToastContainer";
 import { notesPerPage } from "./Notes/NotesPerPage";
-import ManagePage from "./Manage/ManagePage";
-import NoteForm from "./NoteEntry/NoteForm";
-import SnippetPage from "./Snippets/SnippetPage";
-import Sidebar from "./Sidebar/Sidebar";
+import { useToast } from "./Toast/ToastContainer";
 
 export interface selectNoteProps {
   setOutputText: Function;
@@ -53,7 +53,7 @@ const update_output = (select_note_data: selectNoteProps) => {
 const App: React.FC = () => {
   const firstId = generateUniqueId();
 
-  const [notes, setNotes] = useState<Note[]>([getBeeNote(firstId), getBeeHiveNote(generateUniqueId()), getBeeFarmNote(generateUniqueId()), getFarmerNote(generateUniqueId()), getPlayerNote(generateUniqueId())]);
+  const [notes, setNotes] = useState<Note[]>([getBeeNote(firstId), getBeeHiveNote(generateUniqueId()), getBeeFarmNote(generateUniqueId()), getFarmerNote(generateUniqueId()), getPlayerNote(generateUniqueId()), getInventoryNote(generateUniqueId()), getItemNote(generateUniqueId())]);
   const [selectedNoteId, setSelectedNoteId] = useState<string>(firstId);
   const [outputText, setOutputText] = useState<string>(new Preview_Shared_DM_Lib(notes[0]).finalContent);
   const [selectedTab, setSelectedTab] = useState<number>(0);
@@ -96,9 +96,10 @@ const App: React.FC = () => {
     // get index of selectedNote to select the note before it on delete...
     const filteredNotes = notes.filter((note) => note.id !== selectedNoteId);
     let removeNoteIndex = notes.findIndex((note) => note.id === selectedNoteId);
-    let setSelectedNoteIdIndex = removeNoteIndex-1;
+    let setSelectedNoteIdIndex = removeNoteIndex - 1;
 
-    if (setSelectedNoteIdIndex < 0) { // cap at 0.
+    if (setSelectedNoteIdIndex < 0) {
+      // cap at 0.
       setSelectedNoteIdIndex = 0;
     }
 
@@ -119,52 +120,55 @@ const App: React.FC = () => {
 
   let item1;
   let item2;
-  let noteList = <div>
-    <NoteList notes={notes} selectedNoteId={selectedNoteId} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-  </div>;
-  let noteForm = <div>
-    <NoteForm selectedNote={selectedNote} updateNote={updateNote} deleteNote={deleteNote} />
-  </div>;
+  let noteList = (
+    <div>
+      <NoteList notes={notes} selectedNoteId={selectedNoteId} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+    </div>
+  );
+  let noteForm = (
+    <div>
+      <NoteForm selectedNote={selectedNote} updateNote={updateNote} deleteNote={deleteNote} />
+    </div>
+  );
 
   let thirdColumnCounter = 0;
 
   switch (thirdColumnView) {
     case thirdColumnCounter++:
-      item1 = <div className="notes-container-col-view2 my-card">
-        {noteList}
-      </div>;
-      item2 = <div className="notes-container-col-view3 my-card">
-        {noteForm}
-      </div>;
+      item1 = <div className="notes-container-col-view2 my-card">{noteList}</div>;
+      item2 = <div className="notes-container-col-view3 my-card">{noteForm}</div>;
       break;
     case thirdColumnCounter++:
-      item1 = <div className="notes-container-col-view my-card">
-        <ManagePage notes={notes} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} />;
-      </div>
+      item1 = (
+        <div className="notes-container-col-view my-card">
+          <ManagePage notes={notes} setSelectedNoteId={setSelectedNoteId} setNotes={setNotes} />;
+        </div>
+      );
       break;
     case thirdColumnCounter++:
-      item1 = <div className="notes-container-col-view my-card">
-        <SnippetPage notes={notes} selectedNoteId={selectedNoteId} />
-        </div>;
+      item1 = (
+        <div className="notes-container-col-view my-card">
+          <SnippetPage notes={notes} selectedNoteId={selectedNoteId} />
+        </div>
+      );
       break;
     case thirdColumnCounter++:
-      item1 = <div className="notes-container-col-view my-card">
-      <h1>Preview</h1>
-      <p>Show Data Preview Only</p>
-      <Tabs selectedTab={selectedTab} handleTabChange={handleTabChange} />
-      <textarea className="output-text" value={outputText} readOnly wrap="off" />
-    </div>;
-    break;
+      item1 = (
+        <div className="notes-container-col-view my-card">
+          <h1>Preview</h1>
+          <p>Show Data Preview Only</p>
+          <Tabs selectedTab={selectedTab} handleTabChange={handleTabChange} />
+          <textarea className="output-text" value={outputText} readOnly wrap="off" />
+        </div>
+      );
+      break;
     case thirdColumnCounter++:
-      item1 = <div className="notes-container-col-view my-card">
+      item1 = (
+        <div className="notes-container-col-view my-card">
           <h1>Dev View 🧙🏼‍♂️🔥👏🏼⚡✨</h1>
           <div className="dev-view-grid">
-            <div className="my-card">
-            {noteList}
-            </div>
-            <div className="my-card">
-            {noteForm}
-            </div>
+            <div className="my-card">{noteList}</div>
+            <div className="my-card">{noteForm}</div>
             <div className="my-card">
               <div className="output-container">
                 <Tabs selectedTab={selectedTab} handleTabChange={handleTabChange} />
@@ -175,19 +179,24 @@ const App: React.FC = () => {
               <SnippetPage notes={notes} selectedNoteId={selectedNoteId} />
             </div>
           </div>
-        </div>;
+        </div>
+      );
       break;
     case thirdColumnCounter++:
-      item1 = <div className="notes-container-col-view2 my-card">
-        <h1>Help</h1>
-      </div>
+      item1 = (
+        <div className="notes-container-col-view2 my-card">
+          <h1>Help</h1>
+        </div>
+      );
       break;
     case thirdColumnCounter++:
-      item1 = <div className="notes-container-col-view my-card">
-        <h1>About</h1>
-        <p>Project Zero made by Donald Abdullah-Robinson for the purposes of evolving the web development ecosystem.</p>
-        <p>Github: TODO</p>
-      </div>;
+      item1 = (
+        <div className="notes-container-col-view my-card">
+          <h1>About</h1>
+          <p>Project Zero made by Donald Abdullah-Robinson for the purposes of evolving the web development ecosystem.</p>
+          <p>Github: TODO</p>
+        </div>
+      );
       break;
     default:
       item1 = noteForm;
@@ -199,13 +208,13 @@ const App: React.FC = () => {
       <header>
         <h1>ZER0</h1>
       </header>
-        <span className="notes-container">
-          <Sidebar thirdColumnView={thirdColumnView} setThirdColumnView={setThirdColumnView}/>
-          {item1 !== undefined && item1}
-          {item2 !== undefined && item2}
-        </span>
+      <span className="notes-container">
+        <Sidebar thirdColumnView={thirdColumnView} setThirdColumnView={setThirdColumnView} />
+        {item1 !== undefined && item1}
+        {item2 !== undefined && item2}
+      </span>
       {/* End of Notes Container */}
-  </div>
+    </div>
   );
 };
 

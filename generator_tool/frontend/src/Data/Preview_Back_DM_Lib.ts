@@ -59,7 +59,7 @@ export let create_new_${this.name_as_lower} = (state: Backend_State${property_im
   }
 
   generate_add_functions(): string {
-    let bpl: string[] | "" = this.base_property_list.length == 0 ? "" : this.base_property_list.map((property) => `${property.toLocaleLowerCase()}: "No Name"`);
+    let bpl: string[] | "" = this.base_property_list.length == 0 ? "" : this.base_property_list.map((property) => `${property.toLocaleLowerCase()}: "No Value"`);
     let cpl: string[] | "" = this.child_property_list.length == 0 ? "" : this.child_property_list.map((property) => `${property.toLocaleLowerCase()}: []`);
     let combo_arr: string[] = [...bpl, ...cpl];
     let combo: string = "";
