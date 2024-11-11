@@ -8,7 +8,7 @@ export default class Preview_Shared_DM_Lib extends BaseGenerator {
   }
 
   getImportsDefinitions(): string {
-    return `import { Data_Model_Base } from "../Shared_Misc/Data_Model_Base";
+    return `import { Child_Class_Data, Data_Model_Base } from "../Shared_Misc/Data_Model_Base";
 import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";`;
   }
 
@@ -25,9 +25,9 @@ export interface IT_${this.note.object_name} extends Data_Model_Base {
     class_name: string;
     id_list_name: string;
   } | null;
-  child_class_name_list: string[];
+  child_class_data_list: Child_Class_Data[];
   properties: {
-${this.combined_property_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: string;`).join("\n")}
+${this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: string;`).join("\n")}
   };
   functions: {
 ${this.tab_indent}${this.tab_indent}create_new: string;
@@ -40,13 +40,24 @@ ${this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${
 
   getPlainObjectDefinition(): string {
     const noteTitle = this.note.object_name;
-    const childClassNames = this.note.child_list
-      .split(this.delimeter_child_split)
-      .filter((x) => x !== "")
-      .map((x) => `\"${x}\"`)
-      .join(", ");
+    const childClassNames: string[] = this.note.child_list.split(this.delimeter_child_split).filter((x) => x !== "");
 
-    const objectFunctionList = this.combined_property_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: "${x.toLocaleLowerCase()}",`).join("\n");
+    const childObjectList =
+      childClassNames.length == 0
+        ? ""
+        : "\n" +
+          childClassNames
+            .map((child: string) => {
+              return `${this.tab_indent}${this.tab_indent}{
+      class_name: \"${child}\",
+      id_list_name: \"${child.toLocaleLowerCase()}_ids\",
+    },`;
+            })
+            .join("\n") +
+          "\n" +
+          this.tab_indent;
+
+    const objectFunctionList = this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: "${x.toLocaleLowerCase()}",`).join("\n");
     const functionList = this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: "ia_set_${this.name_as_lower}_${x.toLocaleLowerCase()}",`).join("\n");
 
     const parent_data = this.has_parent()
@@ -61,7 +72,7 @@ ${this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${
 
 export const ${noteTitle}: IT_${noteTitle} = {
   class_name: \"${this.note.object_name}\"${parent_data},
-  child_class_name_list: [${childClassNames}],
+  child_class_data_list: [${childObjectList}],
   properties: {
 ${objectFunctionList}
   },

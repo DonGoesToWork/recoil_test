@@ -1,7 +1,7 @@
+import { Child_Class_Data, Data_Model_Base } from "../z_generated/Shared_Misc/Data_Model_Base";
 import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 import Backend_State from "./Backend_State";
-import { Data_Model_Base } from "../z_generated/Shared_Misc/Data_Model_Base";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
 import { IA_Object_Remove } from "../utils/IA_Remove";
 
@@ -23,7 +23,7 @@ let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, ob
     let id_list = parent_object[parent_object_id_list];
 
     // return false when parent object does not include our child id
-    if (parent_object[parent_object_id_list].indexOf(object_id) === -1) {
+    if (parent_object[parent_object_id_list] == undefined || parent_object[parent_object_id_list] == null || parent_object[parent_object_id_list].indexOf(object_id) === -1) {
       return false;
     }
 
@@ -45,15 +45,15 @@ let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, ob
 
 let delete_children_recursively = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
   // Var inits
-  let child_class_names: string[] = base_object.child_class_name_list;
+  let child_class_data_list: Child_Class_Data[] = base_object.child_class_data_list;
 
   // If no children, then delete the object.
-  if (child_class_names == undefined || child_class_names == null || child_class_names.length == 0) {
+  if (child_class_data_list == undefined || child_class_data_list == null || child_class_data_list.length == 0) {
     return;
   }
 
-  child_class_names.forEach((child_class_name: string) => {
-    let children_objects = state.data[child_class_name];
+  child_class_data_list.forEach((child_class_data: Child_Class_Data) => {
+    let children_objects = state.data[child_class_data.class_name];
 
     if (children_objects == undefined || children_objects == null) {
       return;
@@ -67,10 +67,10 @@ let delete_children_recursively = (state: Backend_State, base_object: Data_Model
       }
 
       // Remove children recursively.
-      delete_children_recursively(state, GLOBAL_CLASS_MAP[child_class_name], child.id);
+      delete_children_recursively(state, GLOBAL_CLASS_MAP[child_class_data.class_name], child.id);
 
       // Delete this object.
-      delete_object(state, child_class_name, child.id);
+      delete_object(state, child_class_data.class_name, child.id);
     });
   });
 };

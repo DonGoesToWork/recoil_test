@@ -33,28 +33,31 @@ wss.on("connection", (client: any) => {
 
     // For 'delete function' calls, route all of them to the removal function.
     if (message_action.function_name === DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME) {
+      // Randomize server state. (Must always randomize before making changes)
+      random_server_state_ref = "1"; // TODO -> Randomize
+
       delete_object_and_relations(message_action, state);
+    } else {
+      let class_function_list: { [key: string]: Class_Function } = object_class_function_map[message_action.object_class];
+
+      if (class_function_list === undefined || class_function_list === null) {
+        console.log("[Error 1] Bad Object Transmitted. Object Class is Invalid.", message_action.object_class);
+        return;
+      }
+
+      let class_function: Class_Function = class_function_list[message_action.function_name];
+
+      if (class_function === undefined || class_function === null) {
+        console.log("[Error 2] Bad Object Transmitted. Function name is invalid.", message_action.function_name);
+        return;
+      }
+
+      // Randomize server state. (Must always randomize before making changes)
+      random_server_state_ref = "1"; // TODO -> Randomize
+
+      // Call class function
+      class_function(message_action, state);
     }
-
-    let class_function_list: { [key: string]: Class_Function } = object_class_function_map[message_action.object_class];
-
-    if (class_function_list === undefined || class_function_list === null) {
-      console.log("[Error 1] Bad Object Transmitted. Object Class is Invalid.", message_action.object_class);
-      return;
-    }
-
-    let class_function: Class_Function = class_function_list[message_action.function_name];
-
-    if (class_function === undefined || class_function === null) {
-      console.log("[Error 2] Bad Object Transmitted. Function name is invalid.", message_action.function_name);
-      return;
-    }
-
-    // Randomize server state. (Must always randomize before making changes)
-    random_server_state_ref = "1"; // TODO -> Randomize
-
-    // Call class function
-    class_function(message_action, state);
 
     // Send changes to all other clients.
     wss.clients.forEach((client) => {

@@ -14,6 +14,7 @@ export default class BaseGenerator {
   child_property_list: string[] = [];
 
   combined_property_list: string[] = [];
+  combined_property_list_no_children: string[] = [];
 
   delimeter_child_split: string = "\n";
 
@@ -38,6 +39,7 @@ export default class BaseGenerator {
       .map((x) => x.toLocaleLowerCase() + "_ids");
 
     this.combined_property_list = this.add_parent_id([...this.base_property_list, "id", ...this.child_property_list]);
+    this.combined_property_list_no_children = this.add_parent_id([...this.base_property_list, "id"]);
   }
 
   constructor(note: Note) {
