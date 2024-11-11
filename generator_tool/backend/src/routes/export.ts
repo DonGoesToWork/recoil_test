@@ -64,7 +64,7 @@ router.post("/", (req: any, res: any) => {
   // Copy object registration last.
   copy_folder_to_folder(output_paths.object_registration, main_project_paths.object_registration_file);
 
-  res.sendStatus(200);
+  res.status(200).json({ status: "ok" });
 });
 
 export default router;

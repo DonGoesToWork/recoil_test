@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   console.log("Received import command.");
-  res.json(state.notes);
+  res.status(200).json(state.notes);
 });
 
 export default router;

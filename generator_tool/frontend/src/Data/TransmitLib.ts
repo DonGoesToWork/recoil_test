@@ -75,7 +75,6 @@ export const exportNotes = (notes: Note[]) => {
         throw new Error("Network response was not ok");
       }
       // On response code 200, shoot out a success toast message.
-
       return response.json(); // Assuming the API returns JSON data
     })
     .then((data: any) => {
