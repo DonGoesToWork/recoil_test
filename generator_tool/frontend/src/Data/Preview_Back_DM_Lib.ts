@@ -64,15 +64,8 @@ export let create_new_${this.name_as_lower} = (state: Backend_State, ${this.name
 
     return `let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   const data = message_action as IA_${this.name_as_lower}_create_new;
-
   const new_${this.name_as_lower}: IS_${object_name} = { ${parentId} };
-
-  const payload: Payload_Add = {
-    objectType: ${object_name}.class_name,
-    object: new_${this.name_as_lower},
-  };
-
-  state.add(payload);
+  create_new_${this.name_as_lower}(state, new_${this.name_as_lower});
 };
 `;
   }

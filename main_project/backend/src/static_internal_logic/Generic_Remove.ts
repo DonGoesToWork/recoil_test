@@ -3,7 +3,6 @@ import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_gener
 
 import Backend_State from "./Backend_State";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
-import { IA_Object_Remove } from "../utils/IA_Remove";
 
 // Delete from parents.
 let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
@@ -88,10 +87,14 @@ let delete_object = (state: Backend_State, object_class_name: string, object_id:
 export let delete_object_and_relations = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let base_object_name = message_action.object_class;
   let base_object: Data_Model_Base = GLOBAL_CLASS_MAP[base_object_name];
-  let data = message_action as IA_Object_Remove;
-  let base_object_id = data.id;
+  let data = message_action;
+  let base_object_id: string | undefined = data.id;
 
-  delete_from_parent(state, base_object, base_object_id);
-  delete_children_recursively(state, base_object, base_object_id);
-  delete_object(state, base_object.class_name, base_object_id);
+  if (base_object_id !== undefined && base_object_id !== null) {
+    delete_from_parent(state, base_object, base_object_id);
+    delete_children_recursively(state, base_object, base_object_id);
+    delete_object(state, base_object.class_name, base_object_id);
+  } else {
+    console.log("Error, tried to delete object with no id. Removal objects should always have an id: ", base_object_name, data);
+  }
 };
