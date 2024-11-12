@@ -44,6 +44,7 @@ export const load_notes = () => {
 };
 
 export const copy_folder_to_folder = (src: string, dest: string) => {
+  ensure_exists(dest); // create dest if it doesn't exist.
   fs.readdir(src, (err, files) => {
     if (err) {
       console.error(err);

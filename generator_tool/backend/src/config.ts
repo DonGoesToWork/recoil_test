@@ -21,5 +21,5 @@ export const main_project_paths = {
   backend_data_models_shared: `${root_project_path}\\main_project\\backend\\src\\z_generated\\Shared_Data_Models\\`,
   backend_shared: `${root_project_path}\\main_project\\backend\\src\\z_generated\\Shared_Misc\\`,
   backend_global_class_map: `${root_project_path}\\main_project\\backend\\src\\z_generated\\Global_Class_Map\\`,
-  object_registration_file: `${root_project_path}\\main_project\\backend\\src\\`,
+  object_registration_file: `${root_project_path}\\main_project\\backend\\src\\z_generated\\Object_Registration\\`,
 };

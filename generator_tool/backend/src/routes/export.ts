@@ -40,28 +40,13 @@ router.post("/", (req: any, res: any) => {
   fs.rmSync(root_project_path + "\\main_project\\frontend\\src\\z_generated", { recursive: true, force: true });
   fs.rmSync(root_project_path + "\\main_project\\backend\\src\\z_generated", { recursive: true, force: true });
 
-  ensure_exists(main_project_paths.backend_data_models);
   copy_folder_to_folder(output_paths.backend_data_model, main_project_paths.backend_data_models);
-
-  ensure_exists(main_project_paths.frontend_data_models);
   copy_folder_to_folder(output_paths.frontend_data_model, main_project_paths.frontend_data_models);
-
-  ensure_exists(main_project_paths.backend_global_class_map);
   copy_folder_to_folder(output_paths.global_class_map, main_project_paths.backend_global_class_map);
-
-  ensure_exists(main_project_paths.frontend_data_models_shared);
   copy_folder_to_folder(output_paths.shared_data_model, main_project_paths.frontend_data_models_shared);
-
-  ensure_exists(main_project_paths.backend_data_models_shared);
   copy_folder_to_folder(output_paths.shared_data_model, main_project_paths.backend_data_models_shared);
-
-  ensure_exists(main_project_paths.frontend_shared);
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.frontend_shared);
-
-  ensure_exists(main_project_paths.backend_shared);
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.backend_shared);
-
-  // Copy object registration last.
   copy_folder_to_folder(output_paths.object_registration, main_project_paths.object_registration_file);
 
   res.status(200).json({ status: "ok" });

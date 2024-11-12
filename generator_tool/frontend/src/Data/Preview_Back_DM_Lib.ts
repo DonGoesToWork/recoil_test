@@ -17,7 +17,7 @@ export default class Preview_Back_DM_Lib extends BaseGenerator {
 import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 
 import Backend_State from "../../static_internal_logic/Backend_State";
-import { Object_Class_Function_Map } from "../../Object_Registration";
+import { Object_Class_Function_Map } from "../Object_Registration/Object_Registration";
 import { generate_unique_id } from "../../utils/utils";`;
   }
 

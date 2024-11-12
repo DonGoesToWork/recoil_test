@@ -2,6 +2,11 @@ To actually finish project:
 
 High Priority TODO:
 
+- Add constrained logic to generating our child object data.
+  o ia_create and ia_set can just call non-ia versions. (WIP)
+- Make it so that our interface functions pass an object to the functions, rather than a huge ass parameter list.
+  - Create interface for the function objects that are going to get passed in.
+  - Make it so that parameters are optional. If not set, then set them to 'no value'.
 - Generate Sample Interactions Files in Interactions Folder.
   - Create field on front-end to let user enter in interactions and their desired properties.
 - Track changed notes and only export changes for changed notes.
@@ -47,3 +52,4 @@ Done:
 - Implement schema import and schema export functionality.
 - Fixed ws issues.
 - Confirmation buttons on import/export button clicks.
+- Put Object_Registration into z_generated, because it is, and .gitignore it.

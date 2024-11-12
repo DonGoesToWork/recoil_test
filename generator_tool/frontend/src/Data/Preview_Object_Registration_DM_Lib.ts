@@ -12,12 +12,12 @@ export default class Preview_Object_Registration_DM_Lib {
   get_object_registration() {
     let filtered_notes = this.notes.filter((x: Note) => x.object_name !== "");
 
-    let individual_imports: string = filtered_notes.map((x: Note) => `import { Register_${x.object_name} } from "./z_generated/Data_Models/${x.object_name}";`).join("\n");
+    let individual_imports: string = filtered_notes.map((x: Note) => `import { Register_${x.object_name} } from "../Data_Models/${x.object_name}";`).join("\n");
 
     let global_class_map_entries: string = filtered_notes.map((x: Note) => `Register_${x.object_name}(x);`).join(`\n  `);
 
-    return `import Backend_State from "./static_internal_logic/Backend_State";
-import { Pre_Message_Action_Send } from "./z_generated/Shared_Misc/Communication_Interfaces";
+    return `import Backend_State from "../../static_internal_logic/Backend_State";
+import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 ${individual_imports}
 
 export interface Class_Function {
