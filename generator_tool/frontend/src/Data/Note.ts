@@ -88,7 +88,7 @@ export const getPlayerNote = (id?: string): Note => {
     id: finalId,
     object_name: "Player",
     parent: "Player_Party",
-    child_list: ``,
+    child_list: `Inventory`,
     property_list: `name
 gold
 current_experience
@@ -113,7 +113,7 @@ export const getInventoryNote = (id?: string): Note => {
     id: finalId,
     object_name: "Inventory",
     parent: "Player",
-    child_list: `Item`,
+    child_list: `Rpg_Item`,
     property_list: `name
 description
 type
@@ -127,7 +127,7 @@ export const getItemNote = (id?: string): Note => {
 
   return {
     id: finalId,
-    object_name: "Item",
+    object_name: "Rpg_Item",
     parent: "Inventory",
     child_list: ``,
     property_list: `name

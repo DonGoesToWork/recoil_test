@@ -9,7 +9,8 @@ export default class Preview_Back_DM_Lib extends BaseGenerator {
   }
 
   getImportStatements(): string {
-    return `import { ${this.note.object_name}, ${this.generateInterfaceImports()}, IO_${this.note.object_name} } from "../Shared_Data_Models/${this.note.object_name}";
+    // TODO - Alphabetize the imports so that they do not shift on save.
+    return `import { ${this.generateInterfaceImports()}, IO_${this.note.object_name}, IS_${this.note.object_name}, ${this.note.object_name} } from "../Shared_Data_Models/${this.note.object_name}";
 import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 
 import Backend_State from "../../static_internal_logic/Backend_State";
@@ -23,8 +24,18 @@ import { generate_unique_id } from "../../utils/utils";
   }
 
   generate_ia_add_functions(): string {
-    let bpl: string[] | "" = this.base_property_list.length == 0 ? "" : this.base_property_list.map((property) => `${property.toLocaleLowerCase()}: _${property.toLocaleLowerCase()}`);
-    let cpl: string[] | "" = this.child_property_list.length == 0 ? "" : this.child_property_list.map((property) => `${property.toLocaleLowerCase()}: []`);
+    let bpl: string[] | "" = this.base_property_list.length == 0 ? "" : this.base_property_list.map((property) => `${property.toLocaleLowerCase()}: ${this.name_as_lower}.${property.toLocaleLowerCase()} === undefined ? "0" : ${this.name_as_lower}.${property.toLocaleLowerCase()}`);
+    let cpl: string[] | "" =
+      this.child_property_list.length == 0
+        ? ""
+        : this.child_property_list.map(
+            (property) => `${property.toLocaleLowerCase()}: {
+      ids: [],
+      start_size: 0,
+      max_size: 0,
+      allow_empty_indexes: false,
+    }`
+          );
     let combo_arr: string[] = [...bpl, ...cpl];
     let combo: string = "";
 
@@ -34,14 +45,12 @@ import { generate_unique_id } from "../../utils/utils";
       combo = `\n${this.tab_indent}${this.tab_indent}${combo_arr.join(",\n    ")},`;
     }
 
-    let parent_id = this.has_parent() ? `\n${this.tab_indent}${this.tab_indent}parent_id: _parent_id,` : "";
+    let parent_id = this.has_parent() ? `\n${this.tab_indent}${this.tab_indent}parent_id: ${this.name_as_lower}.parent_id,` : "";
 
-    let bpi_w_parent = this.add_parent_id(this.base_property_list);
-    let property_import_list = bpi_w_parent.length != 0 ? `, ${bpi_w_parent.map((x) => `_${x}: string`).join(", ")}` : "";
     let func_callback = `, _func_callback?: (state: Backend_State, new_${this.name_as_lower}: IO_${this.note.object_name}) => void`;
 
     return `
-export let create_new_${this.name_as_lower} = (state: Backend_State${property_import_list}${func_callback}): void => {
+export let create_new_${this.name_as_lower} = (state: Backend_State, ${this.name_as_lower}: IS_${this.name}${func_callback}): void => {
   const new_${this.name_as_lower}: IO_${this.note.object_name} = {
     id: generate_unique_id(),${combo}${parent_id}
   };
@@ -59,25 +68,14 @@ export let create_new_${this.name_as_lower} = (state: Backend_State${property_im
   }
 
   generate_add_functions(): string {
-    let bpl: string[] | "" = this.base_property_list.length == 0 ? "" : this.base_property_list.map((property) => `${property.toLocaleLowerCase()}: "No Value"`);
-    let cpl: string[] | "" = this.child_property_list.length == 0 ? "" : this.child_property_list.map((property) => `${property.toLocaleLowerCase()}: []`);
-    let combo_arr: string[] = [...bpl, ...cpl];
-    let combo: string = "";
-
-    if (combo_arr.length === 0) {
-      combo = "";
-    } else {
-      combo = `\n${this.tab_indent}${this.tab_indent}${combo_arr.join(",\n    ")},`;
-    }
-
-    let parent_id = this.has_parent() ? `\n${this.tab_indent}${this.tab_indent}parent_id: data.parent_id,` : "";
+    let parent_id = this.has_parent() ? `parent_id: data.parent_id,` : "";
 
     return `
 let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   let data = message_action as IA_${this.name_as_lower}_create_new;
 
-  const new_${this.name_as_lower}: IO_${this.note.object_name} = {
-    id: generate_unique_id(),${combo}${parent_id}
+  const new_${this.name_as_lower}: IS_${this.note.object_name} = {
+    ${parent_id}
   };
 
   const payload: Payload_Add = {

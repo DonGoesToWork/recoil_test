@@ -85,15 +85,39 @@ ${functionList}
   }
 
   getObjectInterface() {
-    // Do this custom process to extract show child_property_list items as string[]
-    let child_str = this.child_property_list.length == 0 ? "" : `\n${this.child_property_list.map((x) => `${this.tab_indent}${x.toLocaleLowerCase()}: string[];`).join("\n")}`;
-    let parent_str = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
+    let child_str =
+      this.child_property_list.length == 0
+        ? ""
+        : `\n${this.child_property_list
+            .map(
+              (x) => `${this.tab_indent}${x.toLocaleLowerCase()}: {
+    ids: string[];
+    start_size: number;
+    max_size: number;
+    allow_empty_indexes: false;
+  };`
+            )
+            .join("\n")}`;
 
     return `
 // Class Definition w/o Metadata Properties or Methods
 
 export interface IO_${this.note.object_name} {
-  ${[...this.base_property_list, "id"].map((x) => `${x.toLocaleLowerCase()}: string;`).join(`\n${this.tab_indent}`)}${child_str}${parent_str}
+  ${this.add_parent_id([...this.base_property_list, "id"])
+    .map((x) => `${x.toLocaleLowerCase()}: string;`)
+    .join(`\n${this.tab_indent}`)}${child_str}
+}
+`;
+  }
+
+  getCreateObjectInterface() {
+    let parent_str = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
+
+    return `
+// Class Definition for Object Creation
+
+export interface IS_${this.note.object_name} {
+  ${[...this.base_property_list, "id"].map((x) => `${x.toLocaleLowerCase()}?: string;`).join(`\n${this.tab_indent}`)}${parent_str}
 }`;
   }
 
@@ -142,6 +166,9 @@ export interface IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()} ex
 
     // Interface Objects
     dataModelEntry += this.getObjectInterface();
+
+    // Add Object Creation Interface
+    dataModelEntry += this.getCreateObjectInterface();
 
     // IAs
     dataModelEntry += this.getInterfacesForIAs();

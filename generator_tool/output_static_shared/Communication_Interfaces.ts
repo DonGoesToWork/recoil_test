@@ -3,6 +3,7 @@
 export interface Pre_Message_Action_Send {
   object_class: string; // points to set of functions related to poarticular object, exists purely for optimization
   function_name: string;
+  id?: string; // removal messages include id field
 }
 
 export interface Message_Action_Send {

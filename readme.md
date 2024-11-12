@@ -42,7 +42,11 @@ Yeah! I mean, I hope! Maybe there is something else like this out there? If so, 
 
 - NOTE: Project searching for 'lootquest8' will help you find these references to change them quickly!
 
-# To run the main project, use the following commands in 3 seperate powershell terminals (update paths to your root path):
+# To run this project, you'll want to set up 5 Powershell Termainals (Hope you have Windows Explorer!). First, Git:
+
+cd "E:\Web Dev\2024_Projects\lootquest8"
+
+# Next, Main Project (update paths to your root path):
 
 cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
 .\start_main_frontend.ps1
@@ -52,12 +56,12 @@ cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
 
 - NOTE: If you move the project, change the path in ./scripts/project_path.txt to the new location, as well as the above paths.
 
-# To run the code generator project, use the following two commands in 2 seperate powershell terminals:
+# Project Zero:
 
-cd "E:\Web Dev\2024_Projects\lootquest8\main_project\generator_tool\backend"
-npm run start
+cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
+.\start_generator_backend.ps1
 
-cd "E:\Web Dev\2024_Projects\lootquest8\main_project\generator_tool\frontend"
-npm run dev
+cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
+.\start_generator_frontend.ps1
 
 - NOTE: I recommend just making your own scripts and process for maximum efficienty. The above is stated to get you started.

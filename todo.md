@@ -3,16 +3,19 @@ To actually finish project:
 High Priority TODO:
 
 - Generate Sample Interactions Files in Interactions Folder.
-- Confirmation buttons on import/export button clicks.
+  - Create field on front-end to let user enter in interactions and their desired properties.
 - Track changed notes and only export changes for changed notes.
 
 * Major 1:
 
 - Turn Properties Field back into Grid after all.
   - Add ability to toggle off generation of ia logic fields to not generate back-end calls.
-    - Sometimes, there are fields that will not need methods to set them directly. They will always be set indirectly through iunteractions. So, we won't need to set with front/back-end interactions.
-- Allow for objects to be numbers or strings.
-  - Numbers get 'ia' methods to increment, decrement, increase, decrease, and set by default.
+    - Sometimes, there are fields that we do not want to exposed to the front-end for being set.
+      - For instance, the 'create' functions are probably interactions that we don't always want on.
+      - We also want 'create' functions to be made from high-priority TODO section.
+  - Allow for setting default value of field.
+  - Allow for properties to be numbers or strings.
+    - Numbers get 'ia' methods to increment, decrement, increase, decrease, and set by default.
 - Generate additional functions based on types aside from 'set'.
 - Create non-ia 'get' methods for each object type to quickly get objects by id.
   - A more customized version of Backend States: 'const existing = this.data[payload.objectType]?.find((item) => item.id === payload.id);'
@@ -43,3 +46,4 @@ Done:
   x Make "Child Name List" and "Properties" fields on web page nice tables with add row/delete/edit functionality.
 - Implement schema import and schema export functionality.
 - Fixed ws issues.
+- Confirmation buttons on import/export button clicks.
