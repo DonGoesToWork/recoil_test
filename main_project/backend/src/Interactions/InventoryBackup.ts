@@ -7,8 +7,6 @@ import { Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communicatio
 import { create_new_rpg_item } from "../z_generated/Data_Models/Rpg_Item";
 import { delete_object_and_relations } from "../static_internal_logic/Generic_Remove";
 
-// DAR TODO - Generate this file after adding more interaction/constraint support.
-
 let inventory_add_rpg_item = (state: Backend_State, inventory_id: string) => {
   if (inventory_is_full(state, inventory_id)) {
     return;
@@ -46,15 +44,10 @@ let inventory_get_free_rpg_item_index = (state: Backend_State, inventory_id: str
   return inventory.rpg_item_ids.ids.findIndex((rpg_item_id: string) => rpg_item_id === "");
 };
 
-// inventory methods: variable based on constrained vs. non-constained array.
-
-// constrained:
 let inventory_is_full = (state: Backend_State, inventory_id: string) => {
   let inventory: IO_Inventory = inventory_get(state, inventory_id);
   return inventory.rpg_item_ids.ids.length >= inventory.rpg_item_ids.max_size;
 };
-
-// child: rpg_item methods:
 
 let inventory_get_rpg_item = (state: Backend_State, inventory: string | IO_Inventory, rpg_item: string | IO_Rpg_Item): IO_Rpg_Item | undefined => {
   const inventory_id = typeof inventory === "string" ? inventory : inventory.id;
@@ -72,7 +65,6 @@ let inventory_remove_item = (state: Backend_State, rpg_item_id: string, _invento
   const rpg_item_index = state.data["rpg_item"].findIndex((rpg_item: IO_Rpg_Item) => rpg_item.id === rpg_item_id && (!inventory_id || rpg_item.parent_id === inventory_id));
 
   if (rpg_item_index !== -1) {
-    // perform 'delete_[object_class]' method in-place.
     let msg: Pre_Message_Action_Send = {
       object_class: "Rpg_Item",
       function_name: DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME,
