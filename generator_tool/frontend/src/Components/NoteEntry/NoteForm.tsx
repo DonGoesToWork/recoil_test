@@ -1,6 +1,7 @@
 import "./NoteForm.css";
 
 import { Note } from "../../Data/Note";
+import PropertyList from "./PropertyList";
 import React from "react";
 
 interface NoteFormProps {
@@ -15,7 +16,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ selectedNote, updateNote, deleteNot
       <label>Class Name</label>
       <input className="note-title" value={selectedNote.object_name} onChange={(e) => updateNote("object_name", e.target.value, selectedNote.id)} placeholder="Note Title" />
       <h3>The name of this object's class. The object's name.</h3>
-      
+
       <label>Parent Name</label>
       <h3>Object that includes this object.</h3>
       <input className="note-title" value={selectedNote.parent} onChange={(e) => updateNote("parent", e.target.value, selectedNote.id)} placeholder="Parent Object" />
@@ -26,7 +27,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ selectedNote, updateNote, deleteNot
 
       <label>Property List</label>
       <h3>Properties that Exist On Object and Sync Across Clients.</h3>
-      <textarea className="note-content large" value={selectedNote.property_list} onChange={(e) => updateNote("property_list", e.target.value, selectedNote.id)} placeholder="Write one (1) property per line..." />
+      <PropertyList selectedNote={selectedNote} updateNote={updateNote} />
 
       <label>Date</label>
       <h3>Date object was added. (or edited, if you modify the field...)</h3>

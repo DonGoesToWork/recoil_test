@@ -1,0 +1,61 @@
+.property-list-container {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.property-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.property-table th,
+.property-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.property-table th {
+  background-color: #f4f4f4;
+}
+
+.even-row {
+  background-color: #f9f9f9;
+}
+
+.odd-row {
+  background-color: #ffffff;
+}
+
+.radio-column {
+  text-align: center;
+}
+
+.property-table td input[type="text"] {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}

@@ -31,7 +31,7 @@ export default class BaseGenerator {
   }
 
   update_lists() {
-    this.base_property_list = this.note.property_list.split("\n").filter((x) => x !== "");
+    this.base_property_list = this.note.property_list.map((x) => `${x.name}`).filter((x) => x !== ""); // TODO - Do stuff with properties of property_llist.
 
     this.child_property_list = this.note.child_list
       .split(this.delimeter_child_split)
