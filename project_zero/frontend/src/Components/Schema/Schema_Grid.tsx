@@ -3,7 +3,7 @@ import "./Schema_Grid.css";
 import React from "react";
 import { Schema } from "../../Data/Schema";
 
-interface SchemaGridProps {
+interface Schema_Grid_Props {
   schemas: Schema[];
   selected_schema_id: string | null;
   set_selected_schema_id: (id: string) => void;
@@ -13,7 +13,7 @@ const line_length_max = 15;
 
 const truncated = (content: string): string => (content.length > line_length_max ? content.substring(0, line_length_max).split("\n").join(", ") + "..." : content);
 
-const SchemaGrid: React.FC<SchemaGridProps> = ({ schemas, selected_schema_id: selectedSchemaId, set_selected_schema_id }) => {
+const Schema_Grid: React.FC<Schema_Grid_Props> = ({ schemas, selected_schema_id: selectedSchemaId, set_selected_schema_id }) => {
   return (
     <div className="schema-grid">
       {schemas.map((schema) => (
@@ -35,4 +35,4 @@ const SchemaGrid: React.FC<SchemaGridProps> = ({ schemas, selected_schema_id: se
   );
 };
 
-export default SchemaGrid;
+export default Schema_Grid;

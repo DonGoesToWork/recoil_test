@@ -4,12 +4,12 @@ import React, { useMemo, useState } from "react";
 import { Schema, get_default_schema } from "../../Data/Schema";
 
 import Pagination from "./Pagination";
-import SchemaGrid from "./Schema_Grid";
+import Schema_Grid from "./Schema_Grid";
 import Search_Bar from "./Search_Bar";
 import { export_schemas } from "../../Data/TransmitLib";
 import { schemas_per_page } from "./Schemas_Per_Page";
 
-interface SchemaListProps {
+interface Schema_List_Props {
   schemas: Schema[];
   selected_schema_id: string | null;
   set_selected_schema_id: (id: string) => void;
@@ -18,7 +18,7 @@ interface SchemaListProps {
   set_current_page: (page: number) => void;
 }
 
-const SchemaList: React.FC<SchemaListProps> = ({ schemas, selected_schema_id, set_selected_schema_id, set_myclasses, current_page, set_current_page }) => {
+const Schema_List: React.FC<Schema_List_Props> = ({ schemas, selected_schema_id, set_selected_schema_id, set_myclasses, current_page, set_current_page }) => {
   const [search_query, set_search_query] = useState("");
 
   const add_schema = () => {
@@ -62,11 +62,11 @@ const SchemaList: React.FC<SchemaListProps> = ({ schemas, selected_schema_id, se
       </div>
       <Search_Bar search_query={search_query} set_search_query={set_search_query} />
 
-      <SchemaGrid schemas={paginated_schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} />
+      <Schema_Grid schemas={paginated_schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} />
 
       <Pagination total_schemas={filtered_schemas.length} schemas_per_page={schemas_per_page} current_page={current_page} set_current_page={set_current_page} />
     </div>
   );
 };
 
-export default SchemaList;
+export default Schema_List;

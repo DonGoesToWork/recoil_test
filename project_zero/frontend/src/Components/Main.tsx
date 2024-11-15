@@ -9,13 +9,13 @@ import Preview_Front_DM_Lib from "../Data/Preview_Front_DM_Lib";
 import Preview_Global_Class_Map_Lib from "../Data/Preview_Global_Class_Map";
 import Preview_Shared_DM_Lib from "../Data/Preview_Shared_DM_Lib";
 import Preview_Singles_DM_Lib from "../Data/Preview_Object_Registration_DM_Lib";
-import SchemaList from "./Schema_Components/Schema_List";
 import Schema_Form from "./Schema_Entry/Schema_Form";
+import Schema_List from "./Schema/Schema_List";
 import Sidebar from "./Sidebar/Sidebar";
 import Snippet_Page from "./Snippets/SnippetPage";
 import Tabs from "./Tabs";
 import { generate_unique_id } from "../Utils/utils";
-import { schemas_per_page } from "./Schema_Components/Schemas_Per_Page";
+import { schemas_per_page } from "./Schema/Schemas_Per_Page";
 import { useToast } from "./Toast/ToastContainer";
 
 export interface Select_RpgClass_Props {
@@ -130,7 +130,7 @@ const App: React.FC = () => {
   let item2;
   let schemaList = (
     <div>
-      <SchemaList schemas={schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_myclasses} current_page={current_page} set_current_page={set_current_page} />
+      <Schema_List schemas={schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_myclasses} current_page={current_page} set_current_page={set_current_page} />
     </div>
   );
   let schemaForm = (
