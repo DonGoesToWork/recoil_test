@@ -5,7 +5,7 @@ function GetRealPath() {
     return $realPath.Trim()
 }
 
-$directory = Join-Path (GetRealPath) "\generator_tool\backend"
+$directory = Join-Path (GetRealPath) "\project_zero\backend"
 
 if (Test-Path -Path $directory) {
     Push-Location $directory

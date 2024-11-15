@@ -58,7 +58,7 @@ This architecture works as is and is perfectly capable, sure, but more than that
 
 # To initialize this project fully, you will have to:
 
-- Go into /generator_tool/backend/index.ts and update the 'root_project_path' to the root path of this entire project (directory where this file is located by default).
+- Go into /project_zero/backend/index.ts and update the 'root_project_path' to the root path of this entire project (directory where this file is located by default).
 - Modify /scripts/project_path.txt to also point to the same root path.
 
 NOTE: Project searching for 'lootquest8' will help you find these references to change them quickly!
