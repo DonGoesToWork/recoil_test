@@ -1,7 +1,6 @@
 import "./Sidebar.css";
 
-import { JSX } from "react/jsx-runtime";
-import React from "react";
+import React, { useState } from "react";
 
 interface SidebarProps {
   third_column_view: number;
@@ -9,24 +8,19 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ third_column_view, set_third_column_view }) => {
-  let button_array = ["🎹 Input", "💾 Manage", "⚡ Snippets", "👌 Preview", "👑 Dev View", "❔ Help", "💭 About"];
-  let button_view_array: JSX.Element[] = [];
+  const [isHovered, setIsHovered] = useState(false);
+  const buttonLabels = ["🎹 Input", "💾 Manage", "⚡ Snippets", "👌 Preview", "👑 Dev View", "❔ Help", "💭 About"];
+  const buttonIcons = ["🎹", "💾", "⚡", "👌", "👑", "❔", "💭"];
 
-  button_array.forEach((v, i) => {
-    button_view_array.push(
-      <button
-        key={i}
-        onClick={() => {
-          set_third_column_view(i);
-        }}
-        className={`${third_column_view === i ? "active" : ""}`}
-      >
-        {v}
-      </button>
-    );
-  });
-
-  return <div className="schemas-container-col-sidebar">{button_view_array.map((v) => v)}</div>;
+  return (
+    <div className={`schemas-container-col-sidebar ${isHovered ? "expanded" : "collapsed"}`} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      {buttonLabels.map((label, index) => (
+        <button key={index} onClick={() => set_third_column_view(index)} className={third_column_view === index ? "active" : ""}>
+          {isHovered ? label : buttonIcons[index]}
+        </button>
+      ))}
+    </div>
+  );
 };
 
 export default Sidebar;

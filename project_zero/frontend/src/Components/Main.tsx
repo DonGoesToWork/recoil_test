@@ -187,9 +187,9 @@ const App: React.FC = () => {
                 <textarea className="output-text" value={output_text} readOnly wrap="off" />
               </div>
             </div>
-            <div className="my-card">
-              <Snippet_Page schemas={schemas} selected_schema_id={selected_schema_id} />
-            </div>
+          </div>
+          <div className="my-card">
+            <Snippet_Page schemas={schemas} selected_schema_id={selected_schema_id} />
           </div>
         </div>
       );

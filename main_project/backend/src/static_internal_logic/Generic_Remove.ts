@@ -4,6 +4,21 @@ import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_gener
 import Backend_State from "./Backend_State";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
 
+// Supplamental method to clear gaps in a parent id list. (Compacts it).
+export const clear_parent_id_list_gaps = (state: Backend_State, base_object: Data_Model_Base, object_id: string): void => {
+  const parent_data = base_object.parent_data;
+  if (!parent_data) return;
+
+  const parent_objects = state.data[parent_data.class_name];
+  if (!parent_objects) return;
+
+  parent_objects.some((parent_object: any) => {
+    const id_list: string[] = parent_object[parent_data.id_list_name];
+    if (!id_list || !id_list.includes(object_id)) return false;
+    parent_object[parent_data.id_list_name] = id_list.filter(Boolean);
+  });
+};
+
 // Delete from parents.
 let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
   // Var inits
@@ -19,7 +34,7 @@ let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, ob
 
   // Find the first parent object that includes our child object id and then filter out our child id from its property list.
   parent_objects.some((parent_object: any) => {
-    let id_list = parent_object[parent_object_id_list];
+    let id_list: string[] = parent_object[parent_object_id_list];
 
     // return false when parent object does not include our child id
     if (parent_object[parent_object_id_list] == undefined || parent_object[parent_object_id_list] == null || parent_object[parent_object_id_list].indexOf(object_id) === -1) {
@@ -27,7 +42,14 @@ let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, ob
     }
 
     // filter id_list to no longer include our child (the base object id)
-    id_list = id_list.filter((id: string) => id !== object_id);
+    // We always clear fields. Never delete. (This is to preserve spaces).
+    id_list.some((id: string) => {
+      if (id === object_id) {
+        id = "";
+        return true;
+      }
+      return false;
+    });
 
     // sent the payload
     const payload: Payload_Set = {

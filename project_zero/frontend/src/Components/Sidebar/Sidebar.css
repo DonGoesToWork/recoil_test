@@ -1,9 +1,18 @@
 .schemas-container-col-sidebar {
-  width: 10%;
   background-color: var(--primary-bg-medium);
   color: white;
   margin-right: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+.schemas-container-col-sidebar.collapsed {
+  width: 50px;
+}
+
+.schemas-container-col-sidebar.expanded {
+  width: 250px;
 }
 
 .schemas-container-col-sidebar:hover {
@@ -19,6 +28,13 @@
   font-weight: 900;
   font-size: 20px;
   border-left: 10px solid var(--primary-bg-light);
+  white-space: nowrap;
+}
+
+.schemas-container-col-sidebar.collapsed button {
+  text-align: center;
+  border-left: none;
+  font-size: 25px;
 }
 
 .schemas-container-col-sidebar button.active {
@@ -26,8 +42,17 @@
   background-color: var(--primary-bg-light);
 }
 
+.schemas-container-col-sidebar.collapsed button.active {
+  border-left: none;
+}
+
 .schemas-container-col-sidebar button:hover,
 .schemas-container-col-sidebar button.active:hover {
   border-left: 10px solid rgb(22, 150, 255);
   background-color: var(--primary-bg-medium);
+}
+
+.schemas-container-col-sidebar.collapsed button:hover,
+.schemas-container-col-sidebar.collapsed button.active:hover {
+  border-left: none;
 }
