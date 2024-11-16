@@ -17,6 +17,8 @@ const Property_List: React.FC<Property_List_Props> = ({ selected_schema, update_
   }, [selected_schema.property_list]);
 
   const handle_edit_property = (index: number, field: keyof Schema_Property, value: string | boolean) => {
+    console.log(index, field, value);
+
     const updated_properties = schema_properties_input.map((prop, i) => (i === index ? { ...prop, [field]: value } : prop));
     setSchemaPropertiesInput(updated_properties);
     update_schema("property_list", updated_properties, selected_schema.id);
@@ -32,21 +34,19 @@ const Property_List: React.FC<Property_List_Props> = ({ selected_schema, update_
     if (!new_property) return;
     const updated_properties = [...schema_properties_input, get_default_string_property(new_property)];
     setSchemaPropertiesInput(updated_properties);
-    update_schema("property_list", updated_properties, selected_schema.id);
     setNewProperty("");
+    update_schema("property_list", updated_properties, selected_schema.id);
   };
 
   return (
     <div className="property-list-container">
       <label>Property List Config</label>
       <h3>Properties that Exist on Object and Sync Across Clients</h3>
-      <h3>(Note: Click outside of a text input box to save changes!)</h3>
       <table className="property-table">
         <thead>
           <tr>
             <th>Name</th>
             <th>Default Value</th>
-            <th>Gen IA Create</th>
             <th>Gen IA Set</th>
             <th>Delete</th>
           </tr>
@@ -55,16 +55,13 @@ const Property_List: React.FC<Property_List_Props> = ({ selected_schema, update_
           {schema_properties_input.map((property, index) => (
             <tr key={index} className={index % 2 === 0 ? "even-row" : "odd-row"}>
               <td>
-                <input type="text" value={property.name} onBlur={(e) => handle_edit_property(index, "name", e.target.value)} autoFocus onChange={() => {}} />
+                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", e.target.value)} autoFocus />
               </td>
               <td>
-                <input type="text" value={property.default_value} onBlur={(e) => handle_edit_property(index, "default_value", e.target.value)} onChange={() => {}} />
+                <input type="text" value={property.default_value} onChange={(e) => handle_edit_property(index, "default_value", e.target.value)} autoFocus />
               </td>
               <td className="radio-column">
-                <input type="radio" checked={property.do_gen_ia_create_new} onClick={() => handle_edit_property(index, "do_gen_ia_create_new", !property.do_gen_ia_create_new)} onChange={() => {}} />
-              </td>
-              <td className="radio-column">
-                <input type="radio" checked={property.do_gen_ia_set} onClick={() => handle_edit_property(index, "do_gen_ia_set", !property.do_gen_ia_set)} onChange={() => {}} />
+                <input type="checkbox" checked={property.do_gen_ia_set} onClick={() => {}} onChange={() => handle_edit_property(index, "do_gen_ia_set", !property.do_gen_ia_set)} />
               </td>
               <td>
                 <button className="delete-btn" onClick={() => handle_delete_property(index)}>

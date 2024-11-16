@@ -85,11 +85,11 @@ const App: React.FC = () => {
     }
   }, [schemas, selected_tab, selected_schema]);
 
-  const update_schema = (field: string, value: string | Schema_Property[], selectedSchemaId: string): void => {
+  const update_schema = (field: string, value: string | boolean | Schema_Property[], selectedSchemaId: string): void => {
     if (selectedSchemaId !== null) {
       if (typeof value === "string") {
-        value = value.replace(new RegExp(" ", "g"), "_");
-        const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: value } : schema));
+        let updated_value = value.replace(new RegExp(" ", "g"), "_");
+        const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: updated_value } : schema));
         set_schemas(updated_schemas);
       } else {
         const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: value } : schema));

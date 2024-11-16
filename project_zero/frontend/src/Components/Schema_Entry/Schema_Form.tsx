@@ -7,7 +7,7 @@ import React from "react";
 
 interface Schema_Form_Props {
   selected_schema: Schema;
-  update_schema: (field: string, value: string | Schema_Property[], selected_schema_id: string) => void;
+  update_schema: (field: string, value: string | boolean | Schema_Property[], selected_schema_id: string) => void;
   delete_schema: () => void;
 }
 
@@ -25,6 +25,10 @@ const Schema_Form: React.FC<Schema_Form_Props> = ({ selected_schema, update_sche
       <label>Child Name List</label>
       <h3>Objects that this object logically includes.</h3>
       <textarea className="schema-content small" value={selected_schema.child_list} onChange={(e) => update_schema("child_list", e.target.value, selected_schema.id)} placeholder="Write one (1) child object per line..." />
+
+      <label>Generate IA Create Function</label>
+      <h3>Create the interaction (ia = Inter-Action) for creating new objects from schema?</h3>
+      <input type="checkbox" checked={selected_schema.do_gen_ia_create_new} onClick={() => update_schema("do_gen_ia_create_new", !selected_schema.do_gen_ia_create_new, selected_schema.id)} onChange={() => {}} />
 
       <Property_List selected_schema={selected_schema} update_schema={update_schema} />
 

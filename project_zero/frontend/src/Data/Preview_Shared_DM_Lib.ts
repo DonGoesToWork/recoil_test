@@ -1,4 +1,4 @@
-import Base_Generator from "./BaseGenerator";
+import Base_Generator from "./Base_Generator";
 import { Schema } from "./Schema";
 
 export default class Preview_Shared_DM_Lib extends Base_Generator {
@@ -31,7 +31,7 @@ ${this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.t
   };
   functions: {
 ${this.tab_indent}${this.tab_indent}create_new: string;
-${this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: string;`).join("\n")}
+${this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: string;`).join("\n")}
   };
 }
 `;
@@ -58,7 +58,7 @@ ${this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${
           this.tab_indent;
 
     const objectFunctionList = this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: "${x.toLocaleLowerCase()}",`).join("\n");
-    const functionList = this.base_property_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: "ia_set_${this.name_as_lower}_${x.toLocaleLowerCase()}",`).join("\n");
+    const functionList = this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: "ia_set_${this.name_as_lower}_${x.toLocaleLowerCase()}",`).join("\n");
 
     const parent_data = this.has_parent()
       ? `,\n${this.tab_indent}parent_data: {
@@ -103,7 +103,7 @@ ${functionList}
 // Class Definition w/o Metadata Properties or Methods
 
 export interface IO_${this.schema.object_name} {
-  ${this.add_parent_id([...this.base_property_list, "id"])
+  ${this.add_parent_id([...this.base_property_name_list, "id"])
     .map((x) => `${x.toLocaleLowerCase()}: string;`)
     .join(`\n${this.tab_indent}`)}${child_str}
 }
@@ -117,7 +117,7 @@ export interface IO_${this.schema.object_name} {
 // Class Definition for Object Creation
 
 export interface IS_${this.schema.object_name} {
-  ${[...this.base_property_list, "id"].map((x) => `${x.toLocaleLowerCase()}?: string;`).join(`\n${this.tab_indent}`)}${parent_str}
+  ${[...this.base_property_name_list, "id"].map((x) => `${x.toLocaleLowerCase()}?: string;`).join(`\n${this.tab_indent}`)}${parent_str}
 }`;
   }
 
@@ -137,7 +137,7 @@ export interface IA_${this.name_as_lower}_create_new extends Pre_Message_Action_
 `;
 
     // Dynamically generate set interfaces.
-    this.base_property_list.forEach((property) => {
+    this.base_property_name_list.forEach((property) => {
       dataModelEntry += `
 export interface IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()} extends Pre_Message_Action_Send {
   object_class: string;

@@ -1,4 +1,4 @@
-import Base_Generator from "./BaseGenerator";
+import Base_Generator from "./Base_Generator";
 import { Schema } from "./Schema";
 
 export default class Preview_Front_DM_Lib extends Base_Generator {
@@ -16,7 +16,7 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
   }
 
   generate_interface_imports(): string {
-    return [`IA_${this.name_as_lower}_create_new`, ...this.base_property_list.map((property) => `IA_${this.name_as_lower}_set_${property}`)].join(", ");
+    return [`IA_${this.name_as_lower}_create_new`, ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property}`)].join(", ");
   }
 
   generate_add_function(): string {
@@ -51,25 +51,23 @@ export let remove_${this.name_as_lower} = (function_send_message: I_Message_Send
   }
 
   generate_set_functions(): string {
-    return (
-      "\n" +
-      this.base_property_list
-        .map((property) => property.toLocaleLowerCase())
-        .map(
-          (property) => `export let set_${this.name_as_lower}_${property} = (function_send_message: Function, ${this.name_as_lower}_id: string, new_${property}: string): void => {
+    return this.base_property_list
+      .map((schema_property) => {
+        const property = schema_property.name.toLowerCase();
+        const setFunction = `
+export let set_${this.name_as_lower}_${property} = (function_send_message: Function, ${this.name_as_lower}_id: string, new_${property}: string): void => {
   let data: IA_${this.name_as_lower}_set_${property} = {
     object_class: ${this.schema.object_name}.class_name,
     function_name: ${this.schema.object_name}.functions.set_${property},
     ${this.name_as_lower}_id: ${this.name_as_lower}_id,
     new_${property}: new_${property},
   };
-
   function_send_message(data);
-};`
-        )
-        .join("\n\n") +
-      "\n"
-    );
+};`;
+        return schema_property.do_gen_ia_set ? setFunction : "";
+      })
+      .filter(Boolean)
+      .join("\n");
   }
 
   generate_action_functions() {
