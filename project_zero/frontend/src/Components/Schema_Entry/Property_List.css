@@ -7,6 +7,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  text-align: center;
 }
 
 .property-table th,
@@ -17,15 +18,17 @@
 }
 
 .property-table th {
-  background-color: #f4f4f4;
+  background-color: var(--primary-bg-dark);
+  color: white;
+  text-align: center;
 }
 
 .even-row {
-  background-color: #f9f9f9;
+  background-color: var(--primary-bg-very-light1);
 }
 
 .odd-row {
-  background-color: #ffffff;
+  background-color: var(--primary-bg-very-light2);
 }
 
 .radio-column {

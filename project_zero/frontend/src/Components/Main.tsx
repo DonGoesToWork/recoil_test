@@ -1,7 +1,7 @@
 import "./main.css";
 
 import React, { useEffect, useState } from "react";
-import { Schema, get_bee_farm_object, get_bee_hive_object, get_bee_object, get_farmer_object, get_inventory_schema as get_inventory_object, get_player_object, get_item_schema as get_rpg_item_schema } from "../Data/Schema";
+import { Schema, Schema_Property, get_bee_farm_object, get_bee_hive_object, get_bee_object, get_farmer_object, get_inventory_schema as get_inventory_object, get_player_object, get_item_schema as get_rpg_item_schema } from "../Data/Schema";
 
 import Manage_Page from "./Manage/Manage_Page";
 import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
@@ -53,7 +53,7 @@ const update_output = (select_schema_data: Select_RpgClass_Props) => {
 const App: React.FC = () => {
   const firstId = generate_unique_id();
 
-  const [schemas, set_myclasses] = useState<Schema[]>([
+  const [schemas, set_schemas] = useState<Schema[]>([
     get_bee_object(firstId),
     get_bee_hive_object(generate_unique_id()),
     get_bee_farm_object(generate_unique_id()),
@@ -85,12 +85,16 @@ const App: React.FC = () => {
     }
   }, [schemas, selected_tab, selected_schema]);
 
-  const update_schema = (field: string, value: string, selectedSchemaId: string): void => {
+  const update_schema = (field: string, value: string | Schema_Property[], selectedSchemaId: string): void => {
     if (selectedSchemaId !== null) {
-      value = value.replace(new RegExp(" ", "g"), "_");
-
-      const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: value } : schema));
-      set_myclasses(updated_schemas);
+      if (typeof value === "string") {
+        value = value.replace(new RegExp(" ", "g"), "_");
+        const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: value } : schema));
+        set_schemas(updated_schemas);
+      } else {
+        const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: value } : schema));
+        set_schemas(updated_schemas);
+      }
     }
   };
 
@@ -112,7 +116,7 @@ const App: React.FC = () => {
     }
 
     set_selected_schema_id(filtered_schemas[set_selected_schema_idIndex].id);
-    set_myclasses(filtered_schemas);
+    set_schemas(filtered_schemas);
 
     // Decrement page whenever we delete the last schema of a page (excluding the first page).
     if (current_page == Math.ceil(schemas.length / schemas_per_page) && schemas.length % schemas_per_page == 1) {
@@ -130,7 +134,7 @@ const App: React.FC = () => {
   let item2;
   let schemaList = (
     <div>
-      <Schema_List schemas={schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_myclasses} current_page={current_page} set_current_page={set_current_page} />
+      <Schema_List schemas={schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_schemas} current_page={current_page} set_current_page={set_current_page} />
     </div>
   );
   let schemaForm = (
@@ -149,7 +153,7 @@ const App: React.FC = () => {
     case thirdColumnCounter++:
       item1 = (
         <div className="schemas-container-col-view my-card">
-          <Manage_Page schemas={schemas} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_myclasses} />;
+          <Manage_Page schemas={schemas} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_schemas} />;
         </div>
       );
       break;

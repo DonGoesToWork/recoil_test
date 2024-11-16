@@ -25,7 +25,7 @@ function get_random_word() {
   return fantasy_words[randomIndex];
 }
 
-const get_default_string_property = (_name: string): Schema_Property => {
+export const get_default_string_property = (_name: string): Schema_Property => {
   return {
     name: _name,
     default_value: "None",
@@ -35,7 +35,7 @@ const get_default_string_property = (_name: string): Schema_Property => {
   };
 };
 
-const get_default_number_property = (_name: string): Schema_Property => {
+export const get_default_number_property = (_name: string): Schema_Property => {
   return {
     name: _name,
     default_value: "None",

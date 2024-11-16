@@ -1,12 +1,13 @@
 import "./Schema_Form.css";
 
+import { Schema, Schema_Property } from "../../Data/Schema";
+
 import Property_List from "./Property_List";
 import React from "react";
-import { Schema } from "../../Data/Schema";
 
 interface Schema_Form_Props {
   selected_schema: Schema;
-  update_schema: (field: string, value: string, selected_schema_id: string) => void;
+  update_schema: (field: string, value: string | Schema_Property[], selected_schema_id: string) => void;
   delete_schema: () => void;
 }
 
@@ -25,8 +26,6 @@ const Schema_Form: React.FC<Schema_Form_Props> = ({ selected_schema, update_sche
       <h3>Objects that this object logically includes.</h3>
       <textarea className="schema-content small" value={selected_schema.child_list} onChange={(e) => update_schema("child_list", e.target.value, selected_schema.id)} placeholder="Write one (1) child object per line..." />
 
-      <label>Property List</label>
-      <h3>Properties that Exist On Object and Sync Across Clients.</h3>
       <Property_List selected_schema={selected_schema} update_schema={update_schema} />
 
       <label>Date</label>
