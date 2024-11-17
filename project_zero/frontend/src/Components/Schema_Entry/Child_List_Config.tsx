@@ -11,7 +11,6 @@ interface Child_List_Config_Props {
 }
 
 const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema, update_schema }): JSX.Element => {
-  const [new_property, set_new_property] = useState("");
   const [schema_child_list_input, set_schema_child_input_list] = useState<Child_Schema[]>(() => [...selected_schema.child_list]);
 
   useEffect(() => {
@@ -31,10 +30,8 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
   };
 
   const handle_add_property = () => {
-    if (!new_property) return;
-    const updated_child_list = [...schema_child_list_input, get_default_child_schema(new_property)];
+    const updated_child_list = [...schema_child_list_input, get_default_child_schema("x")];
     set_schema_child_input_list(updated_child_list);
-    set_new_property("");
     update_schema("child_list", updated_child_list, selected_schema.id);
   };
 
@@ -43,9 +40,8 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
       <label>Child List Config</label>
       <h3>Set Objects that this object includes and set their id_list configuration.</h3>
       <div>
-        <input style={{ marginRight: "10px" }} type="text" value={new_property} onChange={(e) => set_new_property(e.target.value)} placeholder="Add new child dependent..." />
         <button className="add-button" onClick={handle_add_property}>
-          Add New
+          Add New Child
         </button>
       </div>
       <table className="property-table">
@@ -61,7 +57,9 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
         <tbody>
           {schema_child_list_input.map((property, index) => (
             <tr key={index} className={index % 2 === 0 ? "even-row" : "odd-row"}>
-              <td>{property.name}</td>
+              <td>
+                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", e.target.value)} />
+              </td>
               <td>
                 <input type="text" value={property.id_list_start_size} onChange={(e) => handle_edit_property(index, "id_list_start_size", e.target.value)} />
               </td>
@@ -80,6 +78,11 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
           ))}
         </tbody>
       </table>
+      <div>
+        <button className="add-button" onClick={handle_add_property}>
+          Add New Child
+        </button>
+      </div>
     </>
   );
 };

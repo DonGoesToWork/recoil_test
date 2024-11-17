@@ -68,7 +68,7 @@ const App: React.FC = () => {
   const [output_text, set_output_text] = useState<string>(new Preview_Shared_DM_Lib(schemas[0]).final_content);
   const [selected_tab, set_selected_tab] = useState<number>(0);
   const [current_page, set_current_page] = useState(1);
-  const [third_column_view, set_third_column_view] = useState(4); // in prod, we use 5
+  const [third_column_view, set_third_column_view] = useState(5); // in prod, we use 6
 
   const { add_toast: add_toast } = useToast();
 
@@ -173,6 +173,15 @@ const App: React.FC = () => {
           <p>Show Data Preview Only</p>
           <Tabs selected_tab={selected_tab} handle_tab_change={handle_tab_change} />
           <textarea className="output-text" value={output_text} readOnly wrap="off" />
+        </div>
+      );
+      break;
+    case third_column_counter++:
+      item_1 = (
+        <div className="schemas-container-col-view my-card">
+          <h1>Validation</h1>
+          <p>See invalid schema configuration errors.</p>
+          <p>Todo</p>
         </div>
       );
       break;

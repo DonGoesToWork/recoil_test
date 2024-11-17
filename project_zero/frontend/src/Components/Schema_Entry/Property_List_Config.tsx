@@ -11,7 +11,6 @@ interface Property_List_Config_Props {
 }
 
 const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_schema, update_schema }): JSX.Element => {
-  const [new_property, set_new_property] = useState("");
   const [schema_properties_input, set_schema_properties_input] = useState<Schema_Property[]>(() => [...selected_schema.property_list]);
 
   useEffect(() => {
@@ -31,10 +30,8 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
   };
 
   const handle_add_property = () => {
-    if (!new_property) return;
-    const updated_properties = [...schema_properties_input, get_default_string_property(new_property)];
+    const updated_properties = [...schema_properties_input, get_default_string_property("x")];
     set_schema_properties_input(updated_properties);
-    set_new_property("");
     update_schema("property_list", updated_properties, selected_schema.id);
   };
 
@@ -43,8 +40,7 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
       <label>Property List Config</label>
       <h3>Properties that Exist on Object and Sync Across Clients</h3>
       <div>
-        <input style={{ marginRight: "10px" }} type="text" value={new_property} onChange={(e) => set_new_property(e.target.value)} placeholder="Add new property..." />
-        <button onClick={handle_add_property}>Add New</button>
+        <button onClick={handle_add_property}>Add New Property</button>
       </div>
       <table className="property-table">
         <thead>
@@ -76,6 +72,9 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
           ))}
         </tbody>
       </table>
+      <div>
+        <button onClick={handle_add_property}>Add New Property</button>
+      </div>
     </>
   );
 };

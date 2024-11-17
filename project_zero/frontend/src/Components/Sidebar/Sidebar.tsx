@@ -9,8 +9,8 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ third_column_view, set_third_column_view }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const buttonLabels = ["🎹 Input", "💾 Manage", "⚡ Snippets", "👌 Preview", "👑 Dev View", "❔ Help", "💭 About"];
-  const buttonIcons = ["🎹", "💾", "⚡", "👌", "👑", "❔", "💭"];
+  const buttonLabels = ["🎹 Input", "💾 Manage", "⚡ Snippets", "👌 Preview", "👁️ Validate", "👑 Dev View", "❔ Help", "💭 About"];
+  const buttonIcons = ["🎹", "💾", "⚡", "👌", "👁️", "👑", "❔", "💭"];
 
   return (
     <div className={`schemas-container-col-sidebar ${isHovered ? "expanded" : "collapsed"}`} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
