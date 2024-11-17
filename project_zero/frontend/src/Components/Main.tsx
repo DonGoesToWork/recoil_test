@@ -70,7 +70,7 @@ const App: React.FC = () => {
   const [current_page, set_current_page] = useState(1);
   const [third_column_view, set_third_column_view] = useState(4); // in prod, we use 5
 
-  const { addToast: add_toast } = useToast();
+  const { add_toast: add_toast } = useToast();
 
   // Track the selected schema
   const selected_schema: Schema = schemas.find((schema) => schema.id === selected_schema_id) as Schema;
