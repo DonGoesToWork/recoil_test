@@ -19,33 +19,33 @@ import { schemas_per_page } from "./Schema/Schemas_Per_Page";
 import { useToast } from "./Toast/ToastContainer";
 
 export interface Select_RpgClass_Props {
-  setOutputText: Function;
-  selectedTab: number;
+  set_output_text: Function;
+  selected_tab: number;
   schemas: Schema[];
-  selectedSchema: Schema;
+  selected_schema: Schema;
 }
 
 const update_output = (select_schema_data: Select_RpgClass_Props) => {
-  const { setOutputText, selectedTab, schemas, selectedSchema } = select_schema_data;
+  const { set_output_text, selected_tab, schemas, selected_schema } = select_schema_data;
 
-  switch (selectedTab) {
+  switch (selected_tab) {
     case 0:
-      setOutputText(new Preview_Shared_DM_Lib(selectedSchema).final_content);
+      set_output_text(new Preview_Shared_DM_Lib(selected_schema).final_content);
       break;
     case 1:
-      setOutputText(new Preview_Front_DM_Lib(selectedSchema).final_content);
+      set_output_text(new Preview_Front_DM_Lib(selected_schema).final_content);
       break;
     case 2:
-      setOutputText(new Preview_Back_DM_Lib(selectedSchema).final_content);
+      set_output_text(new Preview_Back_DM_Lib(selected_schema).final_content);
       break;
     case 3:
-      setOutputText(new Preview_Singles_DM_Lib(schemas).final_content);
+      set_output_text(new Preview_Singles_DM_Lib(schemas).final_content);
       break;
     case 4:
-      setOutputText(new Preview_Global_Class_Map_Lib(schemas).finalContent);
+      set_output_text(new Preview_Global_Class_Map_Lib(schemas).finalContent);
       break;
     default:
-      setOutputText("");
+      set_output_text("");
       break;
   }
 };
@@ -79,22 +79,22 @@ const App: React.FC = () => {
   useEffect(() => {
     if (selected_schema) {
       update_output({
-        setOutputText: set_output_text,
-        selectedTab: selected_tab,
+        set_output_text: set_output_text,
+        selected_tab: selected_tab,
         schemas,
-        selectedSchema: selected_schema,
+        selected_schema: selected_schema,
       });
     }
   }, [schemas, selected_tab, selected_schema]);
 
-  const update_schema = (field: string, value: Update_Schema_Params, selectedSchemaId: string): void => {
-    if (selectedSchemaId !== null) {
+  const update_schema = (field: string, value: Update_Schema_Params, selected_schema_id: string): void => {
+    if (selected_schema_id !== null) {
       if (typeof value === "string") {
         let updated_value = (value as string).replace(new RegExp(" ", "g"), "_");
-        const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: updated_value } : schema));
+        const updated_schemas = schemas.map((schema) => (schema.id === selected_schema_id ? { ...schema, [field]: updated_value } : schema));
         set_schemas(updated_schemas);
       } else {
-        const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: value } : schema));
+        const updated_schemas = schemas.map((schema) => (schema.id === selected_schema_id ? { ...schema, [field]: value } : schema));
         set_schemas(updated_schemas);
       }
     }
@@ -132,42 +132,42 @@ const App: React.FC = () => {
     set_selected_tab(tabIndex);
   };
 
-  let item1;
-  let item2;
-  let schemaList = (
+  let item_1;
+  let item_2;
+  let schema_list = (
     <div>
       <Schema_List schemas={schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_schemas} current_page={current_page} set_current_page={set_current_page} />
     </div>
   );
-  let schemaForm = (
+  let schema_form = (
     <div>
       <Schema_Form selected_schema={selected_schema} update_schema={update_schema} delete_schema={delete_schema} />
     </div>
   );
 
-  let thirdColumnCounter = 0;
+  let third_column_counter = 0;
 
   switch (third_column_view) {
-    case thirdColumnCounter++:
-      item1 = <div className="schemas-container-col-view2 my-card">{schemaList}</div>;
-      item2 = <div className="schemas-container-col-view3 my-card">{schemaForm}</div>;
+    case third_column_counter++:
+      item_1 = <div className="schemas-container-col-view2 my-card">{schema_list}</div>;
+      item_2 = <div className="schemas-container-col-view3 my-card">{schema_form}</div>;
       break;
-    case thirdColumnCounter++:
-      item1 = (
+    case third_column_counter++:
+      item_1 = (
         <div className="schemas-container-col-view my-card">
           <Manage_Page schemas={schemas} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_schemas} />;
         </div>
       );
       break;
-    case thirdColumnCounter++:
-      item1 = (
+    case third_column_counter++:
+      item_1 = (
         <div className="schemas-container-col-view my-card">
           <Snippet_Page schemas={schemas} selected_schema_id={selected_schema_id} />
         </div>
       );
       break;
-    case thirdColumnCounter++:
-      item1 = (
+    case third_column_counter++:
+      item_1 = (
         <div className="schemas-container-col-view my-card">
           <h1>Preview</h1>
           <p>Show Data Preview Only</p>
@@ -176,13 +176,13 @@ const App: React.FC = () => {
         </div>
       );
       break;
-    case thirdColumnCounter++:
-      item1 = (
+    case third_column_counter++:
+      item_1 = (
         <div className="schemas-container-col-view my-card">
           <h1>Dev View 🧙🏼‍♂️🔥👏🏼⚡✨</h1>
           <div className="dev-view-grid">
-            <div className="my-card">{schemaList}</div>
-            <div className="my-card">{schemaForm}</div>
+            <div className="my-card">{schema_list}</div>
+            <div className="my-card">{schema_form}</div>
             <div className="my-card">
               <div className="output-container">
                 <Tabs selected_tab={selected_tab} handle_tab_change={handle_tab_change} />
@@ -196,15 +196,15 @@ const App: React.FC = () => {
         </div>
       );
       break;
-    case thirdColumnCounter++:
-      item1 = (
+    case third_column_counter++:
+      item_1 = (
         <div className="schemas-container-col-view2 my-card">
           <h1>Help</h1>
         </div>
       );
       break;
-    case thirdColumnCounter++:
-      item1 = (
+    case third_column_counter++:
+      item_1 = (
         <div className="schemas-container-col-view my-card">
           <h1>About</h1>
           <p>Project Zero made by Donald Abdullah-Robinson for the purposes of evolving the web development ecosystem.</p>
@@ -213,7 +213,7 @@ const App: React.FC = () => {
       );
       break;
     default:
-      item1 = schemaForm;
+      item_1 = schema_form;
       break;
   }
 
@@ -224,8 +224,8 @@ const App: React.FC = () => {
       </header>
       <span className="schemas-container">
         <Sidebar third_column_view={third_column_view} set_third_column_view={set_third_column_view} />
-        {item1 !== undefined && item1}
-        {item2 !== undefined && item2}
+        {item_1 !== undefined && item_1}
+        {item_2 !== undefined && item_2}
       </span>
     </div>
   );

@@ -11,7 +11,7 @@ interface Child_List_Config_Props {
 }
 
 const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema, update_schema }): JSX.Element => {
-  const [new_property, setNewProperty] = useState("");
+  const [new_property, set_new_property] = useState("");
   const [schema_child_list_input, set_schema_child_input_list] = useState<Child_Schema[]>(() => [...selected_schema.child_list]);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
     if (!new_property) return;
     const updated_child_list = [...schema_child_list_input, get_default_child_schema(new_property)];
     set_schema_child_input_list(updated_child_list);
-    setNewProperty("");
+    set_new_property("");
     update_schema("child_list", updated_child_list, selected_schema.id);
   };
 
@@ -43,7 +43,7 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
       <label>Child List Config</label>
       <h3>Set Objects that this object includes and set their id_list configuration.</h3>
       <div>
-        <input style={{ marginRight: "10px" }} type="text" value={new_property} onChange={(e) => setNewProperty(e.target.value)} placeholder="Add new child dependent..." />
+        <input style={{ marginRight: "10px" }} type="text" value={new_property} onChange={(e) => set_new_property(e.target.value)} placeholder="Add new child dependent..." />
         <button className="add-button" onClick={handle_add_property}>
           Add New
         </button>
