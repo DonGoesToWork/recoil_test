@@ -1,20 +1,14 @@
-.property-list-container {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-}
-
 .property-table {
-  width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
   text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .property-table th,
 .property-table td {
   padding: 10px;
   text-align: left;
-  border: 1px solid #ddd;
 }
 
 .property-table th {
@@ -32,7 +26,9 @@
 }
 
 .radio-column {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .property-table td input[type="text"] {
@@ -43,7 +39,7 @@
 }
 
 button {
-  padding: 6px 12px;
+  padding: 4px;
   background-color: #007bff;
   color: white;
   border: none;

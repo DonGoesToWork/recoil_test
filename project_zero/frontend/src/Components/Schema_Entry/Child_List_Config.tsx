@@ -39,9 +39,15 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
   };
 
   return (
-    <div className="property-list-container">
+    <>
       <label>Child List Config</label>
       <h3>Set Objects that this object includes and set their id_list configuration.</h3>
+      <div>
+        <input style={{ marginRight: "10px" }} type="text" value={new_property} onChange={(e) => setNewProperty(e.target.value)} placeholder="Add new child dependent..." />
+        <button className="add-button" onClick={handle_add_property}>
+          Add New
+        </button>
+      </div>
       <table className="property-table">
         <thead>
           <tr>
@@ -55,9 +61,7 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
         <tbody>
           {schema_child_list_input.map((property, index) => (
             <tr key={index} className={index % 2 === 0 ? "even-row" : "odd-row"}>
-              <td>
-                <p>{property.name}</p>
-              </td>
+              <td>{property.name}</td>
               <td>
                 <input type="text" value={property.id_list_start_size} onChange={(e) => handle_edit_property(index, "id_list_start_size", e.target.value)} />
               </td>
@@ -74,18 +78,9 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
               </td>
             </tr>
           ))}
-          <tr>
-            <td></td>
-            <td>
-              <input type="text" value={new_property} onChange={(e) => setNewProperty(e.target.value)} placeholder="Add new child dependent..." />
-            </td>
-            <td>
-              <button onClick={handle_add_property}>Add</button>
-            </td>
-          </tr>
         </tbody>
       </table>
-    </div>
+    </>
   );
 };
 

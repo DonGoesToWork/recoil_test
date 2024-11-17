@@ -6,6 +6,14 @@
 .schema-view {
   display: flex;
   flex-direction: column;
+  width: 97%;
+}
+
+.schema-view h3 {
+  text-align: left;
+}
+
+.schema-title {
   width: 100%;
 }
 
@@ -13,16 +21,14 @@ label {
   font-weight: bold;
   margin-bottom: 5px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  justify-content: left;
+  align-items: left;
 }
 
 .schema-title,
 .schema-content,
 .schema-date {
   padding: 10px;
-  margin-bottom: 15px;
   border: 1px solid rgb(0, 0, 0);
   border-radius: 4px;
 }

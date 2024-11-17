@@ -14,6 +14,7 @@ html {
   --primary-bg-very-light1: #b3d6ff;
   --primary-bg-very-light2: #83bdff;
   --white: #faf0e6;
+  --primary-bg-success: #a37b22; /* WIP */
 }
 
 .my-card {
@@ -32,7 +33,7 @@ h1 {
 }
 
 h3 {
-  font-size: 12px;
+  font-size: 16px;
   text-align: center;
   color: #797979;
   margin-top: -5px;
@@ -57,3 +58,15 @@ button:hover {
   background-color: var(--primary-bg-dark);
   color: rgb(245, 245, 245);
 }
+
+hr {
+  border: 2px solid var(--primary-bg-light);
+  border-radius: 5px;
+  width: 100%;
+}
+
+/* WIP - IDK..
+.add-button {
+background-color: var(--primary-bg-success);
+}
+*/

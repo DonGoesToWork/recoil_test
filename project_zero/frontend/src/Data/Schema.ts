@@ -45,7 +45,7 @@ export const get_default_child_schema = (_name: string): Child_Schema => {
 export const get_default_string_property = (_name: string): Schema_Property => {
   return {
     name: _name,
-    default_value: "None",
+    default_value: "unassigned",
     type: "string",
     do_gen_ia_set: true,
     do_gen_ia_get: true,
@@ -55,7 +55,7 @@ export const get_default_string_property = (_name: string): Schema_Property => {
 export const get_default_number_property = (_name: string): Schema_Property => {
   return {
     name: _name,
-    default_value: "None",
+    default_value: "0",
     type: "number",
     do_gen_ia_set: true,
     do_gen_ia_get: true,

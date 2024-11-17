@@ -1,19 +1,15 @@
-import "./ConfirmButton.css"
-import React, { useState } from 'react';
+import "./ConfirmButton.css";
+
+import React, { useState } from "react";
 
 interface ConfirmButtonProps {
   children: React.ReactNode;
   onConfirm: () => void;
   confirmMessage?: string; // Optional custom confirmation message
-  confirmTitle?: string;   // Optional custom title
+  confirmTitle?: string; // Optional custom title
 }
 
-const ConfirmButton: React.FC<ConfirmButtonProps> = ({ 
-  children, 
-  onConfirm, 
-  confirmMessage = 'Are you sure you want to proceed?', 
-  confirmTitle = 'Please Confirm' 
-}) => {
+const ConfirmButton: React.FC<ConfirmButtonProps> = ({ children, onConfirm, confirmMessage = "Are you sure you want to proceed?", confirmTitle = "Please Confirm" }) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleClick = () => {
@@ -41,8 +37,12 @@ const ConfirmButton: React.FC<ConfirmButtonProps> = ({
             <h2>{confirmTitle}</h2>
             <p>{confirmMessage}</p>
             <div className="modal-buttons">
-              <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
-              <button className="confirm-btn" onClick={handleConfirm}>Yes, Continue</button>
+              <button className="cancel-btn" onClick={handleCancel}>
+                Cancel
+              </button>
+              <button className="confirm-btn" onClick={handleConfirm}>
+                Yes, Continue
+              </button>
             </div>
           </div>
         </div>

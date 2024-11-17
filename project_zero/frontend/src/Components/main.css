@@ -6,7 +6,6 @@ header {
 
 .schemas-container {
   display: flex;
-  margin: 10px;
   min-height: 91vh;
 }
 
@@ -40,8 +39,4 @@ header {
   display: grid;
   width: 100%;
   grid-template-columns: 33% 33% 33%;
-}
-
-.dev-view-grid div {
-  margin: 10px;
 }

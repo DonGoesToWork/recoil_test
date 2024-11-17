@@ -14,7 +14,6 @@
 .add-schema-btn {
   margin-bottom: 10px;
   padding: 8px 16px;
-  font-size: 16px;
   cursor: pointer;
   margin-right: 5px;
 }
@@ -24,5 +23,4 @@
   max-width: 600px;
   margin-bottom: 10px;
   padding: 10px;
-  font-size: 16px;
 }

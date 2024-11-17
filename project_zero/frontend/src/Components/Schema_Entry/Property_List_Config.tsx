@@ -39,9 +39,13 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
   };
 
   return (
-    <div className="property-list-container">
+    <>
       <label>Property List Config</label>
       <h3>Properties that Exist on Object and Sync Across Clients</h3>
+      <div>
+        <input style={{ marginRight: "10px" }} type="text" value={new_property} onChange={(e) => set_new_property(e.target.value)} placeholder="Add new property..." />
+        <button onClick={handle_add_property}>Add New</button>
+      </div>
       <table className="property-table">
         <thead>
           <tr>
@@ -70,18 +74,9 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
               </td>
             </tr>
           ))}
-          <tr>
-            <td></td>
-            <td>
-              <input type="text" value={new_property} onChange={(e) => set_new_property(e.target.value)} placeholder="Add new property..." />
-            </td>
-            <td>
-              <button onClick={handle_add_property}>Add</button>
-            </td>
-          </tr>
         </tbody>
       </table>
-    </div>
+    </>
   );
 };
 
