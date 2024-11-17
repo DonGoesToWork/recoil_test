@@ -9,7 +9,7 @@ interface Schema_Grid_Props {
   set_selected_schema_id: (id: string) => void;
 }
 
-const line_length_max = 15;
+const line_length_max = 18;
 
 const truncated = (content: string): string => (content.length > line_length_max ? content.substring(0, line_length_max).split("\n").join(", ") + "..." : content);
 
@@ -25,9 +25,10 @@ const Schema_Grid: React.FC<Schema_Grid_Props> = ({ schemas, selected_schema_id:
           }}
         >
           <div className="schema-title-preview">{schema.object_name}</div>
-          <div className="schema-preview">{truncated("- " + schema.parent)}</div>
-          <div className="schema-preview">{truncated("- " + schema.child_list)}</div>
-          <div className="schema-preview">{truncated("- " + schema.property_list)}</div>
+          <div className="schema-preview">{truncated("PA: " + schema.parent)}</div>
+          <div className="schema-preview">{truncated("CH: " + `${schema.child_list.map((child) => child.name)}`)}</div>
+          <div className="schema-preview">{truncated("PR: " + `${schema.property_list.map((property) => property.name)}`)}</div>
+          {/* TODO ADD INTERFACE FUNCTIONS HERE */}
           <div className="schema-date-preview">{schema.date}</div>
         </div>
       ))}

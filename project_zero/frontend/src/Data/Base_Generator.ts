@@ -1,4 +1,4 @@
-import { Schema, Schema_Property } from "./Schema";
+import { Child_Schema, Schema, Schema_Property } from "./Schema";
 
 export default class Base_Generator {
   schema: Schema;
@@ -12,12 +12,12 @@ export default class Base_Generator {
 
   base_property_list: Schema_Property[] = [];
   base_property_name_list: string[] = [];
-  child_property_list: string[] = [];
+
+  child_property_list: Child_Schema[] = [];
+  child_property_name_list: string[] = [];
 
   combined_property_list: string[] = [];
   combined_property_list_no_children: string[] = [];
-
-  delimeter_child_split: string = "\n";
 
   has_parent() {
     return this.schema.parent !== "";
@@ -39,12 +39,10 @@ export default class Base_Generator {
     this.base_property_list = this.schema.property_list.filter((x) => x.name !== ""); // TODO - Do stuff with properties of property_llist.
     this.base_property_name_list = this.schema.property_list.map((x) => `${x.name.toLocaleLowerCase()}`).filter((x) => x !== ""); // TODO - Do stuff with properties of property_llist.
 
-    this.child_property_list = this.schema.child_list
-      .split(this.delimeter_child_split)
-      .filter((x) => x !== "")
-      .map((x) => x.toLocaleLowerCase() + "_ids");
+    this.child_property_list = this.schema.child_list.filter((x) => x.name !== "");
+    this.child_property_name_list = this.schema.child_list.filter((x) => x.name !== "").map((x) => x.name.toLocaleLowerCase() + "_ids");
 
-    this.combined_property_list = this.add_parent_id([...this.base_property_name_list, "id", ...this.child_property_list]);
+    this.combined_property_list = this.add_parent_id([...this.base_property_name_list, "id", ...this.child_property_name_list]);
     this.combined_property_list_no_children = this.add_parent_id([...this.base_property_name_list, "id"]);
   }
 

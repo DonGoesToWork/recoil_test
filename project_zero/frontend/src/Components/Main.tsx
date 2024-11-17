@@ -1,7 +1,7 @@
 import "./main.css";
 
+import { Child_Schema, Schema, Schema_Property, get_bee_farm_object, get_bee_hive_object, get_bee_object, get_farmer_object, get_inventory_schema as get_inventory_object, get_player_object, get_item_schema as get_rpg_item_schema } from "../Data/Schema";
 import React, { useEffect, useState } from "react";
-import { Schema, Schema_Property, get_bee_farm_object, get_bee_hive_object, get_bee_object, get_farmer_object, get_inventory_schema as get_inventory_object, get_player_object, get_item_schema as get_rpg_item_schema } from "../Data/Schema";
 
 import Manage_Page from "./Manage/Manage_Page";
 import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
@@ -50,6 +50,8 @@ const update_output = (select_schema_data: Select_RpgClass_Props) => {
   }
 };
 
+export type Update_Schema_Params = string | boolean | Schema_Property[] | Child_Schema[];
+
 const App: React.FC = () => {
   const firstId = generate_unique_id();
 
@@ -85,10 +87,10 @@ const App: React.FC = () => {
     }
   }, [schemas, selected_tab, selected_schema]);
 
-  const update_schema = (field: string, value: string | boolean | Schema_Property[], selectedSchemaId: string): void => {
+  const update_schema = (field: string, value: Update_Schema_Params, selectedSchemaId: string): void => {
     if (selectedSchemaId !== null) {
       if (typeof value === "string") {
-        let updated_value = value.replace(new RegExp(" ", "g"), "_");
+        let updated_value = (value as string).replace(new RegExp(" ", "g"), "_");
         const updated_schemas = schemas.map((schema) => (schema.id === selectedSchemaId ? { ...schema, [field]: updated_value } : schema));
         set_schemas(updated_schemas);
       } else {

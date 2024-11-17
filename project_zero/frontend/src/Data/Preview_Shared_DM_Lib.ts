@@ -40,13 +40,12 @@ ${this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}s
 
   get_plain_object_definition(): string {
     const schemaTitle = this.schema.object_name;
-    const childClassNames: string[] = this.schema.child_list.split(this.delimeter_child_split).filter((x) => x !== "");
 
     const childObjectList =
-      childClassNames.length == 0
+      this.child_property_name_list.length == 0
         ? ""
         : "\n" +
-          childClassNames
+          this.child_property_name_list
             .map((child: string) => {
               return `${this.tab_indent}${this.tab_indent}{
       class_name: \"${child}\",
@@ -86,9 +85,9 @@ ${functionList}
 
   get_object_interface() {
     let child_str =
-      this.child_property_list.length == 0
+      this.child_property_name_list.length == 0
         ? ""
-        : `\n${this.child_property_list
+        : `\n${this.child_property_name_list
             .map(
               (x) => `${this.tab_indent}${x.toLocaleLowerCase()}: {
     ids: string[];

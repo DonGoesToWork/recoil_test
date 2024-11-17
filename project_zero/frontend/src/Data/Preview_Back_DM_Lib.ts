@@ -23,14 +23,16 @@ import { generate_unique_id } from "../../utils/utils";`;
 
   generate_initialize_object_function(): string {
     const { object_name } = this.schema;
-    const basePropDefaultValues = this.base_property_list.length ? this.base_property_list.map((prop) => `${prop.default_value}`) : [];
-    const baseProps = this.base_property_name_list.length ? this.base_property_name_list.map((prop, i) => `${prop}: ${this.name_as_lower}.${prop} ?? "${basePropDefaultValues[i]}"`) : [];
-    const childProps = this.child_property_list.length ? this.child_property_list.map((prop) => `${prop}: { ids: [], start_size: 0, max_size: 0, allow_empty_indexes: false }`) : [];
-    const combinedProps = [...baseProps, ...childProps].join(",\n    ");
-    const parentId = this.has_parent() ? `parent_id: ${this.name_as_lower}.parent_id,` : "";
+
+    const base_prop_default_values = this.base_property_list.length ? this.base_property_list.map((prop) => `${prop.default_value}`) : [];
+    const base_props = this.base_property_name_list.length ? this.base_property_name_list.map((prop, i) => `${prop}: ${this.name_as_lower}.${prop} ?? "${base_prop_default_values[i]}"`) : [];
+
+    const child_props = this.child_property_list.length ? this.child_property_list.map((prop) => `${prop.name}: { ids: [], start_size: ${prop.id_list_start_size}, max_size: ${prop.id_list_max_size}, allow_empty_indexes: ${prop.id_list_allow_empty_indexes} }`) : [];
+    const combined_props = [...base_props, ...child_props].join(",\n    ");
+    const parent_id = this.has_parent() ? `parent_id: ${this.name_as_lower}.parent_id,` : "";
 
     return `const initialize_${this.name_as_lower} = (${this.name_as_lower}: IS_${object_name}): IO_${object_name} => ({
-  id: generate_unique_id(),${combinedProps ? `\n${this.tab_indent}${combinedProps},` : ""}${parentId ? `\n${this.tab_indent}${parentId}` : ""}
+  id: generate_unique_id(),${combined_props ? `\n${this.tab_indent}${combined_props},` : ""}${parent_id ? `\n${this.tab_indent}${parent_id}` : ""}
 });`;
   }
 
@@ -48,13 +50,13 @@ import { generate_unique_id } from "../../utils/utils";`;
 
   generate_ia_add_function(): string {
     const { object_name } = this.schema;
-    const parentId = this.has_parent() ? `parent_id: data.parent_id` : "";
+    const parent_id = this.has_parent() ? `parent_id: data.parent_id` : "";
 
     return this.schema.do_gen_ia_create_new
       ? `
 let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   const data = message_action as IA_${this.name_as_lower}_create_new;
-  const new_${this.name_as_lower}: IS_${object_name} = { ${parentId} };
+  const new_${this.name_as_lower}: IS_${object_name} = { ${parent_id} };
   create_new_${this.name_as_lower}(state, new_${this.name_as_lower});
 };`
       : "";
@@ -95,14 +97,14 @@ let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Mes
 
   generate_backend_switch_function(): string {
     const { object_name } = this.schema;
-    const switchStatements = [
+    const switch_statements = [
       `x['${object_name}'] = {};`,
       `x['${object_name}']['ia_${this.name_as_lower}_create_new'] = ia_create_new_${this.name_as_lower};`,
       ...this.base_property_name_list.map((property) => `x['${object_name}']['ia_set_${this.name_as_lower}_${property.toLowerCase()}'] = ia_set_${this.name_as_lower}_${property.toLowerCase()};`),
     ].join("\n  ");
 
     return `export let Register_${object_name} = (x: Object_Class_Function_Map): void => {
-  ${switchStatements}
+  ${switch_statements}
 };`;
   }
 

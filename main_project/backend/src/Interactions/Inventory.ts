@@ -9,20 +9,13 @@ import { Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communicatio
 
 // interaction middleware function to fill
 
+// DEV: Add function to interactions:
+
 export const iam_inventory_add_rpg_item = (state: Backend_State, inventory_id: string, rpg_item_id: string): void => {
-  let inventory: IO_Inventory = inventory_get(state, inventory_id);
-  // let rpg_item: IO_Rpg_Item = rpg_item_get(state, rpg_item_id); // dAR TODO
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // GENERATED CODE REGION START -
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // Write code here.
-  // Sample add snippet: inventory_add_rpg_item(state, inventory_id, rpg_item_id)
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // GENERATED CODE REGION END
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Sample Snippets:
+  // let inventory: IO_Inventory = inventory_get(state, inventory_id);
+  // let rpg_item: IO_Rpg_Item = rpg_item_get(state, rpg_item_id);
+  // inventory_add_rpg_item(state, inventory_id, rpg_item_id)
 };
 
 // More Default Generated Functions
