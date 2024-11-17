@@ -5,6 +5,7 @@ import Property_List_Config from "./Property_List_Config";
 import React from "react";
 import { Schema } from "../../Data/Schema";
 import { Update_Schema_Params } from "../Main";
+import User_Interactions_Config from "./User_Interactions_Config";
 
 interface Schema_Form_Props {
   selected_schema: Schema;
@@ -25,9 +26,6 @@ const Schema_Form: React.FC<Schema_Form_Props> = ({ selected_schema, update_sche
       <input className="schema-title" value={selected_schema.parent} onChange={(e) => update_schema("parent", e.target.value, selected_schema.id)} placeholder="Parent Object" />
 
       <hr />
-      <Child_List_Config selected_schema={selected_schema} update_schema={update_schema} />
-
-      <hr />
       <label>Generate IA Create Function</label>
       <h3>Create the interaction (ia = Inter-Action) for creating new objects from schema?</h3>
       <span style={{ marginBottom: "10px" }}>
@@ -35,7 +33,13 @@ const Schema_Form: React.FC<Schema_Form_Props> = ({ selected_schema, update_sche
       </span>
 
       <hr />
+      <Child_List_Config selected_schema={selected_schema} update_schema={update_schema} />
+
+      <hr />
       <Property_List_Config selected_schema={selected_schema} update_schema={update_schema} />
+
+      <hr />
+      <User_Interactions_Config selected_schema={selected_schema} update_schema={update_schema} />
 
       <hr />
       <label>Date</label>

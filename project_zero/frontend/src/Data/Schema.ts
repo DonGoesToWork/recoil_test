@@ -17,21 +17,35 @@ export type Child_Schema = {
   id_list_allow_empty_indexes: boolean;
 };
 
+export type User_Interaction = {
+  function_name: string;
+  target_object: string;
+  // user object will always get added by default as a preset value, so don't add here.
+};
+
 // Define a type for the Schema structure
 export type Schema = {
   id: string;
   object_name: string;
   parent: string;
-  child_list: Child_Schema[];
   do_gen_ia_create_new: boolean;
+  child_list: Child_Schema[];
   property_list: Schema_Property[];
-  date: string; // Add a date field
+  user_interaction_list: User_Interaction[];
+  date: string;
 };
 
 function get_random_word() {
   const randomIndex = Math.floor(Math.random() * fantasy_words.length);
   return fantasy_words[randomIndex];
 }
+
+export const get_default_user_interaction = (): User_Interaction => {
+  return {
+    function_name: "do_action",
+    target_object: get_random_word(),
+  };
+};
 
 export const get_default_child_schema = (_name: string): Child_Schema => {
   return {
@@ -69,9 +83,10 @@ export const get_bee_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Bee",
     parent: "Bee_Hive",
-    child_list: [],
     do_gen_ia_create_new: true,
+    child_list: [],
     property_list: [get_default_string_property("Name")],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
@@ -83,9 +98,10 @@ export const get_bee_hive_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Bee_Hive",
     parent: "Bee_Farm",
-    child_list: [get_default_child_schema(`Bee`)],
     do_gen_ia_create_new: true,
+    child_list: [get_default_child_schema(`Bee`)],
     property_list: [get_default_string_property("Name")],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
@@ -97,9 +113,10 @@ export const get_bee_farm_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Bee_Farm",
     parent: "Farmer",
-    child_list: [get_default_child_schema(`Bee_Hive`)],
     do_gen_ia_create_new: true,
+    child_list: [get_default_child_schema(`Bee_Hive`)],
     property_list: [get_default_string_property("Name")],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
@@ -111,9 +128,10 @@ export const get_farmer_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Farmer",
     parent: "",
-    child_list: [get_default_child_schema(`Bee_Farm`)],
     do_gen_ia_create_new: true,
+    child_list: [get_default_child_schema(`Bee_Farm`)],
     property_list: [get_default_string_property("Name")],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
@@ -125,8 +143,8 @@ export const get_player_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Player",
     parent: "Player_Party",
-    child_list: [get_default_child_schema(`Inventory`)],
     do_gen_ia_create_new: true,
+    child_list: [get_default_child_schema(`Inventory`)],
     property_list: [
       get_default_string_property("Name"),
       get_default_number_property("Gold"),
@@ -142,6 +160,7 @@ export const get_player_object = (id?: string): Schema => {
       get_default_number_property("Melee_Heal_On_Hit_Flat"),
       get_default_number_property("Melee_Heal_On_Hit_Percent"),
     ],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
@@ -153,9 +172,10 @@ export const get_inventory_schema = (id?: string): Schema => {
     id: finalId,
     object_name: "Inventory",
     parent: "Player",
-    child_list: [get_default_child_schema(`Rpg_Item`)],
     do_gen_ia_create_new: true,
+    child_list: [get_default_child_schema(`Rpg_Item`)],
     property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path")],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
@@ -167,9 +187,10 @@ export const get_item_schema = (id?: string): Schema => {
     id: finalId,
     object_name: "Rpg_Item",
     parent: "Inventory",
-    child_list: [],
     do_gen_ia_create_new: true,
+    child_list: [],
     property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path"), get_default_string_property("Flag_Quest_Item"), get_default_string_property("Flag_Cursed")],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
@@ -181,8 +202,8 @@ export const get_default_schema = (id?: string): Schema => {
     id: finalId,
     object_name: get_random_word(),
     parent: get_random_word(),
-    child_list: [get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word())],
     do_gen_ia_create_new: true,
+    child_list: [get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word())],
     property_list: [
       get_default_string_property(get_random_word()),
       get_default_string_property(get_random_word()),
@@ -192,6 +213,7 @@ export const get_default_schema = (id?: string): Schema => {
       get_default_string_property(get_random_word()),
       get_default_string_property(get_random_word()),
     ],
+    user_interaction_list: [get_default_user_interaction()],
     date: get_current_date(),
   };
 };
