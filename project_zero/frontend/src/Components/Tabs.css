@@ -1,23 +1,19 @@
 /* Tabs Component styles */
 .tabs {
   display: flex;
-  justify-content: center;
-  margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .tab {
-  border: none;
-  padding: 10px 20px;
+  padding: 10px;
   cursor: pointer;
-  margin: 0 5px;
-  background-color: #1783ff;
+  margin: 5px;
 }
 
 .tab.active {
-  background-color: #5ea9ff;
-  color: white;
+  background-color: var(--primary-bg-light);
 }
 
 .tab:hover {
-  color:  rgb(221, 221, 221);
+  color: var(--text-off-white);
 }

@@ -155,7 +155,7 @@ const App: React.FC = () => {
     case third_column_counter++:
       item_1 = (
         <div className="schemas-container-col-view my-card">
-          <Manage_Page schemas={schemas} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_schemas} />;
+          <Manage_Page schemas={schemas} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_schemas} />
         </div>
       );
       break;
@@ -227,15 +227,19 @@ const App: React.FC = () => {
   }
 
   return (
-    <div>
-      <header>
-        <h1>ZER0</h1>
-      </header>
-      <span className="schemas-container">
-        <Sidebar third_column_view={third_column_view} set_third_column_view={set_third_column_view} />
-        {item_1 !== undefined && item_1}
-        {item_2 !== undefined && item_2}
-      </span>
+    <div className="main-body">
+      <div className="main-body-container">
+        <div className="main-body-container-header">
+          <header>
+            <h1>ZER0</h1>
+          </header>
+        </div>
+        <div className="schemas-container">
+          <Sidebar third_column_view={third_column_view} set_third_column_view={set_third_column_view} />
+          {item_1 !== undefined && item_1}
+          {item_2 !== undefined && item_2}
+        </div>
+      </div>
     </div>
   );
 };

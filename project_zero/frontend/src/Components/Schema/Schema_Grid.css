@@ -8,19 +8,19 @@
 }
 
 .schema-item {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background-color: var(--primary-bg-very-dark);
+  border: 1px solid var(--text-off-grey);
   padding: 15px;
-  cursor: pointer;
 }
 
 .schema-item.selected {
-  background-color: #e0f7ff;
-  border-left: 5px solid #3ca1ff;
+  background-color: var(--primary-bg-medium);
+  border: 5px solid var(--text-off-grey);
+  color: white;
 }
 
 .schema-item:hover {
-  background-color: #f9f9f9;
+  background-color: var(--primary-bg-light);
 }
 
 .schema-title-preview {
@@ -28,7 +28,7 @@
 }
 
 .schema-preview {
-  color: rgb(35, 35, 35);
+  color: var(--text-off-white);
 }
 
 .schema-date-preview {

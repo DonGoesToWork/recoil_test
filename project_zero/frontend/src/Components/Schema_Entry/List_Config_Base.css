@@ -3,6 +3,8 @@
   text-align: center;
   margin-top: 10px;
   margin-bottom: 10px;
+  background-color: var(--primary-bg-very-dark);
+  border: 1px solid var(--text-off-grey);
 }
 
 .property-table th,
@@ -12,17 +14,16 @@
 }
 
 .property-table th {
-  background-color: var(--primary-bg-dark);
   color: white;
   text-align: center;
 }
 
 .even-row {
-  background-color: var(--primary-bg-very-light1);
+  background-color: var(--primary-bg-dark);
 }
 
 .odd-row {
-  background-color: var(--primary-bg-very-light2);
+  background-color: var(--primary-bg-medium);
 }
 
 .radio-column {
@@ -34,27 +35,13 @@
 .property-table td input[type="text"] {
   width: 100%;
   padding: 5px;
-  border: 1px solid #ccc;
   border-radius: 4px;
-}
-
-button {
-  padding: 4px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
 }
 
 .delete-btn {
-  background-color: #dc3545;
+  background-color: var(--text-red);
 }
 
 .delete-btn:hover {
-  background-color: #c82333;
+  background-color: var(--text-dark-red);
 }

@@ -1,12 +1,28 @@
-header {
-  background-color: var(--primary-bg-medium);
-  color: white;
-  text-align: center;
+/* Main CSS For Page Layout */
+
+.main-body {
+  min-height: 100vh !important;
+  background-color: var(--primary-bg-very-dark);
+}
+
+.main-body-container {
+  height: 100%;
+}
+
+.main-body-container-header {
+  height: 3%;
 }
 
 .schemas-container {
   display: flex;
-  min-height: 91vh;
+  background-color: var(--primary-bg-very-dark);
+  height: 97%;
+}
+
+header {
+  background-color: var(--primary-bg-very-dark);
+  color: white;
+  text-align: center;
 }
 
 .schemas-container-col-view {
@@ -31,6 +47,8 @@ header {
   height: 550px;
   overflow: scroll;
   resize: none;
+  background-color: var(--primary-bg-very-dark);
+  color: white;
 }
 
 /* Dev View */
@@ -39,4 +57,10 @@ header {
   display: grid;
   width: 100%;
   grid-template-columns: 33% 33% 33%;
+}
+
+input {
+  background-color: var(--primary-bg-very-dark);
+  color: white;
+  border: none;
 }

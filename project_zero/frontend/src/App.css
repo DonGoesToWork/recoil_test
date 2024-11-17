@@ -1,41 +1,57 @@
+:root {
+  --primary-bg-very-dark: #020c19; /* Dark, rich navy */
+  --primary-bg-almost-very-dark: #052039; /* Deep ocean blue */
+  --primary-bg-dark: #093259; /* Muted azure */
+  --primary-bg-medium: #004275; /* Strong, vivid blue */
+  --primary-bg-light: #005495; /* Lighter, approachable blue */
+  --primary-bg-success: #8cad3f; /* Calming olive-green for success */
+  --text-off-white: #e5e5e5; /* Soft, easy-on-eyes white */
+  --text-off-off-white: #c4c4c4; /* Neutral light gray */
+  --text-off-grey: #808080; /* Balanced gray for less emphasis */
+  --text-red: #8a000b;
+  --text-dark-red: #510007;
+}
+
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  font-size: 16px;
+}
+
 /* App-wide global styles */
 body,
 html {
   margin: 0;
   padding: 0;
   font-family: "Arial", sans-serif;
-  background-color: #e9e9e9;
-}
-
-:root {
-  --primary-bg-medium: #1783ff;
-  --primary-bg-dark: #1571db;
-  --primary-bg-light: #5ea9ff;
-  --primary-bg-very-light1: #b3d6ff;
-  --primary-bg-very-light2: #83bdff;
-  --white: #faf0e6;
-  --primary-bg-success: #a37b22; /* WIP */
+  background-color: var(----primary-bg-very-dark);
 }
 
 .my-card {
-  background-color: #fdfdfd;
+  background-color: var(--primary-bg-almost-very-dark);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding: 10px;
+  color: white;
 }
 
 .my-card:hover {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(255, 255, 255, 0.4);
 }
 
 h1 {
-  margin: 2px;
+  margin: 0px;
   padding: 2px;
+  font-size: 36px;
 }
 
 h3 {
   font-size: 16px;
   text-align: center;
-  color: #797979;
+  color: var(--text-off-off-white);
   margin-top: -5px;
   margin-bottom: 4px;
 }
@@ -45,22 +61,24 @@ div {
 }
 
 button {
-  background-color: var(--primary-bg-medium);
+  background-color: var(--primary-bg-very-dark);
   color: white;
   border: none;
   cursor: pointer;
   font-weight: 900;
-  font-size: 20px;
+  font-size: 16px;
   border-radius: 5px;
+  padding: 5px;
+  border: 1px solid var(--text-off-grey);
 }
 
 button:hover {
-  background-color: var(--primary-bg-dark);
-  color: rgb(245, 245, 245);
+  background-color: var(--primary-bg-light);
+  color: var(--text-off-white);
 }
 
 hr {
-  border: 2px solid var(--primary-bg-light);
+  border: 2px solid var(--text-off-white);
   border-radius: 5px;
   width: 100%;
 }
@@ -68,5 +86,22 @@ hr {
 /* WIP - IDK..
 .add-button {
 background-color: var(--primary-bg-success);
+}
+*/
+
+/*
+Original Root Colors before AI Improvements:
+:root {
+  --primary-bg-very-dark: #031223;
+  --primary-bg-almost-very-dark: #061f3e;
+  --primary-bg-dark: #082d58;
+  --primary-bg-medium: #00346f;
+  --primary-bg-light: #00418c;
+  --primary-bg-success: #a37b22;
+  --text-off-white: rgb(214, 214, 214);
+  --text-off-off-white: rgb(180, 180, 180);
+  --text-off-grey: #7e7e7e;
+  --text-red: #aa1e2b;
+  --text-dark-red: #901925;
 }
 */

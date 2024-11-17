@@ -40,15 +40,13 @@ label {
 }
 
 .delete-schema-btn {
-  background-color: #f21139;
-  color: white;
+  background-color: var(--text-red);
   border: none;
   padding: 10px 20px;
-  cursor: pointer;
 }
 
 .delete-schema-btn:hover {
-  background-color: rgb(255, 135, 135);
+  background-color: var(--text-dark-red);
 }
 
 textarea.small {
