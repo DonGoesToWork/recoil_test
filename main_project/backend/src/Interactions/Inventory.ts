@@ -1,17 +1,21 @@
-import { IO_Inventory, IS_Inventory } from "../z_generated/Shared_Data_Models/Inventory";
 import { clear_parent_id_list_gaps, delete_object_and_relations } from "../static_internal_logic/Generic_Remove";
 
 import Backend_State from "../static_internal_logic/Backend_State";
 import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "../utils/IA_Remove";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
+import { IO_Inventory } from "../z_generated/Shared_Data_Models/Inventory";
 import { IO_Rpg_Item } from "../z_generated/Shared_Data_Models/Rpg_Item";
 import { Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 // interaction middleware function to fill
 
-// DEV: Add function to interactions:
-
 export const iam_inventory_add_rpg_item = (state: Backend_State, inventory_id: string, rpg_item_id: string): void => {
+  // Sample Snippets:
+  // let inventory: IO_Inventory = inventory_get(state, inventory_id);
+  // let rpg_item: IO_Rpg_Item = rpg_item_get(state, rpg_item_id);
+  // inventory_add_rpg_item(state, inventory_id, rpg_item_id)
+};
+export const iam_inventory_remove_rpg_item = (state: Backend_State, inventory_id: string, rpg_item_id: string): void => {
   // Sample Snippets:
   // let inventory: IO_Inventory = inventory_get(state, inventory_id);
   // let rpg_item: IO_Rpg_Item = rpg_item_get(state, rpg_item_id);

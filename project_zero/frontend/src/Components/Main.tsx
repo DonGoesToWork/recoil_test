@@ -1,4 +1,4 @@
-import "./main.css";
+import "./Main.css";
 
 import { Child_Schema, Schema, Schema_Property, User_Interaction, get_bee_farm_object, get_bee_hive_object, get_bee_object, get_farmer_object, get_inventory_schema as get_inventory_object, get_player_object, get_item_schema as get_rpg_item_schema } from "../Data/Schema";
 import React, { useEffect, useState } from "react";
@@ -89,14 +89,8 @@ const App: React.FC = () => {
 
   const update_schema = (field: string, value: Update_Schema_Params, selected_schema_id: string): void => {
     if (selected_schema_id !== null) {
-      if (typeof value === "string") {
-        let updated_value = (value as string).replace(new RegExp(" ", "g"), "_");
-        const updated_schemas = schemas.map((schema) => (schema.id === selected_schema_id ? { ...schema, [field]: updated_value } : schema));
-        set_schemas(updated_schemas);
-      } else {
-        const updated_schemas = schemas.map((schema) => (schema.id === selected_schema_id ? { ...schema, [field]: value } : schema));
-        set_schemas(updated_schemas);
-      }
+      const updated_schemas = schemas.map((schema) => (schema.id === selected_schema_id ? { ...schema, [field]: value } : schema));
+      set_schemas(updated_schemas);
     }
   };
 

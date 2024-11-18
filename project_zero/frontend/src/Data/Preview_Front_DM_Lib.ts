@@ -1,5 +1,6 @@
+import { Schema, User_Interaction } from "./Schema";
+
 import Base_Generator from "./Base_Generator";
-import { Schema } from "./Schema";
 
 export default class Preview_Front_DM_Lib extends Base_Generator {
   constructor(schema: Schema) {
@@ -8,15 +9,17 @@ export default class Preview_Front_DM_Lib extends Base_Generator {
   }
 
   get_import_statements(): string {
-    return `import { ${this.schema.object_name}, ${this.generate_interface_imports()} } from "../Shared_Data_Models/${this.schema.object_name}";
+    let interface_imports = [
+      ...this.schema.user_interaction_list.map((user_interaction: User_Interaction) => `IA_${this.name_as_lower}_${user_interaction.function_name}`),
+      `IA_${this.name_as_lower}_create_new`,
+      ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property}`),
+    ].join(", ");
+
+    return `import { ${this.schema.object_name}, ${interface_imports} } from "../Shared_Data_Models/${this.schema.object_name}";
 
 import { GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT } from "../../utils/IA_Remove";
 import { I_Message_Sender } from "../../utils/I_Message_Sender";
 `;
-  }
-
-  generate_interface_imports(): string {
-    return [`IA_${this.name_as_lower}_create_new`, ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property}`)].join(", ");
   }
 
   generate_add_function(): string {
@@ -63,10 +66,34 @@ export let set_${this.name_as_lower}_${property} = (function_send_message: Funct
     new_${property}: new_${property},
   };
   function_send_message(data);
-};`;
+};
+`;
         return schema_property.do_gen_ia_set ? setFunction : "";
       })
       .filter(Boolean)
+      .join("\n");
+  }
+
+  get_interaction_functions(): string {
+    let tab_indent = this.tab_indent;
+
+    function get_user_interaction_object_line(object: string) {
+      object = object.toLocaleLowerCase();
+      return object === "" ? "" : `\n${tab_indent}${tab_indent}${object}_id: ${object}_id,`;
+    }
+
+    return this.schema.user_interaction_list
+      .map((user_interaction) => {
+        return `
+export let ${this.name_as_lower}_${user_interaction.function_name} = (function_send_message: Function, ${user_interaction.object_1.toLocaleLowerCase()}_id: string, ${user_interaction.object_2.toLocaleLowerCase()}_id: string): void => {
+  let data: IA_${this.name_as_lower}_${user_interaction.function_name} = {
+    object_class: "${this.name}",
+    function_name: "${user_interaction.function_name}",${get_user_interaction_object_line(user_interaction.object_1)}${get_user_interaction_object_line(user_interaction.object_2)}
+  };
+  function_send_message(data);
+};
+`;
+      })
       .join("\n");
   }
 
@@ -84,6 +111,9 @@ export let set_${this.name_as_lower}_${property} = (function_send_message: Funct
 
     // Generate set functions
     content += this.generate_set_functions();
+
+    // Generate interaction functions
+    content += this.get_interaction_functions();
 
     this.final_content = content;
   }

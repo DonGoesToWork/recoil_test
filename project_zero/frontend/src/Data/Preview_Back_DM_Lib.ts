@@ -1,4 +1,4 @@
-import { Schema, Schema_Property } from "./Schema";
+import { Schema, Schema_Property, User_Interaction } from "./Schema";
 
 import Base_Generator from "./Base_Generator";
 
@@ -12,13 +12,18 @@ export default class Preview_Back_DM_Lib extends Base_Generator {
 
   get_import_statements(): string {
     const { object_name } = this.schema;
-    const imports = [`IA_${this.name_as_lower}_create_new`, ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()}`)].join(", ");
+    const imports = [
+      ...this.schema.user_interaction_list.map((user_interaction: User_Interaction) => `IA_${this.name_as_lower}_${user_interaction.function_name}`),
+      `IA_${this.name_as_lower}_create_new`,
+      ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()}`),
+    ].join(", ");
 
     return `import { ${imports}, IO_${object_name}, IS_${object_name}, ${object_name} } from "../Shared_Data_Models/${object_name}";
 import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 import Backend_State from "../../static_internal_logic/Backend_State";
 import { Object_Class_Function_Map } from "../Object_Registration/Object_Registration";
 import { generate_unique_id } from "../../utils/utils";
+${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => `import { iam_${this.name_as_lower}_${user_interaction.function_name} } from "../../Interactions/${this.name}";`).join("\n")}
 `;
   }
 
@@ -98,12 +103,30 @@ let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Mes
       .join("\n");
   }
 
+  generate_ia_user_interaction_functions(): string {
+    function get_user_interaction_object_line(object: string) {
+      object = object.toLocaleLowerCase();
+      return object === "" ? "" : `, data.${object}_id`;
+    }
+
+    return this.schema.user_interaction_list
+      .map((user_interaction: User_Interaction) => {
+        return `let ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+  const data = message_action as IA_${this.name_as_lower}_${user_interaction.function_name};
+  iam_${this.name_as_lower}_${user_interaction.function_name}(state${get_user_interaction_object_line(user_interaction.object_1)}${get_user_interaction_object_line(user_interaction.object_2)});
+};
+`;
+      })
+      .join("\n");
+  }
+
   generate_backend_switch_function(): string {
     const { object_name } = this.schema;
     const switch_statements = [
       `x['${object_name}'] = {};`,
       `x['${object_name}']['ia_${this.name_as_lower}_create_new'] = ia_create_new_${this.name_as_lower};`,
       ...this.base_property_name_list.map((property) => `x['${object_name}']['ia_set_${this.name_as_lower}_${property.toLowerCase()}'] = ia_set_${this.name_as_lower}_${property.toLowerCase()};`),
+      ...this.schema.user_interaction_list.map((user_interaction) => `x['${object_name}']['ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()}'] = ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()};`),
     ].join("\n  ");
 
     return `export let Register_${object_name} = (x: Object_Class_Function_Map): void => {
@@ -120,6 +143,7 @@ ${this.generate_initialize_object_function()}
 ${this.generate_add_function()}
 ${this.generate_ia_add_function()}
 ${this.generate_set_functions()}
+${this.generate_ia_user_interaction_functions()}
 ${this.generate_backend_switch_function()}`;
   }
 }

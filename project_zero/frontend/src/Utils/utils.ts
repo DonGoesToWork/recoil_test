@@ -15,3 +15,7 @@ export const get_current_date = (): string => {
   const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+
+export const get_snake_case_lowercase_input = (input: string): string => {
+  return input.replace(" ", "_").toLocaleLowerCase();
+};

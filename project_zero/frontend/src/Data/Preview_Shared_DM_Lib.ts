@@ -1,5 +1,6 @@
+import { Schema, User_Interaction } from "./Schema";
+
 import Base_Generator from "./Base_Generator";
-import { Schema } from "./Schema";
 
 export default class Preview_Shared_DM_Lib extends Base_Generator {
   constructor(schema: Schema) {
@@ -120,7 +121,7 @@ export interface IS_${this.schema.object_name} {
 }`;
   }
 
-  get_interfaces_for_i_as() {
+  generate_ia_interfaces() {
     let parent_schema = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
     let dataModelEntry = `
 
@@ -150,6 +151,25 @@ export interface IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()} ex
     return dataModelEntry;
   }
 
+  generation_ia_user_interaction_interfaces() {
+    let tab_indent = this.tab_indent;
+
+    function get_user_interaction_object_line(object: string) {
+      object = object.toLocaleLowerCase();
+      return object === "" ? "" : `\n${tab_indent}${object}_id: string;`;
+    }
+
+    return this.schema.user_interaction_list
+      .map((user_interaction: User_Interaction) => {
+        return `
+export interface IA_${this.name_as_lower}_${user_interaction.function_name} extends Pre_Message_Action_Send {
+  object_class: string;
+  function_name: string;${get_user_interaction_object_line(user_interaction.object_1)}${get_user_interaction_object_line(user_interaction.object_2)}
+}`;
+      })
+      .join("\n");
+  }
+
   // Shared data model entry first
   get_shared_data_model_entry() {
     let dataModelEntry = "";
@@ -170,7 +190,10 @@ export interface IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()} ex
     dataModelEntry += this.get_create_object_interface();
 
     // IAs
-    dataModelEntry += this.get_interfaces_for_i_as();
+    dataModelEntry += this.generate_ia_interfaces();
+
+    // IA User Interactions
+    dataModelEntry += this.generation_ia_user_interaction_interfaces();
 
     this.final_content = dataModelEntry;
   }

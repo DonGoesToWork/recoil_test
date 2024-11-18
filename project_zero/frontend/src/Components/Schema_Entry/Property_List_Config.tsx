@@ -1,9 +1,10 @@
 import "./List_Config_Base.css";
 
-import { Schema, Schema_Property, get_default_string_property } from "../../Data/Schema";
+import { Schema, Schema_Property, get_default_string_property_blank } from "../../Data/Schema";
 import { useEffect, useState } from "react";
 
 import { Update_Schema_Params } from "../Main";
+import { get_snake_case_lowercase_input } from "../../Utils/utils";
 
 interface Property_List_Config_Props {
   selected_schema: Schema;
@@ -30,7 +31,7 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
   };
 
   const handle_add_property = () => {
-    const updated_properties = [...schema_properties_input, get_default_string_property("x")];
+    const updated_properties = [...schema_properties_input, get_default_string_property_blank()];
     set_schema_properties_input(updated_properties);
     update_schema("property_list", updated_properties, selected_schema.id);
   };
@@ -55,10 +56,10 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
           {schema_properties_input.map((property, index) => (
             <tr key={index} className={index % 2 === 0 ? "even-row" : "odd-row"}>
               <td>
-                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", e.target.value)} />
+                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", get_snake_case_lowercase_input(e.target.value))} />
               </td>
               <td>
-                <input type="text" value={property.default_value} onChange={(e) => handle_edit_property(index, "default_value", e.target.value)} />
+                <input type="text" value={property.default_value} onChange={(e) => handle_edit_property(index, "default_value", get_snake_case_lowercase_input(e.target.value))} />
               </td>
               <td className="radio-column">
                 <input type="checkbox" checked={property.do_gen_ia_set} onClick={() => {}} onChange={() => handle_edit_property(index, "do_gen_ia_set", !property.do_gen_ia_set)} />

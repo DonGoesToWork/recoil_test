@@ -4,6 +4,7 @@ import { Child_Schema, Schema, get_default_child_schema } from "../../Data/Schem
 import { useEffect, useState } from "react";
 
 import { Update_Schema_Params } from "../Main";
+import { get_snake_case_lowercase_input } from "../../Utils/utils";
 
 interface Child_List_Config_Props {
   selected_schema: Schema;
@@ -15,7 +16,7 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
 
   useEffect(() => {
     set_schema_child_input_list([...selected_schema.child_list]);
-  }, [selected_schema.property_list]);
+  }, [selected_schema.child_list]);
 
   const handle_edit_property = (index: number, field: keyof Child_Schema, value: string | boolean) => {
     const updated_child_list = schema_child_list_input.map((prop, i) => (i === index ? { ...prop, [field]: value } : prop));
@@ -30,7 +31,7 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
   };
 
   const handle_add_property = () => {
-    const updated_child_list = [...schema_child_list_input, get_default_child_schema("x")];
+    const updated_child_list = [...schema_child_list_input, get_default_child_schema("")];
     set_schema_child_input_list(updated_child_list);
     update_schema("child_list", updated_child_list, selected_schema.id);
   };
@@ -58,13 +59,13 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
           {schema_child_list_input.map((property, index) => (
             <tr key={index} className={index % 2 === 0 ? "even-row" : "odd-row"}>
               <td>
-                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", e.target.value)} />
+                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", get_snake_case_lowercase_input(e.target.value))} />
               </td>
               <td>
-                <input type="text" value={property.id_list_start_size} onChange={(e) => handle_edit_property(index, "id_list_start_size", e.target.value)} />
+                <input type="text" value={property.id_list_start_size} onChange={(e) => handle_edit_property(index, "id_list_start_size", get_snake_case_lowercase_input(e.target.value))} />
               </td>
               <td>
-                <input type="text" value={property.id_list_max_size} onChange={(e) => handle_edit_property(index, "id_list_max_size", e.target.value)} />
+                <input type="text" value={property.id_list_max_size} onChange={(e) => handle_edit_property(index, "id_list_max_size", get_snake_case_lowercase_input(e.target.value))} />
               </td>
               <td className="radio-column">
                 <input type="checkbox" checked={property.id_list_allow_empty_indexes} onClick={() => {}} onChange={() => handle_edit_property(index, "id_list_allow_empty_indexes", !property.id_list_allow_empty_indexes)} />

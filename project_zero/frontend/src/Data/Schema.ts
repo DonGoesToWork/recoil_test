@@ -19,8 +19,8 @@ export type Child_Schema = {
 
 export type User_Interaction = {
   function_name: string;
-  target_object: string;
-  // user object will always get added by default as a preset value, so don't add here.
+  object_1: string;
+  object_2: string;
 };
 
 // Define a type for the Schema structure
@@ -42,8 +42,9 @@ function get_random_word() {
 
 export const get_default_user_interaction = (): User_Interaction => {
   return {
-    function_name: "do_action",
-    target_object: get_random_word(),
+    function_name: ``,
+    object_1: ``,
+    object_2: ``,
   };
 };
 
@@ -59,7 +60,16 @@ export const get_default_child_schema = (_name: string): Child_Schema => {
 export const get_default_string_property = (_name: string): Schema_Property => {
   return {
     name: _name,
-    default_value: "unassigned",
+    default_value: "undefined",
+    type: "string",
+    do_gen_ia_set: true,
+    do_gen_ia_get: true,
+  };
+};
+export const get_default_string_property_blank = (): Schema_Property => {
+  return {
+    name: "",
+    default_value: "",
     type: "string",
     do_gen_ia_set: true,
     do_gen_ia_get: true,
@@ -86,7 +96,7 @@ export const get_bee_object = (id?: string): Schema => {
     do_gen_ia_create_new: true,
     child_list: [],
     property_list: [get_default_string_property("Name")],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [],
     date: get_current_date(),
   };
 };
@@ -101,7 +111,7 @@ export const get_bee_hive_object = (id?: string): Schema => {
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Bee`)],
     property_list: [get_default_string_property("Name")],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [],
     date: get_current_date(),
   };
 };
@@ -116,7 +126,7 @@ export const get_bee_farm_object = (id?: string): Schema => {
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Bee_Hive`)],
     property_list: [get_default_string_property("Name")],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [],
     date: get_current_date(),
   };
 };
@@ -131,7 +141,7 @@ export const get_farmer_object = (id?: string): Schema => {
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Bee_Farm`)],
     property_list: [get_default_string_property("Name")],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [],
     date: get_current_date(),
   };
 };
@@ -160,7 +170,13 @@ export const get_player_object = (id?: string): Schema => {
       get_default_number_property("Melee_Heal_On_Hit_Flat"),
       get_default_number_property("Melee_Heal_On_Hit_Percent"),
     ],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [
+      {
+        function_name: "attack_target",
+        object_1: "Player",
+        object_2: "Entity",
+      },
+    ],
     date: get_current_date(),
   };
 };
@@ -175,7 +191,18 @@ export const get_inventory_schema = (id?: string): Schema => {
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Rpg_Item`)],
     property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path")],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [
+      {
+        function_name: "add_rpg_item",
+        object_1: "inventory",
+        object_2: "rpg_item",
+      },
+      {
+        function_name: "remove_rpg_item",
+        object_1: "inventory",
+        object_2: "rpg_item",
+      },
+    ],
     date: get_current_date(),
   };
 };
@@ -190,7 +217,7 @@ export const get_item_schema = (id?: string): Schema => {
     do_gen_ia_create_new: true,
     child_list: [],
     property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path"), get_default_string_property("Flag_Quest_Item"), get_default_string_property("Flag_Cursed")],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [],
     date: get_current_date(),
   };
 };
@@ -213,7 +240,7 @@ export const get_default_schema = (id?: string): Schema => {
       get_default_string_property(get_random_word()),
       get_default_string_property(get_random_word()),
     ],
-    user_interaction_list: [get_default_user_interaction()],
+    user_interaction_list: [],
     date: get_current_date(),
   };
 };
