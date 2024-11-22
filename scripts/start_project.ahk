@@ -6,17 +6,6 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 F3::reload
 
 F2::main()
-Send, cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
-Send, ^+rMain Frontend^+t
-
-Send, cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
-Send, ^+Zero Backend^+t
-
-Send, cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
-Send, ^+Zero Frontend^+t
-
-Send, ^{Tab}
-
 return
 
 create_tab(title, create_tab) {
@@ -38,15 +27,17 @@ main() {
 	WinWaitActive, ahk_class CASCADIA_HOSTING_WINDOW_CLASS
 
 	create_tab("Git", true)
-	create_tab("Main Frontend", true)
 	create_tab("Main Backend", true)
-	create_tab("Zero Frontend", true)
-	create_tab("Zero Backend", false)
+	create_tab("Main Frontend", true)
+	create_tab("Zero Backend", true)
+	create_tab("Zero Frontend", false)
 	
 	Sleep 100
 	Send ^{Tab}
 	
 	Send, cd "E:\Web Dev\2024_Projects\lootquest8\"
+	Sleep 10
+	Send, {Enter}
 	Sleep 100
 	Send, git status
 	Sleep 10
