@@ -71,20 +71,14 @@ cd "E:\Web Dev\2024_Projects\lootquest8"
 
 # Next, Main Project (update paths to your root path):
 
-cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
-.\start_main_frontend.ps1
-
-cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
-.\start_main_backend.ps1
+cd "E:\Web Dev\2024_Projects\lootquest8\scripts" ; .\start_main_frontend.ps1
+cd "E:\Web Dev\2024_Projects\lootquest8\scripts" ; .\start_main_backend.ps1
 
 - NOTE: If you move the project, change the path in ./scripts/project_path.txt to the new location, as well as the above paths.
 
 # Project Zero:
 
-cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
-.\start_generator_backend.ps1
-
-cd "E:\Web Dev\2024_Projects\lootquest8\scripts"
-.\start_generator_frontend.ps1
+cd "E:\Web Dev\2024_Projects\lootquest8\scripts" ; .\start_project_zero_backend.ps1
+cd "E:\Web Dev\2024_Projects\lootquest8\scripts" ; .\start_project_zero_frontend.ps1
 
 - NOTE: I recommend just making your own scripts and process for maximum efficienty. The above is stated to get you started.
