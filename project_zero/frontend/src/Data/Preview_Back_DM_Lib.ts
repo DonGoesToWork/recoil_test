@@ -104,16 +104,11 @@ let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Mes
   }
 
   generate_ia_user_interaction_functions(): string {
-    function get_user_interaction_object_line(object: string) {
-      object = object.toLocaleLowerCase();
-      return object === "" ? "" : `, data.${object}_id`;
-    }
-
     return this.schema.user_interaction_list
       .map((user_interaction: User_Interaction) => {
         return `let ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   const data = message_action as IA_${this.name_as_lower}_${user_interaction.function_name};
-  iam_${this.name_as_lower}_${user_interaction.function_name}(state${get_user_interaction_object_line(user_interaction.object_1)}${get_user_interaction_object_line(user_interaction.object_2)});
+  iam_${this.name_as_lower}_${user_interaction.function_name}(state, data);
 };
 `;
       })
