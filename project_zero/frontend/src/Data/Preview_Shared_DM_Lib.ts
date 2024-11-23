@@ -47,10 +47,10 @@ ${this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}s
         ? ""
         : "\n" +
           this.child_property_name_list
-            .map((child: string) => {
+            .map((child: string, i: number) => {
               return `${this.tab_indent}${this.tab_indent}{
-      class_name: \"${child}\",
-      id_list_name: \"${child.toLocaleLowerCase()}_ids\",
+      class_name: \"${this.child_property_list[i].name}\",
+      id_list_name: \"${child.toLocaleLowerCase()}\",
     },`;
             })
             .join("\n") +
