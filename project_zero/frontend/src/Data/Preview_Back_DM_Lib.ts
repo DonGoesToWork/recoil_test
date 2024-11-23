@@ -1,12 +1,13 @@
 import { Schema, Schema_Property, User_Interaction } from "./Schema";
 
 import Base_Generator from "./Base_Generator";
+import { fix_schema } from "./Schema_Lib";
 
 export default class Preview_Back_DM_Lib extends Base_Generator {
   final_content: string = "";
 
-  constructor(schema: Schema) {
-    super(schema);
+  constructor(schema: Schema, schemas: Schema[], do_fix_schemas: boolean) {
+    super(do_fix_schemas ? fix_schema(schema, schemas, true) : schema);
     this.generate_backend_action_functions();
   }
 
@@ -15,7 +16,7 @@ export default class Preview_Back_DM_Lib extends Base_Generator {
     const imports = [
       ...this.schema.user_interaction_list.map((user_interaction: User_Interaction) => `IA_${this.name_as_lower}_${user_interaction.function_name}`),
       `IA_${this.name_as_lower}_create_new`,
-      ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()}`),
+      ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property}`),
     ].join(", ");
 
     return `import { ${imports}, IO_${object_name}, IS_${object_name}, ${object_name} } from "../Shared_Data_Models/${object_name}";
@@ -33,7 +34,7 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
     const base_prop_default_values = this.base_property_list.length ? this.base_property_list.map((prop) => `${prop.default_value}`) : [];
     const base_props = this.base_property_name_list.length ? this.base_property_name_list.map((prop, i) => `${prop}: ${this.name_as_lower}.${prop} ?? "${base_prop_default_values[i]}"`) : [];
 
-    const child_props = this.child_property_list.length ? this.child_property_list.map((prop) => `${prop.name.toLocaleLowerCase()}_ids: { ids: [], start_size: ${prop.id_list_start_size}, max_size: ${prop.id_list_max_size}, allow_empty_indexes: ${prop.id_list_allow_empty_indexes} }`) : [];
+    const child_props = this.child_property_list.length ? this.child_property_list.map((prop) => `${prop.name}_ids: { ids: [], start_size: ${prop.id_list_start_size}, max_size: ${prop.id_list_max_size}, allow_empty_indexes: ${prop.id_list_allow_empty_indexes} }`) : [];
     const combined_props = [...base_props, ...child_props].join(`,\n${this.tab_indent}`);
     const parent_id = this.has_parent() ? `parent_id: ${this.name_as_lower}.parent_id,` : "";
 

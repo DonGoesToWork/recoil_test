@@ -6,6 +6,7 @@ import Preview_Global_Class_Map_Lib from "./Preview_Global_Class_Map";
 import Preview_Object_Registration_DM_Lib from "./Preview_Object_Registration_DM_Lib";
 import Preview_Shared_DM_Lib from "./Preview_Shared_DM_Lib";
 import { Schema } from "./Schema";
+import { fix_schemas } from "./Schema_Lib";
 
 interface Client_Message {
   object_file_data: Object_File_Data[];
@@ -48,15 +49,18 @@ export const import_schemas = (): Schema[] | null => {
 
 // Handle schema export functionality.
 export const export_schemas = (schemas: Schema[]) => {
+  // Fix schemas manually so that we only do it once (and not many times repeatedly).
+  schemas = fix_schemas(schemas);
+
   let export_data: Client_Message = {
     object_file_data: schemas.map((schema: Schema) => ({
       object_name: schema.object_name,
-      backend_data_model: new Preview_Back_DM_Lib(schema).final_content,
-      frontend_data_model: new Preview_Front_DM_Lib(schema).final_content,
-      shared_data_model: new Preview_Shared_DM_Lib(schema).final_content,
+      backend_data_model: new Preview_Back_DM_Lib(schema, schemas, false).final_content,
+      frontend_data_model: new Preview_Front_DM_Lib(schema, schemas, false).final_content,
+      shared_data_model: new Preview_Shared_DM_Lib(schema, schemas, false).final_content,
     })),
-    object_registration_contents: new Preview_Object_Registration_DM_Lib(schemas).final_content,
-    global_class_map_contents: new Preview_Global_Class_Map_Lib(schemas).finalContent,
+    object_registration_contents: new Preview_Object_Registration_DM_Lib(schemas, false).final_content,
+    global_class_map_contents: new Preview_Global_Class_Map_Lib(schemas, false).finalContent,
     schemas: schemas,
   };
 

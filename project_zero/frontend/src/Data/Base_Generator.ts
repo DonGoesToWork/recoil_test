@@ -20,7 +20,7 @@ export default class Base_Generator {
   combined_property_list_no_children: string[] = [];
 
   has_parent() {
-    return this.schema.parent !== "";
+    return this.schema.parent_object_names_list.length > 0;
   }
 
   add_parent_id(arr: string[]): string[] {

@@ -30,19 +30,19 @@ const update_output = (select_schema_data: Select_RpgClass_Props) => {
 
   switch (selected_tab) {
     case 0:
-      set_output_text(new Preview_Shared_DM_Lib(selected_schema).final_content);
+      set_output_text(new Preview_Shared_DM_Lib(selected_schema, schemas, true).final_content);
       break;
     case 1:
-      set_output_text(new Preview_Front_DM_Lib(selected_schema).final_content);
+      set_output_text(new Preview_Front_DM_Lib(selected_schema, schemas, true).final_content);
       break;
     case 2:
-      set_output_text(new Preview_Back_DM_Lib(selected_schema).final_content);
+      set_output_text(new Preview_Back_DM_Lib(selected_schema, schemas, true).final_content);
       break;
     case 3:
-      set_output_text(new Preview_Singles_DM_Lib(schemas).final_content);
+      set_output_text(new Preview_Singles_DM_Lib(schemas, true).final_content);
       break;
     case 4:
-      set_output_text(new Preview_Global_Class_Map_Lib(schemas).finalContent);
+      set_output_text(new Preview_Global_Class_Map_Lib(schemas, true).finalContent);
       break;
     default:
       set_output_text("");
@@ -65,7 +65,7 @@ const App: React.FC = () => {
     get_rpg_item_schema(generate_unique_id()),
   ]);
   const [selected_schema_id, set_selected_schema_id] = useState<string>(firstId);
-  const [output_text, set_output_text] = useState<string>(new Preview_Shared_DM_Lib(schemas[0]).final_content);
+  const [output_text, set_output_text] = useState<string>(new Preview_Shared_DM_Lib(schemas[0], schemas).final_content);
   const [selected_tab, set_selected_tab] = useState<number>(0);
   const [current_page, set_current_page] = useState(1);
   const [third_column_view, set_third_column_view] = useState(5); // in prod, we use 6

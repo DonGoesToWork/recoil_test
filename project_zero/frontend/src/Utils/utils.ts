@@ -16,6 +16,10 @@ export const get_current_date = (): string => {
   return `${year}-${month}-${day}`;
 };
 
+export const get_snake_case = (input: string): string => {
+  return input.replace(" ", "_");
+};
+
 export const get_snake_case_lowercase_input = (input: string): string => {
   return input.replace(" ", "_").toLocaleLowerCase();
 };

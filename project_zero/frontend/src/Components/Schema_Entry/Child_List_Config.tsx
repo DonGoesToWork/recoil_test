@@ -1,10 +1,10 @@
 import "./List_Config_Base.css";
 
 import { Child_Schema, Schema, get_default_child_schema } from "../../Data/Schema";
+import { get_snake_case, get_snake_case_lowercase_input } from "../../Utils/utils";
 import { useEffect, useState } from "react";
 
 import { Update_Schema_Params } from "../Main";
-import { get_snake_case_lowercase_input } from "../../Utils/utils";
 
 interface Child_List_Config_Props {
   selected_schema: Schema;
@@ -59,7 +59,7 @@ const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema,
           {schema_child_list_input.map((property, index) => (
             <tr key={index} className={index % 2 === 0 ? "even-row" : "odd-row"}>
               <td>
-                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", get_snake_case_lowercase_input(e.target.value))} />
+                <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", get_snake_case(e.target.value))} />
               </td>
               <td>
                 <input type="text" value={property.id_list_start_size} onChange={(e) => handle_edit_property(index, "id_list_start_size", get_snake_case_lowercase_input(e.target.value))} />

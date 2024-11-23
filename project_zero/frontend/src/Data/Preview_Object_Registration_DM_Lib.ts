@@ -1,11 +1,12 @@
 import { Schema } from "./Schema";
+import { fix_schemas } from "./Schema_Lib";
 
 export default class Preview_Object_Registration_DM_Lib {
   schemas: Schema[];
   final_content: string = "";
 
-  constructor(_schemas: any) {
-    this.schemas = _schemas;
+  constructor(_schemas: Schema[], do_fix_schemas: boolean) {
+    this.schemas = do_fix_schemas ? fix_schemas(_schemas) : _schemas;
     this.generate_backend_action_functions();
   }
 

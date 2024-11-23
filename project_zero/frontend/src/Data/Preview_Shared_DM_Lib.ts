@@ -1,10 +1,11 @@
 import { Schema, User_Interaction } from "./Schema";
 
 import Base_Generator from "./Base_Generator";
+import { fix_schema } from "./Schema_Lib";
 
 export default class Preview_Shared_DM_Lib extends Base_Generator {
-  constructor(schema: Schema) {
-    super(schema);
+  constructor(schema: Schema, schemas: Schema[], do_fix_schemas: boolean) {
+    super(do_fix_schemas ? fix_schema(schema, schemas, true) : schema);
     this.get_shared_data_model_entry();
   }
 
@@ -23,16 +24,16 @@ import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces
 export interface IT_${this.schema.object_name} extends Data_Model_Base {
   class_name: string;
   parent_data: {
-    class_name: string;
+    class_names: string[];
     id_list_name: string;
   } | null;
   child_class_data_list: Child_Class_Data[];
   properties: {
-${this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: string;`).join("\n")}
+${this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string;`).join("\n")}
   };
   functions: {
 ${this.tab_indent}${this.tab_indent}create_new: string;
-${this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: string;`).join("\n")}
+${this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: string;`).join("\n")}
   };
 }
 `;
@@ -40,9 +41,9 @@ ${this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}s
   }
 
   get_plain_object_definition(): string {
-    const schemaTitle = this.schema.object_name;
+    const schema_title = this.schema.object_name;
 
-    const childObjectList =
+    const child_object_list =
       this.child_property_name_list.length == 0
         ? ""
         : "\n" +
@@ -50,35 +51,35 @@ ${this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}s
             .map((child: string, i: number) => {
               return `${this.tab_indent}${this.tab_indent}{
       class_name: \"${this.child_property_list[i].name}\",
-      id_list_name: \"${child.toLocaleLowerCase()}\",
+      id_list_name: \"${child}\",
     },`;
             })
             .join("\n") +
           "\n" +
           this.tab_indent;
 
-    const objectFunctionList = this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}: "${x.toLocaleLowerCase()}",`).join("\n");
-    const functionList = this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x.toLocaleLowerCase()}: "ia_set_${this.name_as_lower}_${x.toLocaleLowerCase()}",`).join("\n");
+    const object_function_list = this.combined_property_list_no_children.map((x) => `${this.tab_indent}${this.tab_indent}${x}: "${x}",`).join("\n");
+    const function_list = this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: "ia_set_${this.name_as_lower}_${x}",`).join("\n");
 
     const parent_data = this.has_parent()
       ? `,\n${this.tab_indent}parent_data: {
-    class_name: \"${this.schema.parent}\",
-    id_list_name: "${schemaTitle.toLocaleLowerCase()}_ids",
+    class_names: [${this.schema.parent_object_names_list.map((x) => `"${x}"`).join(", ")}], 
+    id_list_name: "${schema_title}_ids",
   }`
       : `,\n${this.tab_indent}parent_data: null`;
 
     return `
 // Complete Class Definition w/ Full Metadata.
 
-export const ${schemaTitle}: IT_${schemaTitle} = {
+export const ${schema_title}: IT_${schema_title} = {
   class_name: \"${this.schema.object_name}\"${parent_data},
-  child_class_data_list: [${childObjectList}],
+  child_class_data_list: [${child_object_list}],
   properties: {
-${objectFunctionList}
+${object_function_list}
   },
   functions: {
-    create_new: "ia_${schemaTitle.toLocaleLowerCase()}_create_new",
-${functionList}
+    create_new: "ia_${schema_title}_create_new",
+${function_list}
   },
 };
 `;
@@ -90,7 +91,7 @@ ${functionList}
         ? ""
         : `\n${this.child_property_name_list
             .map(
-              (x) => `${this.tab_indent}${x.toLocaleLowerCase()}: {
+              (x) => `${this.tab_indent}${x}: {
     ids: string[];
     start_size: number;
     max_size: number;
@@ -104,7 +105,7 @@ ${functionList}
 
 export interface IO_${this.schema.object_name} {
   ${this.add_parent_id([...this.base_property_name_list, "id"])
-    .map((x) => `${x.toLocaleLowerCase()}: string;`)
+    .map((x) => `${x}: string;`)
     .join(`\n${this.tab_indent}`)}${child_str}
 }
 `;
@@ -117,19 +118,19 @@ export interface IO_${this.schema.object_name} {
 // Class Definition for Object Creation
 
 export interface IS_${this.schema.object_name} {
-  ${[...this.base_property_name_list, "id"].map((x) => `${x.toLocaleLowerCase()}?: string;`).join(`\n${this.tab_indent}`)}${parent_str}
+  ${[...this.base_property_name_list, "id"].map((x) => `${x}?: string;`).join(`\n${this.tab_indent}`)}${parent_str}
 }`;
   }
 
   generate_ia_interfaces() {
     let parent_schema = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
-    let dataModelEntry = `
+    let data_model_entry = `
 
 // Interface Argument(s) - Back-End Function Interfaces.
 `;
 
     // Add interface (always the same)
-    dataModelEntry += `
+    data_model_entry += `
 export interface IA_${this.name_as_lower}_create_new extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;${parent_schema}
@@ -138,24 +139,23 @@ export interface IA_${this.name_as_lower}_create_new extends Pre_Message_Action_
 
     // Dynamically generate set interfaces.
     this.base_property_name_list.forEach((property) => {
-      dataModelEntry += `
-export interface IA_${this.name_as_lower}_set_${property.toLocaleLowerCase()} extends Pre_Message_Action_Send {
+      data_model_entry += `
+export interface IA_${this.name_as_lower}_set_${property} extends Pre_Message_Action_Send {
   object_class: string;
   function_name: string;
   ${this.name_as_lower}_id: string;
-  new_${property.toLocaleLowerCase()}: string;
+  new_${property}: string;
 }
 `;
     });
 
-    return dataModelEntry;
+    return data_model_entry;
   }
 
   generation_ia_user_interaction_interfaces() {
     let tab_indent = this.tab_indent;
 
     function get_user_interaction_object_line(object: string) {
-      object = object.toLocaleLowerCase();
       return object === "" ? "" : `\n${tab_indent}${object}_id: string;`;
     }
 
@@ -172,29 +172,29 @@ export interface IA_${this.name_as_lower}_${user_interaction.function_name} exte
 
   // Shared data model entry first
   get_shared_data_model_entry() {
-    let dataModelEntry = "";
+    let data_model_entry = "";
 
     // Create imports first
-    dataModelEntry += this.get_imports_definitions(); // Works
+    data_model_entry += this.get_imports_definitions(); // Works
 
     // Add Interface Type
-    dataModelEntry += this.get_interface_type_section(); // Works
+    data_model_entry += this.get_interface_type_section(); // Works
 
     // Plain Object Definition
-    dataModelEntry += this.get_plain_object_definition();
+    data_model_entry += this.get_plain_object_definition();
 
     // Interface Objects
-    dataModelEntry += this.get_object_interface();
+    data_model_entry += this.get_object_interface();
 
     // Add Object Creation Interface
-    dataModelEntry += this.get_create_object_interface();
+    data_model_entry += this.get_create_object_interface();
 
     // IAs
-    dataModelEntry += this.generate_ia_interfaces();
+    data_model_entry += this.generate_ia_interfaces();
 
     // IA User Interactions
-    dataModelEntry += this.generation_ia_user_interaction_interfaces();
+    data_model_entry += this.generation_ia_user_interaction_interfaces();
 
-    this.final_content = dataModelEntry;
+    this.final_content = data_model_entry;
   }
 }

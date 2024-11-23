@@ -1,11 +1,12 @@
 import { Schema } from "./Schema";
+import { fix_schemas } from "./Schema_Lib";
 
 export default class Preview_Global_Class_Map_Lib {
   schemas: Schema[];
   finalContent: string = "";
 
-  constructor(_schemas: any) {
-    this.schemas = _schemas;
+  constructor(_schemas: Schema[], do_fix_schemas: boolean) {
+    this.schemas = do_fix_schemas ? fix_schemas(_schemas) : _schemas;
     this.finalContent = this.get_object_registration();
   }
 

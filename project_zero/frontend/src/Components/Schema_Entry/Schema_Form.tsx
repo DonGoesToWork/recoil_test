@@ -21,11 +21,6 @@ const Schema_Form: React.FC<Schema_Form_Props> = ({ selected_schema, update_sche
       <input className="schema-title" value={selected_schema.object_name} onChange={(e) => update_schema("object_name", e.target.value, selected_schema.id)} placeholder="Schema Title" />
 
       <hr />
-      <label>Parent Name</label>
-      <h3>Object that includes this object.</h3>
-      <input className="schema-title" value={selected_schema.parent} onChange={(e) => update_schema("parent", e.target.value, selected_schema.id)} placeholder="Parent Object" />
-
-      <hr />
       <label>Generate IA Create Function</label>
       <h3>Create the interaction (ia = Inter-Action) for creating new objects from schema?</h3>
       <span style={{ marginBottom: "10px" }}>

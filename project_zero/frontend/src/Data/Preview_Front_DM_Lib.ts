@@ -1,10 +1,11 @@
 import { Schema, User_Interaction } from "./Schema";
 
 import Base_Generator from "./Base_Generator";
+import { fix_schema } from "./Schema_Lib";
 
 export default class Preview_Front_DM_Lib extends Base_Generator {
-  constructor(schema: Schema) {
-    super(schema);
+  constructor(schema: Schema, schemas: Schema[], do_fix_schemas: boolean) {
+    super(do_fix_schemas ? fix_schema(schema, schemas, true) : schema);
     this.generate_action_functions();
   }
 
@@ -27,9 +28,10 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
     let parent_schema = "";
     let input_args = "";
 
+    // TODO 11/22 - Fix this.
     if (this.has_parent()) {
-      parent_arg = `, ${this.schema.parent.toLocaleLowerCase()}_id: string`;
-      parent_schema = `,\n${this.tab_indent}${this.tab_indent}parent_id: ${this.schema.parent.toLocaleLowerCase()}_id,`;
+      parent_arg = `, ${this.schema.parent_object_names_list[0].toLocaleLowerCase()}_id: string`;
+      parent_schema = `,\n${this.tab_indent}${this.tab_indent}parent_id: ${this.schema.parent_object_names_list[0].toLocaleLowerCase()}_id,`;
     }
 
     // Front-End - generateAddFunction() - We only pass the 'user_input' properties to the back-end and let it generate the rest.
@@ -46,9 +48,12 @@ export let create_new_${this.name_as_lower} = (function_send_message: Function${
   }
 
   generate_remove_function(): string {
+    // TODO 11/22 - Fix this.
+    let object_id_arg = (this.schema.object_name + "_id").toLocaleLowerCase();
+
     return `
-export let remove_${this.name_as_lower} = (function_send_message: I_Message_Sender, ${this.schema.parent.toLocaleLowerCase()}_id: string): void => {
-  function_send_message(GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT(${this.schema.object_name}.class_name, ${this.schema.parent.toLocaleLowerCase()}_id));
+export let remove_${this.name_as_lower} = (function_send_message: I_Message_Sender, ${object_id_arg}: string): void => {
+  function_send_message(GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT(${this.schema.object_name}.class_name, ${object_id_arg}));
 };
 `;
   }
@@ -78,7 +83,6 @@ export let set_${this.name_as_lower}_${property} = (function_send_message: Funct
     let tab_indent = this.tab_indent;
 
     function get_user_interaction_object_line(object: string) {
-      object = object.toLocaleLowerCase();
       return object === "" ? "" : `\n${tab_indent}${tab_indent}${object}_id: ${object}_id,`;
     }
 
