@@ -1,7 +1,7 @@
-import { Bee, IO_Bee } from "../z_generated/Shared_Data_Models/Bee";
-import { Bee_Farm, IO_Bee_Farm } from "../z_generated/Shared_Data_Models/Bee_Farm";
-import { Bee_Hive, IO_Bee_Hive } from "../z_generated/Shared_Data_Models/Bee_Hive";
-import { Farmer, IO_Farmer } from "../z_generated/Shared_Data_Models/Farmer";
+import { MO_Bee, SO_Bee } from "../z_generated/Shared_Data_Models/Bee";
+import { MO_Bee_Farm, SO_Bee_Farm } from "../z_generated/Shared_Data_Models/Bee_Farm";
+import { MO_Bee_Hive, SO_Bee_Hive } from "../z_generated/Shared_Data_Models/Bee_Hive";
+import { MO_Farmer, SO_Farmer } from "../z_generated/Shared_Data_Models/Farmer";
 import { Message_Action_Send, Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 import { create_new_bee_farm_w_parent_farmer, remove_bee_farm } from "../z_generated/Data_Models/Bee_Farm";
 import { create_new_bee_hive_w_parent_bee_farm, remove_bee_hive } from "../z_generated/Data_Models/Bee_Hive";
@@ -20,7 +20,7 @@ const HiveComponent: React.FC = () => {
   let server_state_ref = "0"; // TODO - Implement
 
   useEffect(() => {
-    const client = new WebSocketClient("ws://localhost:5000", handleMessage, setConnected);
+    const client = new WebSocketClient("ws://localhost:5000", handleMessage, setConnected, setState);
     setWsClient(client);
     return () => client.close();
   }, []);
@@ -91,38 +91,36 @@ const HiveComponent: React.FC = () => {
     );
   }
 
-  console.log("TEST: ", state);
-
   return (
     <div>
       <h1>Let's Grow!</h1>
 
       <button onClick={() => create_new_farmer_wo_parent(__SM__)}>Add Farmer</button>
-      {state[Farmer.class_name]?.map((farmer: IO_Farmer) => (
+      {state[MO_Farmer.class_name]?.map((farmer: SO_Farmer) => (
         <div key={farmer.id}>
           <h2>{farmer.name}</h2>
           <h3>{farmer.id}</h3>
           <button onClick={() => remove_farmer(__SM__, farmer.id)}>Remove Farmer</button>💩
           <button onClick={() => create_new_bee_farm_w_parent_farmer(__SM__, farmer.id)}>Add Bee Farm</button>
-          {state[Bee_Farm.class_name]
-            ?.filter((farm: IO_Bee_Farm) => farm.parent_id === farmer.id)
-            .map((farm: IO_Bee_Farm) => (
+          {state[MO_Bee_Farm.class_name]
+            ?.filter((farm: SO_Bee_Farm) => farm.parent_id === farmer.id)
+            .map((farm: SO_Bee_Farm) => (
               <div key={farm.id}>
                 <h2>{farm.name}</h2>
                 <h3>{farm.id}</h3>
                 <button onClick={() => remove_bee_farm(__SM__, farm.id)}>Remove Farm</button>💩
                 <button onClick={() => create_new_bee_hive_w_parent_bee_farm(__SM__, farm.id)}>Add Hive</button>
-                {state[Bee_Hive.class_name]
-                  ?.filter((hive: IO_Bee_Hive) => hive.parent_id === farm.id)
-                  .map((hive: IO_Bee_Hive) => (
+                {state[MO_Bee_Hive.class_name]
+                  ?.filter((hive: SO_Bee_Hive) => hive.parent_id === farm.id)
+                  .map((hive: SO_Bee_Hive) => (
                     <div key={hive.id}>
                       <h3>{hive.name}</h3>
                       <h3>{hive.id}</h3>
                       <button onClick={() => remove_bee_hive(__SM__, hive.id)}>Remove Hive</button>💩
                       <button onClick={() => create_new_bee_w_parent_bee_hive(__SM__, hive.id)}>Add Bee</button>
-                      {state[Bee.class_name]
-                        ?.filter((bee: IO_Bee) => bee.parent_id === hive.id)
-                        .map((bee: IO_Bee) => (
+                      {state[MO_Bee.class_name]
+                        ?.filter((bee: SO_Bee) => bee.parent_id === hive.id)
+                        .map((bee: SO_Bee) => (
                           <div key={bee.id}>
                             <p>{bee.name}</p>
                             <p>{bee.id}</p>

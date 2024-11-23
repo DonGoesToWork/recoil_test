@@ -6,11 +6,11 @@ Description:
 
 - Auto-generate parent data. Allow for objects to have multiple possible parents, but only one actual parent. Use this to allow objects to be slotted into different objects as a child without causing problems when specific item type isn't present in one object type or another.
 
-Intended use case is to let objects go into multiple object types without problesm. For instance, stat containers can be put onto players, items and monsters and be removed as necessary without causing issues.
+Intended use case is to let objects go into multiple object types without problems. For instance, stat containers can be put onto players, items and monsters and be removed as necessary without causing issues.
 
 Status:
 
-- Started! Fix create_new methods tomorrow. (Remove worked fine though.)
+- Actually test multiple parent functionality and ensure add/removes are all working as intended. Could psosibly be done.
 
 ---
 
@@ -43,6 +43,27 @@ Optional groups are parent objects that do not delete children when children are
 Major 4: Object Transfer
 
 - If an object has a certain object type as a child, then it should be possible to transfer an object from one parent to another effortlessly.
+
+---
+
+Major 5:
+
+Better Reconnection support:
+
+We currently resync with the server automatically on reconnect by 'adding' all state object records to the client.
+A more sophisticated implementation would be to playback only changes that occured on disconnect.
+To do that, we could probably track a few variables while a client is disconnected and replay changes based on an optimal strategy.
+
+- Strat A: Track all changes since disconnect and resend those.
+- Strat B: Track only objects that were changed since disconnect and resend those.
+
+Based on total number of changes and number of uniquely touched objects, we can decide what playback strategy to use.
+In general, the less evenly our changes are spread across different classes, the better strat A is and the reverse. Thus:
+
+- 1 change over 1 object (or 10 over 10) = Strat A
+- 100 changes over 10 objects = Strat B
+
+Because of Project Zero, we could even exactly calculate the optimal strategy with a minimal performance hit. Project Zero can write out an estimated (or exact, if needed) object class size (in it's MO\_[object]) and use that to determine which message would be smaller: strat A or B.
 
 ---
 

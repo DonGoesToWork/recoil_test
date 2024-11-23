@@ -12,13 +12,13 @@ export default class Preview_Global_Class_Map_Lib {
 
   get_object_registration() {
     let filtered_schemas = this.schemas.filter((x: Schema) => x.object_name !== "");
-    let individual_imports: string = filtered_schemas.map((x: Schema) => `import { ${x.object_name} } from "../Shared_Data_Models/${x.object_name}";`).join("\n");
-    let global_class_map_entries: string = filtered_schemas.map((x: Schema) => `GLOBAL_CLASS_MAP[\'${x.object_name}\'] = ${x.object_name};`).join("\n");
+    let individual_imports: string = filtered_schemas.map((x: Schema) => `import { MO_${x.object_name} } from "../Shared_Data_Models/${x.object_name}";`).join("\n");
+    let global_class_map_entries: string = filtered_schemas.map((x: Schema) => `GLOBAL_CLASS_MAP[\'${x.object_name}\'] = MO_${x.object_name};`).join("\n");
 
     return `${individual_imports}
-import { Data_Model_Base } from "../Shared_Misc/Data_Model_Base";
+import { Metadata_Object_Base } from "../Shared_Misc/Metadata_Object_Base";
 
-export let GLOBAL_CLASS_MAP: { [key: string]: Data_Model_Base } = {};
+export let GLOBAL_CLASS_MAP: { [key: string]: Metadata_Object_Base } = {};
 
 ${global_class_map_entries}`;
   }

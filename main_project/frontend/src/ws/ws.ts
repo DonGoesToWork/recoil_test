@@ -4,7 +4,7 @@ class WebSocketClient {
   private reconnectCount: number = 0;
   private reconnectIntervalId: NodeJS.Timeout | null = null;
 
-  constructor(private url: string, private onMessage: (message: string) => void, private setConnected: (connected: boolean) => void) {
+  constructor(private url: string, private onMessage: (message: string) => void, private setConnected: (connected: boolean) => void, private set_state: (state: any) => void) {
     this.connect();
   }
 
@@ -30,6 +30,7 @@ class WebSocketClient {
 
     this.ws.onclose = () => {
       console.log("Disconnected. Scheduling reconnection attempts...");
+      this.set_state({}); // for now, we just clear state and let backend send all objects on reconnect -- planned task is to make reconnect logic smoother and not need to do this
       this.setConnected(false);
       this.scheduleReconnect();
     };

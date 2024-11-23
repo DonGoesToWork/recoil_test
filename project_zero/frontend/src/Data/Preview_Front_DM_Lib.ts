@@ -12,11 +12,11 @@ export default class Preview_Front_DM_Lib extends Base_Generator {
   get_import_statements(): string {
     let interface_imports = [
       ...this.schema.user_interaction_list.map((user_interaction: User_Interaction) => `IA_${this.name_as_lower}_${user_interaction.function_name}`),
-      `IA_${this.name_as_lower}_create_new`,
-      ...this.base_property_name_list.map((property) => `IA_${this.name_as_lower}_set_${property}`),
+      `IA_create_new_${this.name_as_lower}`,
+      ...this.base_property_name_list.map((property) => `IA_set_${this.name_as_lower}_${property}`),
     ].join(", ");
 
-    return `import { ${this.schema.object_name}, ${interface_imports} } from "../Shared_Data_Models/${this.schema.object_name}";
+    return `import { MO_${this.schema.object_name}, ${interface_imports} } from "../Shared_Data_Models/${this.schema.object_name}";
 
 import { GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT } from "../../utils/IA_Remove";
 import { I_Message_Sender } from "../../utils/I_Message_Sender";
@@ -35,9 +35,9 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
     if (this.schema.parent_object_names_list.length == 0) {
       return `
 export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: Function${input_args}): void => {
-  let data: IA_${this.name_as_lower}_create_new = {
-    object_class: ${this.name}.class_name,
-    function_name: ${this.name}.functions.create_new,
+  let data: IA_create_new_${this.name_as_lower} = {
+    object_class: MO_${this.name}.class_name,
+    function_name: MO_${this.name}.functions.create_new,
   };
 
   function_send_message(data);
@@ -46,9 +46,9 @@ export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: 
     } else {
       full_str += `
 export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: Function${input_args}): void => {
-  let data: IA_${this.name_as_lower}_create_new = {
-    object_class: ${this.name}.class_name,
-    function_name: ${this.name}.functions.create_new,
+  let data: IA_create_new_${this.name_as_lower} = {
+    object_class: MO_${this.name}.class_name,
+    function_name: MO_${this.name}.functions.create_new,
     parent_id: "",
     parent_class_name: ""
   };
@@ -66,9 +66,9 @@ export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: 
 
       full_str += `
 export let create_new_${this.name_as_lower}_w_parent_${parent_as_lower} = (function_send_message: Function${input_args}${parent_arg}): void => {
-  let data: IA_${this.name_as_lower}_create_new = {
-    object_class: ${this.name}.class_name,
-    function_name: ${this.name}.functions.create_new${parent_schema}    
+  let data: IA_create_new_${this.name_as_lower} = {
+    object_class: MO_${this.name}.class_name,
+    function_name: MO_${this.name}.functions.create_new${parent_schema}    
   };
 
   function_send_message(data);
@@ -80,11 +80,11 @@ export let create_new_${this.name_as_lower}_w_parent_${parent_as_lower} = (funct
   }
 
   generate_remove_function(): string {
-    let object_id_arg = (this.schema.object_name + "_id").toLocaleLowerCase();
+    let object_id_arg = (this.name + "_id").toLocaleLowerCase();
 
     return `
 export let remove_${this.name_as_lower} = (function_send_message: I_Message_Sender, ${object_id_arg}: string): void => {
-  function_send_message(GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT(${this.schema.object_name}.class_name, ${object_id_arg}));
+  function_send_message(GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT(MO_${this.schema.object_name}.class_name, ${object_id_arg}));
 };
 `;
   }
@@ -95,9 +95,9 @@ export let remove_${this.name_as_lower} = (function_send_message: I_Message_Send
         const property = schema_property.name.toLowerCase();
         const setFunction = `
 export let set_${this.name_as_lower}_${property} = (function_send_message: Function, ${this.name_as_lower}_id: string, new_${property}: string): void => {
-  let data: IA_${this.name_as_lower}_set_${property} = {
-    object_class: ${this.schema.object_name}.class_name,
-    function_name: ${this.schema.object_name}.functions.set_${property},
+  let data: IA_set_${this.name_as_lower}_${property} = {
+    object_class: MO_${this.name}.class_name,
+    function_name: MO_${this.name}.functions.set_${property},
     ${this.name_as_lower}_id: ${this.name_as_lower}_id,
     new_${property}: new_${property},
   };
@@ -122,8 +122,8 @@ export let set_${this.name_as_lower}_${property} = (function_send_message: Funct
         return `
 export let ${this.name_as_lower}_${user_interaction.function_name} = (function_send_message: Function, ${user_interaction.object_1.toLocaleLowerCase()}_id: string, ${user_interaction.object_2.toLocaleLowerCase()}_id: string): void => {
   let data: IA_${this.name_as_lower}_${user_interaction.function_name} = {
-    object_class: "${this.name}",
-    function_name: "${user_interaction.function_name}",${get_user_interaction_object_line(user_interaction.object_1)}${get_user_interaction_object_line(user_interaction.object_2)}
+    object_class: MO_${this.name}.class_name,
+    function_name: MO_${this.name}.functions.${user_interaction.function_name},${get_user_interaction_object_line(user_interaction.object_1)}${get_user_interaction_object_line(user_interaction.object_2)}
   };
   function_send_message(data);
 };

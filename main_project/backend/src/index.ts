@@ -48,7 +48,7 @@ wss.on("connection", (client: any) => {
       let class_function: Class_Function = class_function_list[message_action.function_name];
 
       if (class_function === undefined || class_function === null) {
-        console.log("[Error 2] Bad Object Transmitted. Function name is invalid.", message_action.function_name);
+        console.log("[Error 2] Bad Object Transmitted. Function name is invalid.", message_action.function_name, " Object Class: ", message_action.object_class);
         return;
       }
 
