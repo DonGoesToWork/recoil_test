@@ -23,32 +23,63 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
 `;
   }
 
+  // Front-End - generate_add_function() - We only pass the 'user_input' properties to the back-end and let it generate the rest.
   generate_add_function(): string {
     let parent_arg = "";
     let parent_schema = "";
     let input_args = "";
+    let parent_as_lower = "";
+    let full_str = "";
 
-    // TODO 11/22 - Fix this.
-    if (this.has_parent()) {
-      parent_arg = `, ${this.schema.parent_object_names_list[0].toLocaleLowerCase()}_id: string`;
-      parent_schema = `,\n${this.tab_indent}${this.tab_indent}parent_id: ${this.schema.parent_object_names_list[0].toLocaleLowerCase()}_id,`;
+    // be careful with this method if you decide to use it, objects without parents must be manually managed!
+    if (this.schema.parent_object_names_list.length == 0) {
+      return `
+export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: Function${input_args}): void => {
+  let data: IA_${this.name_as_lower}_create_new = {
+    object_class: ${this.name}.class_name,
+    function_name: ${this.name}.functions.create_new,
+  };
+
+  function_send_message(data);
+};
+      `;
+    } else {
+      full_str += `
+export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: Function${input_args}): void => {
+  let data: IA_${this.name_as_lower}_create_new = {
+    object_class: ${this.name}.class_name,
+    function_name: ${this.name}.functions.create_new,
+    parent_id: "",
+    parent_class_name: ""
+  };
+
+  function_send_message(data);
+};
+      `;
     }
 
-    // Front-End - generateAddFunction() - We only pass the 'user_input' properties to the back-end and let it generate the rest.
-    return `
-export let create_new_${this.name_as_lower} = (function_send_message: Function${input_args}${parent_arg}): void => {
+    this.schema.parent_object_names_list.forEach((parent: string) => {
+      parent_as_lower = parent.toLocaleLowerCase();
+
+      parent_arg = `, ${parent_as_lower}_id: string`;
+      parent_schema = `,\n${this.tab_indent}${this.tab_indent}parent_id: ${parent_as_lower}_id,` + `\n${this.tab_indent}${this.tab_indent}parent_class_name: "${parent}"`;
+
+      full_str += `
+export let create_new_${this.name_as_lower}_w_parent_${parent_as_lower} = (function_send_message: Function${input_args}${parent_arg}): void => {
   let data: IA_${this.name_as_lower}_create_new = {
-    object_class: ${this.schema.object_name}.class_name,
-    function_name: ${this.schema.object_name}.functions.create_new${parent_schema}    
+    object_class: ${this.name}.class_name,
+    function_name: ${this.name}.functions.create_new${parent_schema}    
   };
 
   function_send_message(data);
 };
 `;
+    });
+
+    return full_str;
   }
 
   generate_remove_function(): string {
-    // TODO 11/22 - Fix this.
     let object_id_arg = (this.schema.object_name + "_id").toLocaleLowerCase();
 
     return `

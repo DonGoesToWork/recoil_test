@@ -34,9 +34,9 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
     const base_prop_default_values = this.base_property_list.length ? this.base_property_list.map((prop) => `${prop.default_value}`) : [];
     const base_props = this.base_property_name_list.length ? this.base_property_name_list.map((prop, i) => `${prop}: ${this.name_as_lower}.${prop} ?? "${base_prop_default_values[i]}"`) : [];
 
-    const child_props = this.child_property_list.length ? this.child_property_list.map((prop) => `${prop.name}_ids: { ids: [], start_size: ${prop.id_list_start_size}, max_size: ${prop.id_list_max_size}, allow_empty_indexes: ${prop.id_list_allow_empty_indexes} }`) : [];
+    const child_props = this.child_property_list.length ? this.child_property_list.map((prop) => `${prop.name.toLocaleLowerCase()}_ids: { ids: [], start_size: ${prop.id_list_start_size}, max_size: ${prop.id_list_max_size}, allow_empty_indexes: ${prop.id_list_allow_empty_indexes} }`) : [];
     const combined_props = [...base_props, ...child_props].join(`,\n${this.tab_indent}`);
-    const parent_id = this.has_parent() ? `parent_id: ${this.name_as_lower}.parent_id,` : "";
+    const parent_id = this.has_parent() ? `parent_id: ${this.name_as_lower}.parent_id,\n${this.tab_indent}parent_class_name: ${this.name_as_lower}.parent_class_name,` : "";
 
     return `const initialize_${this.name_as_lower} = (${this.name_as_lower}: IS_${object_name}): IO_${object_name} => ({
   id: generate_unique_id(),${combined_props ? `\n${this.tab_indent}${combined_props},` : ""}${parent_id ? `\n${this.tab_indent}${parent_id}` : ""}
@@ -58,7 +58,7 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
 
   generate_ia_add_function(): string {
     const { object_name } = this.schema;
-    const parent_id = this.has_parent() ? `parent_id: data.parent_id` : "";
+    const parent_id = this.has_parent() ? `parent_id: data.parent_id, parent_class_name: data.parent_class_name,` : "";
 
     return this.schema.do_gen_ia_create_new
       ? `let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {

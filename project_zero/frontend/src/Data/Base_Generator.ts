@@ -25,7 +25,7 @@ export default class Base_Generator {
 
   add_parent_id(arr: string[]): string[] {
     if (this.has_parent()) {
-      return [...arr, "parent_id"];
+      return [...arr, "parent_id", "parent_class_name"];
     }
 
     return arr;

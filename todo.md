@@ -1,6 +1,20 @@
 To actually finish project:
 
-- General: Increase Scope of generated functions:
+Major 1: Multiple Parent Support
+
+Description:
+
+- Auto-generate parent data. Allow for objects to have multiple possible parents, but only one actual parent. Use this to allow objects to be slotted into different objects as a child without causing problems when specific item type isn't present in one object type or another.
+
+Intended use case is to let objects go into multiple object types without problesm. For instance, stat containers can be put onto players, items and monsters and be removed as necessary without causing issues.
+
+Status:
+
+- Started! Fix create_new methods tomorrow. (Remove worked fine though.)
+
+---
+
+Major 2: Increase Scope of generated functions:
 
 1. Property List Config - Set Values to number or string.
 
@@ -14,7 +28,9 @@ To actually finish project:
 - If not set or -1, then do not constrain.
 - If allow empty indexes is set vs. not, we should change how the delete algorithm behaves on object deletion.
 
-Major 2: Optional Groups
+---
+
+Major 3: Optional Groups
 
 Optional groups are parent objects that do not delete children when children are removed from the gorup. All other rules apply.
 
@@ -22,21 +38,13 @@ Optional groups are parent objects that do not delete children when children are
 2. Implement code generation to support "Optional Groups"
 3. Implement generic optional group removal functiosn that are distinguisehed from those in Generic_Remove.ts
 
-Major 3: Multiple Parent Support
-
-Multiple parents means that an object only has one parent still, but that parent can be one of a group of parents.
-
-This means that, as long as the object's parent isn't deleted, the object won't be deleted.
-
-The idea behind this is that we can have, for instance, stat containers that are associated with items, players and monsters. With only one parent, then you can only have a stat container associated with one group. However, we want it shared among many. And, we also don't want to the stat container to be deleted if it's actually parent exists. like if it's on an item and an unrelated monster is deleted.
-
-Thus, multiple parents have an 'or' relationship with each other for checks.
-
-Will work out more logic upon implementation.
+---
 
 Major 4: Object Transfer
 
 - If an object has a certain object type as a child, then it should be possible to transfer an object from one parent to another effortlessly.
+
+---
 
 Future Consideration(s):
 

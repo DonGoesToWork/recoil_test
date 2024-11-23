@@ -112,7 +112,7 @@ export interface IO_${this.schema.object_name} {
   }
 
   get_create_object_interface() {
-    let parent_str = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
+    let parent_str = this.has_parent() ? `\n${this.tab_indent}parent_id: string;\n${this.tab_indent}parent_class_name: string;` : "";
 
     return `
 // Class Definition for Object Creation
@@ -123,7 +123,7 @@ export interface IS_${this.schema.object_name} {
   }
 
   generate_ia_interfaces() {
-    let parent_schema = this.has_parent() ? `\n${this.tab_indent}parent_id: string;` : "";
+    let parent_schema = this.has_parent() ? `\n${this.tab_indent}parent_id: string;\n${this.tab_indent}parent_class_name: string;` : "";
     let data_model_entry = `
 
 // Interface Argument(s) - Back-End Function Interfaces.

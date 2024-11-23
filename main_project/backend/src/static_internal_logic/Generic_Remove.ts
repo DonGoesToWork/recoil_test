@@ -4,20 +4,31 @@ import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_gener
 import Backend_State from "./Backend_State";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
 
-// Supplamental method to clear gaps in a parent id list. (Compacts it).
-export const clear_parent_id_list_gaps = (state: Backend_State, base_object: Data_Model_Base, object_id: string): void => {
-  const parent_data = base_object.parent_data;
-  if (!parent_data) return;
+// // Supplamental method to clear gaps in a parent id list. (Compacts it).
+// export const clear_parent_id_list_gaps = (state: Backend_State, base_object: Data_Model_Base, object_id: string): void => {
+//   const parent_data = base_object.parent_data;
+//   if (!parent_data) return;
 
-  const parent_objects = state.data[parent_data.class_name];
-  if (!parent_objects) return;
+//   let err = false;
+//   let parent_class_name = state.data.properties.parent_class_name;
 
-  parent_objects.some((parent_object: any) => {
-    const id_list: string[] = parent_object[parent_data.id_list_name];
-    if (!id_list || !id_list.includes(object_id)) return false;
-    parent_object[parent_data.id_list_name] = id_list.filter(Boolean);
-  });
-};
+//   const parent_objects = state.data[parent_class_name];
+
+//   if (!parent_objects) {
+//     return;
+//   }
+
+//   parent_objects.some((parent_object: any) => {
+//     const id_list: string[] = parent_object[parent_data.id_list_name];
+
+//     if (!id_list) {
+//       return false;
+//     }
+
+//     parent_object[parent_data.id_list_name] = id_list.filter(Boolean); // todo
+//     return true;
+//   });
+// };
 
 // Delete from parents.
 let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, object_id: string) => {
@@ -28,9 +39,10 @@ let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, ob
     return;
   }
 
-  let parent_data_model: Data_Model_Base = GLOBAL_CLASS_MAP[parent_data.class_name];
+  let parent_class_name = base_object.properties.parent_class_name;
+  let parent_data_model: Data_Model_Base = GLOBAL_CLASS_MAP[parent_class_name];
   let parent_object_id_list: string = parent_data_model.properties[parent_data.id_list_name];
-  let parent_objects = state.data[parent_data.class_name];
+  let parent_objects = state.data[parent_class_name];
 
   // Find the first parent object that includes our child object id and then filter out our child id from its property list.
   parent_objects.some((parent_object: any) => {
