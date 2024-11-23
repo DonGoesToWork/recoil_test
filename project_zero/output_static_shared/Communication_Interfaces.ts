@@ -25,18 +25,18 @@ export interface Message_Recieve {
 }
 
 export interface Payload_Add {
-  objectType: string;
+  object_type: string;
   object: any;
 }
 
 export interface Payload_Set {
-  objectType: string;
+  object_type: string;
   id: string;
-  propertyName: string;
-  propertyValue: any;
+  property_name: string;
+  property_value: any;
 }
 
 export interface Payload_Delete {
-  objectType: string;
+  object_type: string;
   objectId: string;
 }

@@ -2,7 +2,7 @@ import { Child_Class_Data, Data_Model_Base } from "../z_generated/Shared_Misc/Da
 import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 import Backend_State from "./Backend_State";
-import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
+import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
 
 // Supplamental method to clear gaps in a parent id list. (Compacts it).
 export const clear_parent_id_list_gaps = (state: Backend_State, base_object: Data_Model_Base, object_id: string): void => {
@@ -53,10 +53,10 @@ let delete_from_parent = (state: Backend_State, base_object: Data_Model_Base, ob
 
     // sent the payload
     const payload: Payload_Set = {
-      objectType: parent_object.class_name,
+      object_type: parent_object.class_name,
       id: parent_object.id,
-      propertyName: parent_object_id_list,
-      propertyValue: id_list,
+      property_name: parent_object_id_list,
+      property_value: id_list,
     };
 
     state.set(payload);
@@ -98,7 +98,7 @@ let delete_children_recursively = (state: Backend_State, base_object: Data_Model
 
 let delete_object = (state: Backend_State, object_class_name: string, object_id: string): void => {
   const payload: Payload_Delete = {
-    objectType: object_class_name,
+    object_type: object_class_name,
     objectId: object_id,
   };
 

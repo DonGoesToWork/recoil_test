@@ -21,7 +21,7 @@ export default class Preview_Back_DM_Lib extends Base_Generator {
     return `import { ${imports}, IO_${object_name}, IS_${object_name}, ${object_name} } from "../Shared_Data_Models/${object_name}";
 import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 import Backend_State from "../../static_internal_logic/Backend_State";
-import { Object_Class_Function_Map } from "../Object_Registration/Object_Registration";
+import { Object_Class_Function_Map } from "../Data_Registration/Object_Registration";
 import { generate_unique_id } from "../../utils/utils";
 ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => `import { iam_${this.name_as_lower}_${user_interaction.function_name} } from "../../Interactions/${this.name}";`).join("\n")}
 `;
@@ -49,7 +49,7 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
     return `export let create_new_${this.name_as_lower} = (state: Backend_State, ${this.name_as_lower}: IS_${object_name}, _func_callback?: (state: Backend_State, new_${this.name_as_lower}: IO_${object_name}) => void): void => {
   const new_${this.name_as_lower} = initialize_${this.name_as_lower}(${this.name_as_lower});
   if (_func_callback) _func_callback(state, new_${this.name_as_lower});
-  const payload: Payload_Add = { objectType: ${object_name}.class_name, object: new_${this.name_as_lower} };
+  const payload: Payload_Add = { object_type: ${object_name}.class_name, object: new_${this.name_as_lower} };
   state.add(payload);
 };
 `;
@@ -70,12 +70,12 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
   }
 
   generate_create_set_payload_function(): string {
-    return `const create_set_payload = (objectType: string, id: string, propertyName: string, propertyValue: string): Payload_Set => ({ objectType, id, propertyName, propertyValue });\n`;
+    return `const create_set_payload = (object_type: string, id: string, property_name: string, property_value: string): Payload_Set => ({ object_type, id, property_name, property_value });\n`;
   }
 
   generate_set_property_function(): string {
-    return `const set_${this.name_as_lower}_property = (state: Backend_State, ${this.name_as_lower}_id: string, propertyName: string, propertyValue: string): void => {
-  const payload = create_set_payload(${this.schema.object_name}.class_name, ${this.name_as_lower}_id, propertyName, propertyValue);
+    return `const set_${this.name_as_lower}_property = (state: Backend_State, ${this.name_as_lower}_id: string, property_name: string, property_value: string): void => {
+  const payload = create_set_payload(${this.schema.object_name}.class_name, ${this.name_as_lower}_id, property_name, property_value);
   state.set(payload);
 };
 `;

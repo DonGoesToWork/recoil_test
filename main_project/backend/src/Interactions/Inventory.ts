@@ -3,7 +3,7 @@ import { clear_parent_id_list_gaps, delete_object_and_relations } from "../stati
 
 import Backend_State from "../static_internal_logic/Backend_State";
 import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "../utils/IA_Remove";
-import { GLOBAL_CLASS_MAP } from "../z_generated/Global_Class_Map/Global_Class_Map";
+import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
 import { IO_Rpg_Item } from "../z_generated/Shared_Data_Models/Rpg_Item";
 import { Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 

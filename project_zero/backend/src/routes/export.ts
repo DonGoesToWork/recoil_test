@@ -30,8 +30,8 @@ router.post("/", (req: any, res: any) => {
     write_file(res, output_paths.shared_data_model + item.object_name + ".ts", item.shared_data_model);
   });
 
-  write_file(res, output_paths.global_class_map + "/Global_Class_Map.ts", state.global_class_map_contents);
-  write_file(res, output_paths.object_registration + "/Object_Registration.ts", state.object_registration_contents);
+  write_file(res, output_paths.data_registration + "/Global_Class_Map.ts", state.global_class_map_contents);
+  write_file(res, output_paths.data_registration + "/Object_Registration.ts", state.object_registration_contents);
   write_file(res, output_paths.schemas + "/schemas.ts", JSON.stringify(state.schemas));
 
   // * Move all files to their relevant locations within the frontend and backend folders one-level down from project root.
@@ -42,12 +42,11 @@ router.post("/", (req: any, res: any) => {
 
   copy_folder_to_folder(output_paths.backend_data_model, main_project_paths.backend_data_models);
   copy_folder_to_folder(output_paths.frontend_data_model, main_project_paths.frontend_data_models);
-  copy_folder_to_folder(output_paths.global_class_map, main_project_paths.backend_global_class_map);
+  copy_folder_to_folder(output_paths.data_registration, main_project_paths.backend_data_registration);
   copy_folder_to_folder(output_paths.shared_data_model, main_project_paths.frontend_data_models_shared);
   copy_folder_to_folder(output_paths.shared_data_model, main_project_paths.backend_data_models_shared);
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.frontend_shared);
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.backend_shared);
-  copy_folder_to_folder(output_paths.object_registration, main_project_paths.object_registration_file);
 
   res.status(200).json({ status: "ok" });
 });

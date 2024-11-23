@@ -1,6 +1,6 @@
 // index.ts (back-end)
 
-import { Class_Function, Object_Class_Function_Map, Register_Objects } from "./z_generated/Object_Registration/Object_Registration";
+import { Class_Function, Object_Class_Function_Map, Register_Objects } from "./z_generated/Data_Registration/Object_Registration";
 
 import Backend_State from "./static_internal_logic/Backend_State";
 import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "./utils/IA_Remove";

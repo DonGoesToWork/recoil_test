@@ -1,38 +1,60 @@
 import { Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
+import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
+
 // In-memory storage for simplicity; replace with a database in production
 class Backend_State {
-  public data: Record<string, any[]> = {};
+  public data: Record<string, any> = {}; // must use any due to: https://github.com/microsoft/TypeScript/issues/40803
+
+  // public data: Partial<RpgDataSchema> = {};
   public change_payloads: Message_Arr_Recieve = {
     messageArr: [],
   };
 
   set(payload: Payload_Set) {
-    const existing = this.data[payload.objectType]?.find((item) => item.id === payload.id);
+    let object_type = payload.object_type;
+    const existing = this.data[object_type]?.find((item: any) => item.id === payload.id);
 
-    if (existing) {
-      // Change internal state
-      existing[payload.propertyName] = payload.propertyValue;
-
-      // Create payload to send to front-end.
-      let message: Message_Recieve;
-
-      message = {
-        messageType: "set",
-        payload,
-      };
-
-      this.change_payloads.messageArr.push(message);
-    } else {
-      console.log("Fatal error. Object not found.");
+    // Sanity checks.
+    if (!existing) {
+      console.log("Fatal error: Object type " + object_type + " not found.");
+      return;
     }
+
+    if (!existing[payload.property_name]) {
+      console.log("Fatal error: Property " + payload.property_name + " not found.");
+      return;
+    }
+
+    // Change internal state
+    existing[payload.property_name] = payload.property_value;
+
+    // Create payload to send to front-end.
+    let message: Message_Recieve;
+
+    message = {
+      messageType: "set",
+      payload,
+    };
+
+    this.change_payloads.messageArr.push(message);
   }
 
   add(payload: Payload_Add) {
-    if (!this.data[payload.objectType]) {
-      this.data[payload.objectType] = [];
+    let object_type = payload.object_type;
+
+    // Sanity check.
+    if (GLOBAL_CLASS_MAP[object_type] === undefined) {
+      console.log("Fatal error: Tried to add object of unsupported type: " + object_type);
+      return;
     }
-    this.data[payload.objectType].push(payload.object);
+
+    // If first entry, prepare array.
+    if (!this.data[object_type]) {
+      this.data[object_type] = [];
+    }
+
+    this.data[object_type].push(payload.object);
 
     // Create payload to send to front-end.
     let message: Message_Recieve;
@@ -46,7 +68,15 @@ class Backend_State {
   }
 
   delete(payload: Payload_Delete) {
-    this.data[payload.objectType] = this.data[payload.objectType].filter((item) => item.id !== payload.objectId);
+    let object_type = payload.object_type;
+
+    // Sanity check.
+    if (this.data[object_type] === undefined) {
+      console.log("Fatal error: Tried to delete non-existant object: " + object_type);
+      return;
+    }
+
+    this.data[object_type] = this.data[object_type].filter((item: any) => item.id !== payload.objectId);
 
     // Create payload to send to front-end.
     let message: Message_Recieve;
@@ -67,7 +97,7 @@ class Backend_State {
         message = {
           messageType: "add",
           payload: {
-            objectType: key,
+            object_type: key,
             object: v,
           },
         };

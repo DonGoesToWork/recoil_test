@@ -42,28 +42,28 @@ const HiveComponent: React.FC = () => {
         if (messageType === "set") {
           const payload_set = parsedMessage.payload as Payload_Set;
 
-          const existing = newState[payload_set.objectType]?.find((item) => item.id === payload_set.id);
+          const existing = newState[payload_set.object_type]?.find((item) => item.id === payload_set.id);
 
           if (existing) {
-            existing[payload_set.propertyName] = payload_set.propertyValue;
+            existing[payload_set.property_name] = payload_set.property_value;
           }
         } else if (messageType === "add") {
           const payload_add = parsedMessage.payload as Payload_Add;
 
-          if (!newState[payload_add.objectType]) {
-            newState[payload_add.objectType] = [];
+          if (!newState[payload_add.object_type]) {
+            newState[payload_add.object_type] = [];
           }
 
           // reject duplicates
-          const isDuplicate = newState[payload_add.objectType].some((item) => item.id === payload_add.object.id);
+          const isDuplicate = newState[payload_add.object_type].some((item) => item.id === payload_add.object.id);
 
           if (!isDuplicate) {
-            newState[payload_add.objectType].push(payload_add.object);
+            newState[payload_add.object_type].push(payload_add.object);
           }
         } else if (messageType === "delete") {
           const payload_remove = parsedMessage.payload as Payload_Delete;
 
-          newState[payload_remove.objectType] = newState[payload_remove.objectType].filter((item) => item.id !== payload_remove.objectId);
+          newState[payload_remove.object_type] = newState[payload_remove.object_type].filter((item) => item.id !== payload_remove.objectId);
         }
       });
       return newState;
