@@ -41,7 +41,8 @@ wss.on("connection", (client: any) => {
       let class_function_list: { [key: string]: Class_Function } = object_class_function_map[message_action.object_class];
 
       if (class_function_list === undefined || class_function_list === null) {
-        console.log("[Error 1] Bad Object Transmitted. Object Class is Invalid.", message_action.object_class);
+        console.log("[Error 1] Bad Object Transmitted. Object Class is Invalid: ", message_action.object_class);
+        console.log("If this object type was recently created and exported from Project Zero, then you must restart this backend. Live refresh won't work.");
         return;
       }
 

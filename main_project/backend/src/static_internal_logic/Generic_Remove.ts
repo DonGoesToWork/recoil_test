@@ -156,7 +156,24 @@ export let delete_object_and_relations = (message_action: Pre_Message_Action_Sen
   let metadata_object_id: string | undefined = data.id;
 
   if (metadata_object_id !== undefined && metadata_object_id !== null) {
-    delete_from_parent(state, metadata_object, metadata_object_id);
+    let object_array = state.data[metadata_object_name];
+
+    // Sanity check.
+    if (!object_array) {
+      console.log("Fatal error: Can't delete object " + metadata_object_name + " - Object array not found.");
+      return;
+    }
+
+    // find so object using id:
+    let so_object: any = object_array.find((object: any) => object.id === metadata_object_id);
+
+    // Sanity check.
+    if (!so_object) {
+      console.log("Fatal error: Can't delete object " + metadata_object_name + " - Object not found at id: " + metadata_object_id);
+      return;
+    }
+
+    delete_from_parent(state, metadata_object, so_object);
     delete_children_recursively(state, metadata_object, metadata_object_id);
     delete_object(state, metadata_object.class_name, metadata_object_id);
   } else {

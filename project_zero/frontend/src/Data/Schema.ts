@@ -146,6 +146,21 @@ export const get_farmer_object = (id?: string): Schema => {
   };
 };
 
+export const get_nature_object = (id?: string): Schema => {
+  let finalId = id === undefined ? generate_unique_id() : id;
+
+  return {
+    id: finalId,
+    object_name: "Nature",
+    parent_object_names_list: [],
+    do_gen_ia_create_new: true,
+    child_list: [get_default_child_schema(`Bee_Farm`)],
+    property_list: [get_default_string_property("Name")],
+    user_interaction_list: [],
+    date: get_current_date(),
+  };
+};
+
 export const get_player_object = (id?: string): Schema => {
   let finalId = id === undefined ? generate_unique_id() : id;
 

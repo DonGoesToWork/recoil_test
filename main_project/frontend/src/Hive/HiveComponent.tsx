@@ -2,11 +2,13 @@ import { MO_Bee, SO_Bee } from "../z_generated/Shared_Data_Models/Bee";
 import { MO_Bee_Farm, SO_Bee_Farm } from "../z_generated/Shared_Data_Models/Bee_Farm";
 import { MO_Bee_Hive, SO_Bee_Hive } from "../z_generated/Shared_Data_Models/Bee_Hive";
 import { MO_Farmer, SO_Farmer } from "../z_generated/Shared_Data_Models/Farmer";
+import { MO_Nature, SO_Nature } from "../z_generated/Shared_Data_Models/Nature";
 import { Message_Action_Send, Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
-import { create_new_bee_farm_w_parent_farmer, remove_bee_farm } from "../z_generated/Data_Models/Bee_Farm";
+import { create_new_bee_farm_w_parent_farmer, create_new_bee_farm_w_parent_nature, remove_bee_farm } from "../z_generated/Data_Models/Bee_Farm";
 import { create_new_bee_hive_w_parent_bee_farm, remove_bee_hive } from "../z_generated/Data_Models/Bee_Hive";
 import { create_new_bee_w_parent_bee_hive, remove_bee, set_bee_name } from "../z_generated/Data_Models/Bee";
 import { create_new_farmer_wo_parent, remove_farmer } from "../z_generated/Data_Models/Farmer";
+import { create_new_nature_wo_parent, remove_nature } from "../z_generated/Data_Models/Nature";
 import { useEffect, useState } from "react";
 
 import { I_Message_Sender } from "../utils/I_Message_Sender";
@@ -95,6 +97,20 @@ const HiveComponent: React.FC = () => {
     <div>
       <h1>Let's Grow!</h1>
 
+      <hr />
+
+      <button onClick={() => create_new_nature_wo_parent(__SM__)}>Add Nature</button>
+      {state[MO_Nature.class_name]?.map((nature: SO_Nature) => (
+        <div key={nature.id}>
+          <h2>{nature.name}</h2>
+          <h3>{nature.id}</h3>
+          <button onClick={() => remove_nature(__SM__, nature.id)}>Remove Nature</button>💩
+          <button onClick={() => create_new_bee_farm_w_parent_nature(__SM__, nature.id)}>Add Bee Farm</button>
+        </div>
+      ))}
+
+      <hr />
+
       <button onClick={() => create_new_farmer_wo_parent(__SM__)}>Add Farmer</button>
       {state[MO_Farmer.class_name]?.map((farmer: SO_Farmer) => (
         <div key={farmer.id}>
@@ -144,6 +160,7 @@ const HiveComponent: React.FC = () => {
                   ))}
               </div>
             ))}
+          <hr />
         </div>
       ))}
     </div>

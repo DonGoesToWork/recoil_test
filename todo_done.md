@@ -1,5 +1,17 @@
 This is a list of todo items that have been complated.
 
+\*----------------------------------------------------------\*
+11/23/2024
+
+Major 1: Multiple Parent Support
+
+Description:
+
+- Auto-generate parent data. Allow for objects to have multiple possible parents, but only one actual parent. Use this to allow objects to be slotted into different objects as a child without causing problems when specific item type isn't present in one object type or another.
+
+Intended use case is to let objects go into multiple object types without problems. For instance, stat containers can be put onto players, items and monsters and be removed as necessary without causing issues.
+
+\*----------------------------------------------------------\*
 Old as of 11/22:
 
 - Major 3:
