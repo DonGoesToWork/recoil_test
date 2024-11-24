@@ -25,7 +25,7 @@ const Schema_List: React.FC<Schema_List_Props> = ({ schemas, selected_schema_id,
     const newSchema: Schema = get_default_schema();
     set_myclasses([...schemas, newSchema]);
     set_selected_schema_id(newSchema.id);
-    let finalPage = Math.floor(schemas.length / 9) + 1;
+    let finalPage = Math.floor(schemas.length / schemas_per_page) + 1;
 
     // Always advance to final page when not on it.
     if (current_page != finalPage) {

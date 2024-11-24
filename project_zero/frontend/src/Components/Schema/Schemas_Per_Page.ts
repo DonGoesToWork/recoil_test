@@ -1,1 +1,1 @@
-export const schemas_per_page = 9;
+export const schemas_per_page = 15;

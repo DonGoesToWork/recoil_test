@@ -47,6 +47,14 @@ export let inventory_get_parent = (state: Backend_State, inventory_id: string) =
   return state.data["inventory"].find((inventory: SO_Inventory) => inventory.id === inventory_id)?.parent_id;
 };
 
+// Club add/remove functions.
+
+export let clear_player_club_guild = (state: Backend_State, player_id: string): void => {
+  let player: SO_Inventory = inventory_get(state, player_id);
+  // todo
+  // player.club;
+};
+
 //  Default Functions to Generate for every child object.
 
 export let inventory_get_rpg_item = (state: Backend_State, inventory: string | SO_Inventory, rpg_item_id: string): SO_Rpg_Item | undefined => {
