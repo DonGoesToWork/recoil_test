@@ -1,6 +1,23 @@
 import "./Main.css";
 
-import { Child_Schema, Schema, Schema_Property, User_Interaction, get_bee_farm_object, get_bee_hive_object, get_bee_object, get_farmer_object, get_inventory_schema as get_inventory_object, get_nature_object, get_player_object, get_item_schema as get_rpg_item_schema } from "../Data/Schema";
+import {
+  Child_Schema,
+  Schema,
+  Schema_Property,
+  User_Interaction,
+  get_bee_farm_object,
+  get_bee_hive_object,
+  get_bee_object,
+  get_entity_inventory_schema,
+  get_farmer_object,
+  get_guild_object,
+  get_inventory_schema as get_inventory_object,
+  get_nature_object,
+  get_party_object,
+  get_player_inventory_schema,
+  get_player_object,
+  get_item_schema as get_rpg_item_schema,
+} from "../Data/Schema";
 import React, { useEffect, useState } from "react";
 
 import Manage_Page from "./Manage/Manage_Page";
@@ -50,7 +67,7 @@ const update_output = (select_schema_data: Select_RpgClass_Props) => {
   }
 };
 
-export type Update_Schema_Params = string | boolean | Schema_Property[] | Child_Schema[] | User_Interaction[];
+export type Update_Schema_Params = string | boolean | string[] | Schema_Property[] | Child_Schema[] | User_Interaction[];
 
 const App: React.FC = () => {
   const firstId = generate_unique_id();
@@ -61,7 +78,11 @@ const App: React.FC = () => {
     get_bee_farm_object(generate_unique_id()),
     get_farmer_object(generate_unique_id()),
     get_nature_object(generate_unique_id()),
+    get_guild_object(generate_unique_id()),
+    get_party_object(generate_unique_id()),
     get_player_object(generate_unique_id()),
+    get_player_inventory_schema(generate_unique_id()),
+    get_entity_inventory_schema(generate_unique_id()),
     get_inventory_object(generate_unique_id()),
     get_rpg_item_schema(generate_unique_id()),
   ]);

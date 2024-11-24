@@ -17,18 +17,29 @@ export const get_schema_parent_data = (_schema: Schema, schemas: Schema[]): stri
   return parent_class_names;
 };
 
-// Do I want to allow duplicates? I think so, right?
+export const get_schema_club_data = (_schema: Schema, schemas: Schema[]): string[] => {
+  let club_class_names: string[] = [];
 
-// A pet can be owned by multipple players
-// So, they would see the same pet. And, if it's deleted from one parent, it should remain until deleted by both
+  // Iterate over schemas to find clubs.
+  schemas.forEach((club: Schema) => {
+    club.member_object_names_list.forEach((member: string) => {
+      if (member === _schema.object_name) {
+        club_class_names.push(club.object_name);
+      }
+    });
+  });
 
-// Our best attempt to ensure schemas are in the appropriate format before creating any forms.
+  return club_class_names;
+};
 
 export const fix_schema = (schema: Schema, schemas: Schema[], create_new_object: boolean): Schema => {
   if (create_new_object) schema = { ...schema };
 
   let class_names: string[] = get_schema_parent_data(schema, schemas);
   schema.parent_object_names_list = class_names;
+
+  let club_data: string[] = get_schema_club_data(schema, schemas);
+  schema.club_object_names_list = club_data;
 
   schema.child_list.forEach((child: Child_Schema) => {
     if (child.id_list_start_size > 1000) {

@@ -10,37 +10,95 @@ export default class Preview_Shared_DM_Lib extends Base_Generator {
   }
 
   get_imports_definitions(): string {
-    return `import { Child_Class_Data, Metadata_Object_Base } from "../Shared_Misc/Metadata_Object_Base";
+    return `import { Group_Class_Data, Group_Container_Class_Data, Metadata_Object_Base } from "../Shared_Misc/Metadata_Object_Base";
 import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";`;
   }
 
-  get_object_interface() {
-    let child_str =
-      this.child_property_name_list.length == 0
-        ? ""
-        : `\n${this.child_property_name_list
-            .map(
-              (x) => `${this.tab_indent}${x}: {
-    ids: string[];
-    start_size: number;
-    max_size: number;
-    allow_empty_indexes: false;
-  };`
-            )
-            .join("\n")}`;
+  /**
+   * Code for creating object interface
+   */
 
-    return `
+  get_parent_str(): string {
+    if (!this.has_parent()) {
+      return "";
+    }
 
-// SO = Stateful Object
-// SO_[object] holds real information that is manipulated and changed over time.
+    let parent_str = `\n${this.tab_indent}parent_data: {`;
 
-export interface SO_${this.schema.object_name} {
-  ${this.add_parent_id([...this.base_property_name_list, "id"])
-    .map((x) => `${x}: string;`)
-    .join(`\n${this.tab_indent}`)}${child_str}
-}
-`;
+    this.schema.parent_object_names_list.forEach((x) => {
+      parent_str += `\n${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`;
+    });
+
+    parent_str += `\n${this.tab_indent}}`;
+
+    return parent_str;
   }
+
+  get_child_str(): string {
+    if (this.child_property_name_list.length === 0) {
+      return "";
+    }
+
+    return `\n${this.tab_indent}child_data: {${this.child_property_name_list
+      .map(
+        (x) => `
+${this.tab_indent}${this.tab_indent}${x}: {
+${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: string[];
+${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: false;
+${this.tab_indent}${this.tab_indent}};`
+      )
+      .join("\n")}\n${this.tab_indent}}`;
+  }
+
+  get_club_str(): string {
+    if (!this.has_club()) {
+      return "";
+    }
+
+    let club_str = `\n${this.tab_indent}club_data: {`;
+
+    this.schema.club_object_names_list.forEach((x) => {
+      club_str += `\n${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`;
+    });
+
+    club_str += `\n${this.tab_indent}}`;
+
+    return club_str;
+  }
+
+  get_member_str(): string {
+    if (this.schema.member_object_names_list.length === 0) {
+      return "";
+    }
+
+    let member_str = `\n${this.tab_indent}member_data: {`;
+
+    this.schema.member_object_names_list.forEach((x) => {
+      member_str += `\n${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`;
+    });
+
+    member_str += `\n${this.tab_indent}}`;
+
+    return member_str;
+  }
+
+  get_object_interface(): string {
+    return `
+  
+  // SO = Stateful Object
+  // SO_[object] holds real information that is manipulated and changed over time.
+  
+  export interface SO_${this.schema.object_name} {
+${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}: string;`).join(`\n${this.tab_indent}`)}${this.get_parent_str()}${this.get_child_str()}${this.get_club_str()}${this.get_member_str()}
+}
+  `;
+  }
+
+  /**
+   * End of code for creating object interface
+   */
 
   get_interface_type_section(): string {
     let base_property_list = this.base_property_name_list.length == 0 ? "" : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: string;`).join("\n");
@@ -52,11 +110,10 @@ export interface SO_${this.schema.object_name} {
 
 export interface IMO_${this.schema.object_name} extends Metadata_Object_Base {
   class_name: string;
-  parent_data: {
-    class_names: string[];
-    id_list_name: string;
-  } | null;
-  child_class_data_list: Child_Class_Data[];
+  parent_data: Group_Container_Class_Data;
+  child_class_data_list: Group_Class_Data[];
+  club_class_data_list: Group_Container_Class_Data;
+  member_class_data_list: Group_Class_Data[];
   functions: {
 ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${user_generation}
   };
@@ -66,7 +123,12 @@ ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${us
   }
 
   get_plain_object_definition(): string {
-    const schema_title = this.schema.object_name;
+    const parent_data = this.has_parent()
+      ? `,\n${this.tab_indent}parent_data: {
+    class_names: [${this.schema.parent_object_names_list.map((x) => `"${x}"`).join(", ")}], 
+    id_list_name: "${this.name}_ids",
+  }`
+      : `,\n${this.tab_indent}parent_data: null`;
 
     const child_object_list =
       this.child_property_name_list.length == 0
@@ -83,23 +145,40 @@ ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${us
           "\n" +
           this.tab_indent;
 
+    // club versions
+    const club_data = this.has_club()
+      ? `,\n${this.tab_indent}club_class_data_list: {
+    class_names: [${this.schema.club_object_names_list.map((x) => `"${x}"`).join(", ")}], 
+    id_list_name: "${this.name}_ids",
+  }`
+      : `,\n${this.tab_indent}club_class_data_list: null`;
+
+    const member_object_list =
+      this.schema.member_object_names_list.length == 0
+        ? ""
+        : "\n" +
+          this.schema.member_object_names_list
+            .map((child: string) => {
+              return `${this.tab_indent}${this.tab_indent}{
+      class_name: \"${child}\",
+      id_list_name: \"${child}_ids\",
+    },`;
+            })
+            .join("\n") +
+          "\n" +
+          this.tab_indent;
+
     const function_list = this.base_property_name_list.length == 0 ? "" : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: "ia_set_${this.name_as_lower}_${x}",`).join("\n");
     const user_interaction_function_list = this.schema.user_interaction_list.length == 0 ? "" : "\n" + this.schema.user_interaction_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.function_name}: "ia_${this.name_as_lower}_${x.function_name}",`).join("\n");
-
-    const parent_data = this.has_parent()
-      ? `,\n${this.tab_indent}parent_data: {
-    class_names: [${this.schema.parent_object_names_list.map((x) => `"${x}"`).join(", ")}], 
-    id_list_name: "${schema_title}_ids",
-  }`
-      : `,\n${this.tab_indent}parent_data: null`;
 
     return `
 // Interface that represents all metadata properties of an object.
 // - These properties are all hardcoded and do not change over time.
 
-export const MO_${schema_title}: IMO_${schema_title} = {
+export const MO_${this.name}: IMO_${this.name} = {
   class_name: \"${this.schema.object_name}\"${parent_data},
-  child_class_data_list: [${child_object_list}],
+  child_class_data_list: [${child_object_list}]${club_data},
+  member_class_data_list: [${member_object_list}],
   functions: {
     create_new: "ia_create_new_${this.name_as_lower}",${function_list}${user_interaction_function_list}
   },
@@ -107,17 +186,76 @@ export const MO_${schema_title}: IMO_${schema_title} = {
 `;
   }
 
-  get_create_object_interface() {
-    let parent_str = this.has_parent() ? `\n${this.tab_indent}parent_id: string;\n${this.tab_indent}parent_class_name: string;` : "";
+  /**
+   * Start of code for creating 'Create' object interface. 'C_[object]'
+   */
 
+  get_create_parent_str(): string {
+    if (!this.has_parent()) {
+      return "";
+    }
+
+    return `\n${this.tab_indent}parent_data: {
+${this.tab_indent}${this.tab_indent}player_id: string;
+${this.tab_indent}};`;
+  }
+
+  get_create_child_str(): string {
+    if (this.child_property_name_list.length === 0) {
+      return "";
+    }
+
+    return `\n${this.tab_indent}child_data?: {${this.child_property_name_list
+      .map(
+        (x) => `
+${this.tab_indent}${this.tab_indent}${x}: {
+${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: string[];
+${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: false;
+${this.tab_indent}${this.tab_indent}};`
+      )
+      .join("\n")}\n${this.tab_indent}};`;
+  }
+
+  get_create_club_str(): string {
+    if (!this.has_club()) {
+      return "";
+    }
+
+    return `\n${this.tab_indent}club_data?: {
+${this.tab_indent}${this.tab_indent}guild_id: string;
+${this.tab_indent}${this.tab_indent}player_inventory_id: string;
+${this.tab_indent}${this.tab_indent}entity_inventory_id: string;
+${this.tab_indent}};`;
+  }
+
+  get_create_member_str(): string {
+    if (this.schema.member_object_names_list.length === 0) {
+      return "";
+    }
+
+    return `\n${this.tab_indent}member_data?: {${this.schema.member_object_names_list
+      .map(
+        (x) => `
+  ${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`
+      )
+      .join("\n")}\n${this.tab_indent}};`;
+  }
+
+  get_create_object_interface(): string {
     return `
-// C = Create
-// Interface for object creation.
-
-export interface C_${this.schema.object_name} {
-  ${[...this.base_property_name_list, "id"].map((x) => `${x}?: string;`).join(`\n${this.tab_indent}`)}${parent_str}
+  // C = Create
+  // Interface for object creation.
+  
+  export interface C_${this.schema.object_name} {
+${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}?: string;`).join(`\n${this.tab_indent}`)}${this.get_create_parent_str()}${this.get_create_child_str()}${this.get_create_club_str()}${this.get_create_member_str()}
 }`;
   }
+
+  /**
+   * End of code for creating 'Create' object interface. 'C_[object]'
+   */
 
   generate_ia_interfaces() {
     let parent_schema = this.has_parent() ? `\n${this.tab_indent}parent_id: string;\n${this.tab_indent}parent_class_name: string;` : "";

@@ -1,11 +1,13 @@
 import { IA_inventory_add_rpg_item, IA_inventory_remove_rpg_item, SO_Inventory } from "../z_generated/Shared_Data_Models/Inventory";
+import { MO_Player_Inventory, SO_Player_Inventory } from "../z_generated/Shared_Data_Models/Player_Inventory";
 import { MO_Rpg_Item, SO_Rpg_Item } from "../z_generated/Shared_Data_Models/Rpg_Item";
 import { clear_parent_id_list_gaps, delete_object_and_relations } from "../static_internal_logic/Generic_Remove";
 
 import Backend_State from "../static_internal_logic/Backend_State";
 import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "../utils/IA_Remove";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
-import { Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
+import { MO_Player, SO_Player } from "../z_generated/Shared_Data_Models/Player";
+import { Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 // interaction middleware function to fill
 
@@ -25,16 +27,43 @@ export const iam_inventory_remove_rpg_item = (state: Backend_State, data: IA_inv
 
 // More Default Generated Functions
 
+WIP
+
 export let inventory_get = (state: Backend_State, inventory_id: string): SO_Inventory => {
-  return state.data["inventory"].find((inventory: SO_Inventory) => inventory.id === inventory_id);
+  return state.data["inventory"][inventory_id];
 };
 
 export let inventory_delete = (state: Backend_State, inventory_id: string) => {
+  let inventory: SO_Inventory = inventory_get(state, inventory_id);
+  
+  // Clear all parent id fields.
+  inventory.parent_data.player_id = "";
+
+  // This code would be in player normally I imagine under player_remove_inventory.
+  let player_id = inventory.parent_data.player_id;
+  let player: SO_Player = state.data[MO_Player.class_name][player_id];
+  player.child
+
+
+  player[]
+  let set_payload: Payload_Set = {
+    object_class: MO_Player.class_name,
+    function_name: MO_Player.functions.set,
+  }
+
+  state.data[MO_Player.class_name][d];
+
+  for (let [key, value] of Object.entries(inventory.parent_data)) {
+    // Get the parent by id
+    state.data[value].findIndex((inventory: SO_Inventory) => inventory.id === inventory_id);
+  }
+
   let msg: Pre_Message_Action_Send = {
     object_class: "inventory",
     function_name: DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME,
     id: inventory_id,
   };
+
   delete_object_and_relations(msg, state); // <- set based on
 };
 
@@ -43,16 +72,48 @@ export let inventory_is_full = (state: Backend_State, inventory_id: string) => {
   return inventory.rpg_item_ids.ids.length >= inventory.rpg_item_ids.max_size;
 };
 
-export let inventory_get_parent = (state: Backend_State, inventory_id: string) => {
-  return state.data["inventory"].find((inventory: SO_Inventory) => inventory.id === inventory_id)?.parent_id;
+// Parent add/remove functions
+
+export let inventory_set_player = (state: Backend_State, inventory_id: string, player_id: string): void => {
+  let inventory: SO_Inventory = inventory_get(state, inventory_id);
+  inventory.parent_data.player_id = player_id;
+};
+
+export let inventory_remove_player = (state: Backend_State, inventory_id: string): void => {
+  let inventory: SO_Inventory = inventory_get(state, inventory_id);
+  inventory.parent_data.player_id = "";
 };
 
 // Club add/remove functions.
 
-export let clear_player_club_guild = (state: Backend_State, player_id: string): void => {
-  let player: SO_Inventory = inventory_get(state, player_id);
-  // todo
-  // player.club;
+export let inventory_get_club_player_inventory = (state: Backend_State, inventory_id: string): SO_Player_Inventory | null => {
+  let inventory: SO_Inventory = inventory_get(state, inventory_id);
+
+  for (let so_player_inventory of state.data[MO_Player_Inventory.class_name]) {
+    if (inventory.club_data.player_inventory_id === so_player_inventory.id) {
+      return so_player_inventory;
+    }
+  }
+
+  console.log("Fatal error: Failed to find player inventory.");
+  return null;
+};
+
+export let inventory_remove_club_player_inventory = (state: Backend_State, inventory_id: string): void => {
+  let player_inventory: SO_Player_Inventory | null = inventory_get_club_player_inventory(state, inventory_id);
+
+  if (!player_inventory) {
+    return;
+  }
+
+  state.data[MO_Player_Inventory.class_name];
+
+  // player_inventory_remove_inventory(state, player_inventory.id, inventory.id); (WILL BE GENERATED)
+};
+
+export let inventory_set_player_inventory = (state: Backend_State, inventory_id: string, player_inventory_id: string): void => {
+  let inventory: SO_Inventory = inventory_get(state, inventory_id);
+  inventory.club_data.player_inventory_id = player_inventory_id;
 };
 
 //  Default Functions to Generate for every child object.

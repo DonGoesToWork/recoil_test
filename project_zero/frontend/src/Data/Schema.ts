@@ -27,7 +27,9 @@ export type User_Interaction = {
 export type Schema = {
   id: string;
   object_name: string;
-  parent_object_names_list: string[];
+  parent_object_names_list: string[]; // gets set by fix_schema
+  club_object_names_list: string[]; // gets set by fix_schema
+  member_object_names_list: string[];
   do_gen_ia_create_new: boolean;
   child_list: Child_Schema[];
   property_list: Schema_Property[];
@@ -66,6 +68,7 @@ export const get_default_string_property = (_name: string): Schema_Property => {
     do_gen_ia_get: true,
   };
 };
+
 export const get_default_string_property_blank = (): Schema_Property => {
   return {
     name: "",
@@ -93,6 +96,8 @@ export const get_bee_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Bee",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [],
     property_list: [get_default_string_property("Name")],
@@ -108,6 +113,8 @@ export const get_bee_hive_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Bee_Hive",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Bee`)],
     property_list: [get_default_string_property("Name")],
@@ -123,6 +130,8 @@ export const get_bee_farm_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Bee_Farm",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Bee_Hive`)],
     property_list: [get_default_string_property("Name")],
@@ -138,6 +147,8 @@ export const get_farmer_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Farmer",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Bee_Farm`)],
     property_list: [get_default_string_property("Name")],
@@ -153,9 +164,45 @@ export const get_nature_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Nature",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Bee_Farm`)],
     property_list: [get_default_string_property("Name")],
+    user_interaction_list: [],
+    date: get_current_date(),
+  };
+};
+
+export const get_guild_object = (id?: string): Schema => {
+  let finalId = id === undefined ? generate_unique_id() : id;
+
+  return {
+    id: finalId,
+    object_name: "Guild",
+    parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: ["Player", "Inventory"],
+    do_gen_ia_create_new: true,
+    child_list: [],
+    property_list: [get_default_string_property("Name"), get_default_number_property("treasury")],
+    user_interaction_list: [],
+    date: get_current_date(),
+  };
+};
+
+export const get_party_object = (id?: string): Schema => {
+  let finalId = id === undefined ? generate_unique_id() : id;
+
+  return {
+    id: finalId,
+    object_name: "Party",
+    parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: ["Player"],
+    do_gen_ia_create_new: true,
+    child_list: [],
+    property_list: [get_default_string_property("Name"), get_default_number_property("treasury")],
     user_interaction_list: [],
     date: get_current_date(),
   };
@@ -168,6 +215,8 @@ export const get_player_object = (id?: string): Schema => {
     id: finalId,
     object_name: "Player",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Inventory`)],
     property_list: [
@@ -196,6 +245,40 @@ export const get_player_object = (id?: string): Schema => {
   };
 };
 
+export const get_entity_inventory_schema = (id?: string): Schema => {
+  let finalId = id === undefined ? generate_unique_id() : id;
+
+  return {
+    id: finalId,
+    object_name: "Entity_Inventory",
+    parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: ["Inventory"],
+    do_gen_ia_create_new: true,
+    child_list: [],
+    property_list: [get_default_string_property("Name")],
+    user_interaction_list: [],
+    date: get_current_date(),
+  };
+};
+
+export const get_player_inventory_schema = (id?: string): Schema => {
+  let finalId = id === undefined ? generate_unique_id() : id;
+
+  return {
+    id: finalId,
+    object_name: "Player_Inventory",
+    parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: ["Inventory"],
+    do_gen_ia_create_new: true,
+    child_list: [],
+    property_list: [get_default_string_property("Name")],
+    user_interaction_list: [],
+    date: get_current_date(),
+  };
+};
+
 export const get_inventory_schema = (id?: string): Schema => {
   let finalId = id === undefined ? generate_unique_id() : id;
 
@@ -203,6 +286,8 @@ export const get_inventory_schema = (id?: string): Schema => {
     id: finalId,
     object_name: "Inventory",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(`Rpg_Item`)],
     property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path")],
@@ -229,6 +314,8 @@ export const get_item_schema = (id?: string): Schema => {
     id: finalId,
     object_name: "Rpg_Item",
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [],
     property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path"), get_default_string_property("Flag_Quest_Item"), get_default_string_property("Flag_Cursed")],
@@ -244,6 +331,8 @@ export const get_default_schema = (id?: string): Schema => {
     id: finalId,
     object_name: get_random_word(),
     parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
     do_gen_ia_create_new: true,
     child_list: [get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word())],
     property_list: [

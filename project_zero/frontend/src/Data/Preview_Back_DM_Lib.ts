@@ -28,21 +28,81 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
 `;
   }
 
+  /**
+   * Start of code for initialize object functions.
+   */
+
   generate_initialize_object_function(): string {
     const { object_name } = this.schema;
 
-    const base_prop_default_values = this.base_property_list.length ? this.base_property_list.map((prop) => `${prop.default_value}`) : [];
-    const base_props = this.base_property_name_list.length ? this.base_property_name_list.map((prop, i) => `${prop}: ${this.name_as_lower}.${prop} ?? "${base_prop_default_values[i]}"`) : [];
+    // Base properties
+    const base_prop_default_values = this.base_property_list.map((prop) => `${prop.default_value}`);
+    const base_props = this.base_property_name_list.map((prop, i) => `${prop}: ${this.name_as_lower}.${prop} ?? "${base_prop_default_values[i]}"`);
 
-    const child_props = this.child_property_list.length ? this.child_property_list.map((prop) => `${prop.name.toLocaleLowerCase()}_ids: { ids: [], start_size: ${prop.id_list_start_size}, max_size: ${prop.id_list_max_size}, allow_empty_indexes: ${prop.id_list_allow_empty_indexes} }`) : [];
-    const combined_props = [...base_props, ...child_props].join(`,\n${this.tab_indent}`);
-    const parent_id = this.has_parent() ? `parent_id: ${this.name_as_lower}.parent_id,\n${this.tab_indent}parent_class_name: ${this.name_as_lower}.parent_class_name,` : "";
+    // Parent Data
+    const parent_data = this.has_parent()
+      ? `parent_data: {${this.schema.parent_object_names_list
+          .map(
+            (parent) => `
+${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: "",`
+          )
+          .join("")}
+${this.tab_indent}}`
+      : "";
+
+    // Child Data
+    const child_data = this.child_property_list.length
+      ? `child_data: {${this.child_property_list
+          .map(
+            (child) => `
+${this.tab_indent}${this.tab_indent}${child.name.toLocaleLowerCase()}_ids: {
+${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: [],
+${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: ${child.id_list_start_size},
+${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: ${child.id_list_max_size},
+${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: ${child.id_list_allow_empty_indexes}
+${this.tab_indent}${this.tab_indent}},`
+          )
+          .join("")}
+${this.tab_indent}}`
+      : "";
+
+    // Club Data
+    const club_data = this.has_club()
+      ? `club_data: {${this.schema.club_object_names_list
+          .map(
+            (club) => `
+${this.tab_indent}${this.tab_indent}${club.toLocaleLowerCase()}_id: "",`
+          )
+          .join("")}
+${this.tab_indent}}`
+      : "";
+
+    // Member Data
+    const member_data = this.schema.member_object_names_list.length
+      ? `member_data: {${this.schema.member_object_names_list
+          .map(
+            (member) => `
+${this.tab_indent}${this.tab_indent}${member.toLocaleLowerCase()}_id: "",`
+          )
+          .join("")}
+${this.tab_indent}}`
+      : "";
+
+    // Combine all properties
+    const combined_props = [...base_props, parent_data, child_data, club_data, member_data]
+      .filter((prop) => prop) // Remove empty properties
+      .join(`,\n${this.tab_indent}`);
 
     return `const initialize_${this.name_as_lower} = (${this.name_as_lower}: C_${object_name}): SO_${object_name} => ({
-  id: generate_unique_id(),${combined_props ? `\n${this.tab_indent}${combined_props},` : ""}${parent_id ? `\n${this.tab_indent}${parent_id}` : ""}
+  id: generate_unique_id(),
+  ${combined_props}
 });
 `;
   }
+
+  /**
+   * End of code for initialize object functions.
+   */
 
   generate_add_function(): string {
     const { object_name } = this.schema;
@@ -58,15 +118,25 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
 
   generate_ia_add_function(): string {
     const { object_name } = this.schema;
-    const parent_id = this.has_parent() ? `parent_id: data.parent_id, parent_class_name: data.parent_class_name,` : "";
+
+    const parent_data = this.has_parent()
+      ? `${this.tab_indent}parent_data: {${this.schema.parent_object_names_list
+          .map(
+            (parent) => `
+  ${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: data.parent_id,`
+          )
+          .join("")}
+  ${this.tab_indent}},`
+      : "";
 
     return this.schema.do_gen_ia_create_new
       ? `let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   const data = message_action as IA_create_new_${this.name_as_lower};
-  const new_${this.name_as_lower}: C_${object_name} = { ${parent_id} };
+  const new_${this.name_as_lower}: C_${object_name} = {${parent_data ? `\n${this.tab_indent}${parent_data}` : ""}
+  };
   create_new_${this.name_as_lower}(state, new_${this.name_as_lower});
 };
-`
+  `
       : "";
   }
 

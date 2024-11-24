@@ -13,21 +13,21 @@ class Backend_State {
 
   set(payload: Payload_Set) {
     let object_type = payload.object_type;
-    const existing = this.data[object_type]?.find((item: any) => item.id === payload.id);
+    const target_object = this.data[object_type][payload.id];
 
     // Sanity checks.
-    if (!existing) {
+    if (!target_object) {
       console.log("Fatal error: Object type " + object_type + " not found.");
       return;
     }
 
-    if (!existing[payload.property_name]) {
+    if (!target_object[payload.property_name]) {
       console.log("Fatal error: Property " + payload.property_name + " not found.");
       return;
     }
 
     // Change internal state
-    existing[payload.property_name] = payload.property_value;
+    target_object[payload.property_name] = payload.property_value;
 
     // Create payload to send to front-end.
     let message: Message_Recieve;
@@ -54,7 +54,14 @@ class Backend_State {
       this.data[object_type] = [];
     }
 
-    this.data[object_type].push(payload.object);
+    if (!payload.object.id) {
+      console.log("Fatal error: Can't add object with no id: ", object_type, payload);
+      return;
+    }
+
+    this.data[object_type].push({ [payload.object.id]: payload.object });
+
+    // this.data[object_type].push(payload.object);
 
     // Create payload to send to front-end.
     let message: Message_Recieve;
@@ -76,7 +83,8 @@ class Backend_State {
       return;
     }
 
-    this.data[object_type] = this.data[object_type].filter((item: any) => item.id !== payload.objectId);
+    // Filter object out of data.
+    this.data[object_type] = Object.fromEntries(Object.entries(this.data[object_type]).filter(([key]) => key !== payload.objectId));
 
     // Create payload to send to front-end.
     let message: Message_Recieve;

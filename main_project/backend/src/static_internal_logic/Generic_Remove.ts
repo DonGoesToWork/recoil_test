@@ -1,4 +1,4 @@
-import { Child_Class_Data, Metadata_Object_Base } from "../z_generated/Shared_Misc/Metadata_Object_Base";
+import { Group_Class_Data, Metadata_Object_Base } from "../z_generated/Shared_Misc/Metadata_Object_Base";
 import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 import Backend_State from "./Backend_State";
@@ -56,7 +56,7 @@ export const clear_parent_id_list_gaps = (state: Backend_State, metadata_object:
   });
 };
 
-// Delete from parents.
+// Delete from parent(s)
 let delete_from_parent = (state: Backend_State, metadata_object: Metadata_Object_Base, stateful_object: any) => {
   const parent_data = metadata_object.parent_data;
   let parent_object_array = get_parent_object_array_from_child(state, metadata_object, stateful_object);
@@ -109,14 +109,14 @@ let delete_from_parent = (state: Backend_State, metadata_object: Metadata_Object
 
 let delete_children_recursively = (state: Backend_State, metadata_object: Metadata_Object_Base, object_id: string) => {
   // Var inits
-  let child_class_data_list: Child_Class_Data[] = metadata_object.child_class_data_list;
+  let child_class_data_list: Group_Class_Data[] = metadata_object.child_class_data_list;
 
   // If no children, then delete the object.
   if (child_class_data_list == undefined || child_class_data_list == null || child_class_data_list.length == 0) {
     return;
   }
 
-  child_class_data_list.forEach((child_class_data: Child_Class_Data) => {
+  child_class_data_list.forEach((child_class_data: Group_Class_Data) => {
     let children_objects = state.data[child_class_data.class_name];
 
     if (children_objects == undefined || children_objects == null) {

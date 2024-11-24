@@ -23,9 +23,16 @@ export default class Base_Generator {
     return this.schema.parent_object_names_list.length > 0;
   }
 
-  add_parent_id(arr: string[]): string[] {
+  has_club() {
+    return this.schema.club_object_names_list.length > 0;
+  }
+
+  add_parent_fields_if_present(_arr: string[]): string[] {
+    let arr = [..._arr];
+
     if (this.has_parent()) {
-      return [...arr, "parent_id", "parent_class_name"];
+      arr.push("parent_id");
+      arr.push("parent_class_name");
     }
 
     return arr;
@@ -42,8 +49,8 @@ export default class Base_Generator {
     this.child_property_list = this.schema.child_list.filter((x) => x.name !== "");
     this.child_property_name_list = this.schema.child_list.filter((x) => x.name !== "").map((x) => x.name.toLocaleLowerCase() + "_ids");
 
-    this.combined_property_list = this.add_parent_id([...this.base_property_name_list, "id", ...this.child_property_name_list]);
-    this.combined_property_list_no_children = this.add_parent_id([...this.base_property_name_list, "id"]);
+    this.combined_property_list = this.add_parent_fields_if_present([...this.base_property_name_list, "id", ...this.child_property_name_list]);
+    this.combined_property_list_no_children = this.add_parent_fields_if_present([...this.base_property_name_list, "id"]);
   }
 
   constructor(schema: Schema) {

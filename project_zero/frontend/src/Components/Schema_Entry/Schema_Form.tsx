@@ -1,6 +1,7 @@
 import "./Schema_Form.css";
 
 import Child_List_Config from "./Child_List_Config";
+import Member_List_Config from "./Member_List_Config";
 import Property_List_Config from "./Property_List_Config";
 import React from "react";
 import { Schema } from "../../Data/Schema";
@@ -19,6 +20,9 @@ const Schema_Form: React.FC<Schema_Form_Props> = ({ selected_schema, update_sche
       <label>Class Name</label>
       <h3>The name of this object's class. The object's name.</h3>
       <input className="schema-title" value={selected_schema.object_name} onChange={(e) => update_schema("object_name", e.target.value, selected_schema.id)} placeholder="Schema Title" />
+
+      <hr />
+      <Member_List_Config selected_schema={selected_schema} update_schema={update_schema} />
 
       <hr />
       <label>Generate IA Create Function</label>

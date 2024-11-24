@@ -59,3 +59,6 @@ Future Consideration(s):
 
 - When doing operations on Backend_State, like 'find', etc., maybe we can cache them?
 - Track changed notes and only export changes for changed notes.
+- Maybe we do add a default user object and security context objecT?
+- Maybe only store metadata properties on backend? IDK how feasible. Would require investigation.
+- Automatic Obfuscation of most strings?
