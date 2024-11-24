@@ -15,7 +15,7 @@ import { I_Message_Sender } from "../utils/I_Message_Sender";
 import WebSocketClient from "../ws/ws";
 
 const HiveComponent: React.FC = () => {
-  const [state, setState] = useState<Record<string, any[]>>({});
+  const [state, setState] = useState<Record<string, any>>({});
   const [wsClient, setWsClient] = useState<WebSocketClient | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
 
@@ -44,7 +44,7 @@ const HiveComponent: React.FC = () => {
         if (messageType === "set") {
           const payload_set = parsedMessage.payload as Payload_Set;
 
-          const existing = newState[payload_set.object_type]?.find((item) => item.id === payload_set.id);
+          const existing = newState[payload_set.object_type][payload_set.id];
 
           if (existing) {
             existing[payload_set.property_name] = payload_set.property_value;
@@ -119,7 +119,7 @@ const HiveComponent: React.FC = () => {
           <button onClick={() => remove_farmer(__SM__, farmer.id)}>Remove Farmer</button>💩
           <button onClick={() => create_new_bee_farm_w_parent_farmer(__SM__, farmer.id)}>Add Bee Farm</button>
           {state[MO_Bee_Farm.class_name]
-            ?.filter((farm: SO_Bee_Farm) => farm.parent_id === farmer.id)
+            ?.filter((farm: SO_Bee_Farm) => farm.parent_data.farmer_id === farmer.id)
             .map((farm: SO_Bee_Farm) => (
               <div key={farm.id}>
                 <h2>{farm.name}</h2>
@@ -127,7 +127,7 @@ const HiveComponent: React.FC = () => {
                 <button onClick={() => remove_bee_farm(__SM__, farm.id)}>Remove Farm</button>💩
                 <button onClick={() => create_new_bee_hive_w_parent_bee_farm(__SM__, farm.id)}>Add Hive</button>
                 {state[MO_Bee_Hive.class_name]
-                  ?.filter((hive: SO_Bee_Hive) => hive.parent_id === farm.id)
+                  ?.filter((hive: SO_Bee_Hive) => hive.parent_data.bee_farm_id === farm.id)
                   .map((hive: SO_Bee_Hive) => (
                     <div key={hive.id}>
                       <h3>{hive.name}</h3>
@@ -135,7 +135,7 @@ const HiveComponent: React.FC = () => {
                       <button onClick={() => remove_bee_hive(__SM__, hive.id)}>Remove Hive</button>💩
                       <button onClick={() => create_new_bee_w_parent_bee_hive(__SM__, hive.id)}>Add Bee</button>
                       {state[MO_Bee.class_name]
-                        ?.filter((bee: SO_Bee) => bee.parent_id === hive.id)
+                        ?.filter((bee: SO_Bee) => bee.parent_data.bee_hive_id === hive.id)
                         .map((bee: SO_Bee) => (
                           <div key={bee.id}>
                             <p>{bee.name}</p>

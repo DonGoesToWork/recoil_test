@@ -27,7 +27,7 @@ export const iam_inventory_remove_rpg_item = (state: Backend_State, data: IA_inv
 
 // More Default Generated Functions
 
-WIP
+
 
 export let inventory_get = (state: Backend_State, inventory_id: string): SO_Inventory => {
   return state.data["inventory"][inventory_id];

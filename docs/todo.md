@@ -1,5 +1,13 @@
 To actually finish project:
 
+Highest Prio don't forget midway status
+
+- Finish state update from [ any -> object ] to [ any -> id -> object ].
+- Finish implementing two-way data set and removal of parents/children and clubs/members.
+- Create convenience functions to interact with state object id objects as arrays for use on front-backend.
+  - /z_generated_utils ?
+- Update Hive_Component to support new state and convenience function changes.
+
 ---
 
 Major 1: Optional Groups
