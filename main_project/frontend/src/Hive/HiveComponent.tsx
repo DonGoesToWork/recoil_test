@@ -57,15 +57,12 @@ const HiveComponent: React.FC = () => {
           }
 
           // reject duplicates
-          const isDuplicate = newState[payload_add.object_type].some((item) => item.id === payload_add.object.id);
-
-          if (!isDuplicate) {
-            newState[payload_add.object_type].push(payload_add.object);
+          if (!(newState[payload_add.object_type][payload_add.object.id] !== undefined)) {
+            newState[payload_add.object_type].push({ [payload_add.object.id]: payload_add.object });
           }
         } else if (messageType === "delete") {
           const payload_remove = parsedMessage.payload as Payload_Delete;
-
-          newState[payload_remove.object_type] = newState[payload_remove.object_type].filter((item) => item.id !== payload_remove.objectId);
+          newState[payload_remove.object_type] = Object.fromEntries(Object.entries(newState[payload_remove.object_type]).filter(([key]) => key !== payload_remove.objectId));
         }
       });
       return newState;

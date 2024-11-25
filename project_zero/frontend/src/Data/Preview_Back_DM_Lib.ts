@@ -123,7 +123,7 @@ ${this.tab_indent}}`
       ? `${this.tab_indent}parent_data: {${this.schema.parent_object_names_list
           .map(
             (parent) => `
-  ${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: data.parent_id,`
+  ${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: data.${parent.toLocaleLowerCase()}_id,`
           )
           .join("")}
   ${this.tab_indent}},`

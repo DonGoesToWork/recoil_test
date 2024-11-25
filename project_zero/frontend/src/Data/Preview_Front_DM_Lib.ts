@@ -25,58 +25,25 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
 
   // Front-End - generate_add_function() - We only pass the 'user_input' properties to the back-end and let it generate the rest.
   generate_add_function(): string {
-    let parent_arg = "";
-    let parent_schema = "";
-    let input_args = "";
-    let parent_as_lower = "";
-    let full_str = "";
+    const createFunction = (withParent: boolean, parentNames?: string[]): string => {
+      const parentArgs = withParent ? parentNames!.map((parent) => `${parent.toLowerCase()}_id: string`).join(", ") : "";
+      const parentFields = withParent ? parentNames!.map((parent) => `${parent.toLowerCase()}_id: ${parent.toLowerCase()}_id`).join(",\n    ") : "";
+      const functionNameSuffix = withParent ? `_w_parents` : `_wo_parent`;
 
-    // be careful with this method if you decide to use it, objects without parents must be manually managed!
-    if (this.schema.parent_object_names_list.length == 0) {
       return `
-export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: Function${input_args}): void => {
-  let data: IA_create_new_${this.name_as_lower} = {
+export let create_new_${this.name_as_lower}${functionNameSuffix} = (function_send_message: Function${parentArgs ? `, ${parentArgs}` : ""}): void => {
+  const data: IA_create_new_${this.name_as_lower} = {
     object_class: MO_${this.name}.class_name,
-    function_name: MO_${this.name}.functions.create_new,
-  };
-
-  function_send_message(data);
-};
-      `;
-    } else {
-      full_str += `
-export let create_new_${this.name_as_lower}_wo_parent = (function_send_message: Function${input_args}): void => {
-  let data: IA_create_new_${this.name_as_lower} = {
-    object_class: MO_${this.name}.class_name,
-    function_name: MO_${this.name}.functions.create_new,
-    parent_id: "",
-    parent_class_name: ""
-  };
-
-  function_send_message(data);
-};
-      `;
-    }
-
-    this.schema.parent_object_names_list.forEach((parent: string) => {
-      parent_as_lower = parent.toLocaleLowerCase();
-
-      parent_arg = `, ${parent_as_lower}_id: string`;
-      parent_schema = `,\n${this.tab_indent}${this.tab_indent}parent_id: ${parent_as_lower}_id,` + `\n${this.tab_indent}${this.tab_indent}parent_class_name: "${parent}"`;
-
-      full_str += `
-export let create_new_${this.name_as_lower}_w_parent_${parent_as_lower} = (function_send_message: Function${input_args}${parent_arg}): void => {
-  let data: IA_create_new_${this.name_as_lower} = {
-    object_class: MO_${this.name}.class_name,
-    function_name: MO_${this.name}.functions.create_new${parent_schema}    
+    function_name: MO_${this.name}.functions.create_new${parentFields ? `,\n    ${parentFields}` : ""}
   };
 
   function_send_message(data);
 };
 `;
-    });
+    };
 
-    return full_str;
+    const parentNames = this.schema.parent_object_names_list;
+    return parentNames.length > 0 ? createFunction(true, parentNames) : createFunction(false);
   }
 
   generate_remove_function(): string {

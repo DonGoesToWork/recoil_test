@@ -195,9 +195,7 @@ export const MO_${this.name}: IMO_${this.name} = {
       return "";
     }
 
-    return `\n${this.tab_indent}parent_data: {
-${this.tab_indent}${this.tab_indent}player_id: string;
-${this.tab_indent}};`;
+    return `\n${this.tab_indent}parent_data: {\n${this.schema.parent_object_names_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`).join("\n")}\n${this.tab_indent}};`;
   }
 
   get_create_child_str(): string {
@@ -258,7 +256,7 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}?: s
    */
 
   generate_ia_interfaces() {
-    let parent_schema = this.has_parent() ? `\n${this.tab_indent}parent_id: string;\n${this.tab_indent}parent_class_name: string;` : "";
+    let parent_schema = this.has_parent() ? this.schema.parent_object_names_list.map((x) => `\n${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`).join("") : "";
     let data_model_entry = `
 
 // Interface Argument(s) - Back-End Function Interfaces.
