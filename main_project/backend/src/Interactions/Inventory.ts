@@ -86,26 +86,28 @@ export let inventory_add_rpg_item = (state: Backend_State, inventory_id: string,
   // let rpg_item = rpg_item_get(state, rpg_item_id); // TODO - READD
 
   // Add item to first index of inventory 'rpg item ids' that is null.
-  let rpg_item_index = inventory.rpg_item_ids.ids.findIndex((rpg_item_id: string) => rpg_item_id === "");
+  // et rpg_item_index = inventory.rpg_item_ids.ids.findIndex((rpg_item_id: string) => rpg_item_id === "");
 
   // Should never equal -1.
-  if (rpg_item_index === -1) {
-    console.log("Critical error. No free spot found!");
-    return;
-  }
+  // if (rpg_item_index === -1) {
+  //   console.log("Critical error. No free spot found!");
+  //   return;
+  // }
 
   // nventory.rpg_item_ids.ids[rpg_item_index] = rpg_item.id; // TODO - READD
 };
 
 export let inventory_get_unused_rpg_item_index = (state: Backend_State, inventory_id: string) => {
   let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  return inventory.rpg_item_ids.ids.findIndex((rpg_item_id: string) => rpg_item_id === "");
+  //  return inventory.rpg_item_ids.ids.findIndex((rpg_item_id: string) => rpg_item_id === "");
+  return "";
 };
 
 export let inventory_replace_rpg_item = (state: Backend_State, inventory_id: string, rpg_item_id: string) => {
   let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  let rpg_item_index = inventory.rpg_item_ids.ids.findIndex((rpg_item_id: string) => rpg_item_id === "");
-  inventory.rpg_item_ids.ids[rpg_item_index] = rpg_item_id;
+  // let rpg_item_index = inventory.rpg_item_ids.ids.findIndex((rpg_item_id: string) => rpg_item_id === "");
+  // inventory.rpg_item_ids.ids[rpg_item_index] = rpg_item_id;
+  return "";
 };
 
 export let inventory_is_full_rpg_items = (state: Backend_State, inventory_id: string) => {

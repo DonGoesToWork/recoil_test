@@ -4,9 +4,9 @@ import { MO_Bee_Hive, SO_Bee_Hive } from "../z_generated/Shared_Data_Models/Bee_
 import { MO_Farmer, SO_Farmer } from "../z_generated/Shared_Data_Models/Farmer";
 import { MO_Nature, SO_Nature } from "../z_generated/Shared_Data_Models/Nature";
 import { Message_Action_Send, Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
-import { create_new_bee_farm_w_parent_farmer, create_new_bee_farm_w_parent_nature, remove_bee_farm } from "../z_generated/Data_Models/Bee_Farm";
-import { create_new_bee_hive_w_parent_bee_farm, remove_bee_hive } from "../z_generated/Data_Models/Bee_Hive";
-import { create_new_bee_w_parent_bee_hive, remove_bee, set_bee_name } from "../z_generated/Data_Models/Bee";
+import { create_new_bee_farm_w_parents, remove_bee_farm } from "../z_generated/Data_Models/Bee_Farm";
+import { create_new_bee_hive_w_parents, remove_bee_hive } from "../z_generated/Data_Models/Bee_Hive";
+import { create_new_bee_w_parents, remove_bee, set_bee_name } from "../z_generated/Data_Models/Bee";
 import { create_new_farmer_wo_parent, remove_farmer } from "../z_generated/Data_Models/Farmer";
 import { create_new_nature_wo_parent, remove_nature } from "../z_generated/Data_Models/Nature";
 import { useEffect, useState } from "react";
@@ -102,7 +102,7 @@ const HiveComponent: React.FC = () => {
           <h2>{nature.name}</h2>
           <h3>{nature.id}</h3>
           <button onClick={() => remove_nature(__SM__, nature.id)}>Remove Nature</button>💩
-          <button onClick={() => create_new_bee_farm_w_parent_nature(__SM__, nature.id)}>Add Bee Farm</button>
+          <button onClick={() => create_new_bee_farm_w_parents(__SM__, "1", nature.id)}>Add Bee Farm</button>
         </div>
       ))}
 
@@ -114,7 +114,7 @@ const HiveComponent: React.FC = () => {
           <h2>{farmer.name}</h2>
           <h3>{farmer.id}</h3>
           <button onClick={() => remove_farmer(__SM__, farmer.id)}>Remove Farmer</button>💩
-          <button onClick={() => create_new_bee_farm_w_parent_farmer(__SM__, farmer.id)}>Add Bee Farm</button>
+          <button onClick={() => create_new_bee_farm_w_parents(__SM__, farmer.id, "1")}>Add Bee Farm</button>
           {state[MO_Bee_Farm.class_name]
             ?.filter((farm: SO_Bee_Farm) => farm.parent_data.farmer_id === farmer.id)
             .map((farm: SO_Bee_Farm) => (
@@ -122,7 +122,7 @@ const HiveComponent: React.FC = () => {
                 <h2>{farm.name}</h2>
                 <h3>{farm.id}</h3>
                 <button onClick={() => remove_bee_farm(__SM__, farm.id)}>Remove Farm</button>💩
-                <button onClick={() => create_new_bee_hive_w_parent_bee_farm(__SM__, farm.id)}>Add Hive</button>
+                <button onClick={() => create_new_bee_hive_w_parents(__SM__, farm.id)}>Add Hive</button>
                 {state[MO_Bee_Hive.class_name]
                   ?.filter((hive: SO_Bee_Hive) => hive.parent_data.bee_farm_id === farm.id)
                   .map((hive: SO_Bee_Hive) => (
@@ -130,7 +130,7 @@ const HiveComponent: React.FC = () => {
                       <h3>{hive.name}</h3>
                       <h3>{hive.id}</h3>
                       <button onClick={() => remove_bee_hive(__SM__, hive.id)}>Remove Hive</button>💩
-                      <button onClick={() => create_new_bee_w_parent_bee_hive(__SM__, hive.id)}>Add Bee</button>
+                      <button onClick={() => create_new_bee_w_parents(__SM__, hive.id)}>Add Bee</button>
                       {state[MO_Bee.class_name]
                         ?.filter((bee: SO_Bee) => bee.parent_data.bee_hive_id === hive.id)
                         .map((bee: SO_Bee) => (

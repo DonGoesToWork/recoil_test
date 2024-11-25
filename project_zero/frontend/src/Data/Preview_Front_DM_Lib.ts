@@ -25,6 +25,7 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
 
   // Front-End - generate_add_function() - We only pass the 'user_input' properties to the back-end and let it generate the rest.
   generate_add_function(): string {
+    // tODO, macro rename these
     const createFunction = (withParent: boolean, parentNames?: string[]): string => {
       const parentArgs = withParent ? parentNames!.map((parent) => `${parent.toLowerCase()}_id: string`).join(", ") : "";
       const parentFields = withParent ? parentNames!.map((parent) => `${parent.toLowerCase()}_id: ${parent.toLowerCase()}_id`).join(",\n    ") : "";
