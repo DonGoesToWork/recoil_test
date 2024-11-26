@@ -3,7 +3,7 @@ import { MO_Bee_Farm, SO_Bee_Farm } from "../z_generated/Shared_Data_Models/Bee_
 import { MO_Bee_Hive, SO_Bee_Hive } from "../z_generated/Shared_Data_Models/Bee_Hive";
 import { MO_Farmer, SO_Farmer } from "../z_generated/Shared_Data_Models/Farmer";
 import { MO_Nature, SO_Nature } from "../z_generated/Shared_Data_Models/Nature";
-import { Message_Action_Send, Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
+import { Message_Action_Send, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 import { create_new_bee_farm_w_parents, remove_bee_farm } from "../z_generated/Data_Models/Bee_Farm";
 import { create_new_bee_hive_w_parents, remove_bee_hive } from "../z_generated/Data_Models/Bee_Hive";
 import { create_new_bee_w_parents, remove_bee, set_bee_name } from "../z_generated/Data_Models/Bee";
@@ -13,16 +13,30 @@ import { useEffect, useState } from "react";
 
 import { I_Message_Sender } from "../utils/I_Message_Sender";
 import WebSocketClient from "../ws/ws";
+import generate_unique_id from "../utils/utils";
+
+enum Message_Type {
+  FULL_STORAGE = "full_storage",
+  CHANGE_PAYLOADS = "change_payloads",
+  ERROR = "error",
+}
+
+interface Client_Return_object {
+  message_type: Message_Type;
+  server_state_ref: string;
+  message_array: Message_Recieve[];
+  error_message?: string;
+}
 
 const HiveComponent: React.FC = () => {
   const [state, setState] = useState<Record<string, any>>({});
   const [wsClient, setWsClient] = useState<WebSocketClient | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
 
-  let server_state_ref = "0"; // TODO - Implement
+  // let server_state_ref = "0"; // TODO - Implement
 
   useEffect(() => {
-    const client = new WebSocketClient("ws://localhost:5000", handleMessage, setConnected, setState);
+    const client = new WebSocketClient(`ws://localhost:5000?token=${encodeURIComponent("donald")}&token=${encodeURIComponent("robinson")}`, handleMessage, setConnected, setState);
     setWsClient(client);
     return () => client.close();
   }, []);
@@ -33,45 +47,56 @@ const HiveComponent: React.FC = () => {
       return;
     }
 
-    const parsedMessageArr: Message_Arr_Recieve = JSON.parse(message);
+    const parsed_message_array: Client_Return_object = JSON.parse(message);
+    console.log(parsed_message_array.server_state_ref, parsed_message_array);
 
-    setState((prevState) => {
-      const newState = { ...prevState };
+    // Show errors and return when they occur.
+    if (parsed_message_array.message_type === Message_Type.ERROR) {
+      if (parsed_message_array.error_message !== undefined) {
+        return;
+      }
+    } else if (parsed_message_array.message_type === Message_Type.FULL_STORAGE) {
+      console.log("Clear");
+      setState({});
+    }
 
-      parsedMessageArr.messageArr.forEach((parsedMessage: Message_Recieve) => {
-        const messageType: string = parsedMessage.messageType;
+    setState((prev_state) => {
+      const new_state = { ...prev_state };
+
+      parsed_message_array.message_array.forEach((parsed_message: Message_Recieve) => {
+        const messageType: string = parsed_message.messageType;
 
         if (messageType === "set") {
-          const payload_set = parsedMessage.payload as Payload_Set;
+          const payload_set = parsed_message.payload as Payload_Set;
 
-          const existing = newState[payload_set.object_type][payload_set.id];
+          const existing = new_state[payload_set.object_type][payload_set.id];
 
           if (existing) {
             existing[payload_set.property_name] = payload_set.property_value;
           }
         } else if (messageType === "add") {
-          const payload_add = parsedMessage.payload as Payload_Add;
+          const payload_add = parsed_message.payload as Payload_Add;
 
-          if (!newState[payload_add.object_type]) {
-            newState[payload_add.object_type] = [];
+          if (!new_state[payload_add.object_type]) {
+            new_state[payload_add.object_type] = {};
           }
 
-          // reject duplicates
-          if (!(newState[payload_add.object_type][payload_add.object.id] !== undefined)) {
-            newState[payload_add.object_type].push({ [payload_add.object.id]: payload_add.object });
-          }
+          new_state[payload_add.object_type][payload_add.object_id] = payload_add.object;
         } else if (messageType === "delete") {
-          const payload_remove = parsedMessage.payload as Payload_Delete;
-          newState[payload_remove.object_type] = Object.fromEntries(Object.entries(newState[payload_remove.object_type]).filter(([key]) => key !== payload_remove.objectId));
+          const payload_remove = parsed_message.payload as Payload_Delete;
+          new_state[payload_remove.object_type] = Object.fromEntries(Object.entries(new_state[payload_remove.object_type]).filter(([key]) => key !== payload_remove.objectId));
         }
       });
-      return newState;
+
+      new_state["server_state_ref"] = parsed_message_array.server_state_ref;
+      return new_state;
     });
   };
 
   const __SM__: I_Message_Sender = (update: Pre_Message_Action_Send): void => {
-    let finalUpdate: Message_Action_Send = update as Message_Action_Send;
-    finalUpdate["server_state_ref"] = server_state_ref; // Add server state ref.
+    let final_update: Message_Action_Send = update as Message_Action_Send;
+    final_update["server_state_ref"] = state.server_state_ref; // Add server state ref.
+    final_update["request_id"] = generate_unique_id();
     wsClient?.sendMessage(JSON.stringify(update)); // Send update
   };
 
@@ -90,6 +115,19 @@ const HiveComponent: React.FC = () => {
     );
   }
 
+  let nature_display = "";
+
+  if (state[MO_Nature.class_name]) {
+    nature_display = (Object.entries(state[MO_Nature.class_name]) as any | undefined).map((nature: SO_Nature) => (
+      <div key={nature.id}>
+        <h2>{nature.name}</h2>
+        <h3>{nature.id}</h3>
+        <button onClick={() => remove_nature(__SM__, nature.id)}>Remove Nature</button>💩
+        <button onClick={() => create_new_bee_farm_w_parents(__SM__, "1", nature.id)}>Add Bee Farm</button>
+      </div>
+    ));
+  }
+
   return (
     <div>
       <h1>Let's Grow!</h1>
@@ -97,15 +135,7 @@ const HiveComponent: React.FC = () => {
       <hr />
 
       <button onClick={() => create_new_nature_wo_parent(__SM__)}>Add Nature</button>
-      {state[MO_Nature.class_name]?.map((nature: SO_Nature) => (
-        <div key={nature.id}>
-          <h2>{nature.name}</h2>
-          <h3>{nature.id}</h3>
-          <button onClick={() => remove_nature(__SM__, nature.id)}>Remove Nature</button>💩
-          <button onClick={() => create_new_bee_farm_w_parents(__SM__, "1", nature.id)}>Add Bee Farm</button>
-        </div>
-      ))}
-
+      {nature_display}
       <hr />
 
       <button onClick={() => create_new_farmer_wo_parent(__SM__)}>Add Farmer</button>

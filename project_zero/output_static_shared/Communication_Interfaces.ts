@@ -15,16 +15,13 @@ export interface Message_Action_Send {
 
 // Receive Interfaces
 
-export interface Message_Arr_Recieve {
-  messageArr: Message_Recieve[];
-}
-
 export interface Message_Recieve {
   messageType: string;
   payload: Payload_Add | Payload_Set | Payload_Delete;
 }
 
 export interface Payload_Add {
+  object_id: string;
   object_type: string;
   object: any;
 }

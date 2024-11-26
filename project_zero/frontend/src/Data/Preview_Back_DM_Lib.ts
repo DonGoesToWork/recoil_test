@@ -110,7 +110,7 @@ ${this.tab_indent}}`
     return `export let create_new_${this.name_as_lower} = (state: Backend_State, ${this.name_as_lower}: C_${object_name}, _func_callback?: (state: Backend_State, new_${this.name_as_lower}: SO_${object_name}) => void): void => {
   const new_${this.name_as_lower} = initialize_${this.name_as_lower}(${this.name_as_lower});
   if (_func_callback) _func_callback(state, new_${this.name_as_lower});
-  const payload: Payload_Add = { object_type: MO_${object_name}.class_name, object: new_${this.name_as_lower} };
+  const payload: Payload_Add = { object_id: new_${this.name_as_lower}.id, object_type: MO_${object_name}.class_name, object: new_${this.name_as_lower} };
   state.add(payload);
 };
 `;

@@ -28,7 +28,14 @@ class WebSocketClient {
       this.onMessage(event.data);
     };
 
-    this.ws.onclose = () => {
+    this.ws.onclose = (event: any) => {
+      console.log("EVENT: ", event);
+
+      if (event.reason === "Client already connected.") {
+        console.log("Failed to connect because already connected. Avoiding reconnection attempts.");
+        return;
+      }
+
       console.log("Disconnected. Scheduling reconnection attempts...");
       this.set_state({}); // for now, we just clear state and let backend send all objects on reconnect -- planned task is to make reconnect logic smoother and not need to do this
       this.setConnected(false);

@@ -1,15 +1,19 @@
-import { Message_Arr_Recieve, Message_Recieve, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
+import { Message_Recieve, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
+import { generate_unique_id } from "../utils/utils";
 
 // In-memory storage for simplicity; replace with a database in production
 class Backend_State {
   public data: Record<string, any> = {}; // must use any due to: https://github.com/microsoft/TypeScript/issues/40803
+  public server_state_ref: string = generate_unique_id();
 
   // public data: Partial<RpgDataSchema> = {};
-  public change_payloads: Message_Arr_Recieve = {
-    messageArr: [],
-  };
+  public change_payloads: Message_Recieve[] = [];
+
+  public randomize_server_state_ref(): void {
+    this.server_state_ref = generate_unique_id();
+  }
 
   set(payload: Payload_Set) {
     let object_type = payload.object_type;
@@ -37,7 +41,7 @@ class Backend_State {
       payload,
     };
 
-    this.change_payloads.messageArr.push(message);
+    this.change_payloads.push(message);
   }
 
   add(payload: Payload_Add) {
@@ -49,19 +53,19 @@ class Backend_State {
       return;
     }
 
-    // If first entry, prepare array.
-    if (!this.data[object_type]) {
-      this.data[object_type] = [];
-    }
+    let object_id = payload.object_id;
 
-    if (!payload.object.id) {
+    if (!payload.object_id) {
       console.log("Fatal error: Can't add object with no id: ", object_type, payload);
       return;
     }
 
-    this.data[object_type].push({ [payload.object.id]: payload.object });
+    // If first entry, prepare array.
+    if (!this.data[object_type]) {
+      this.data[object_type] = {};
+    }
 
-    // this.data[object_type].push(payload.object);
+    this.data[object_type][payload.object_id] = payload.object;
 
     // Create payload to send to front-end.
     let message: Message_Recieve;
@@ -71,7 +75,7 @@ class Backend_State {
       payload,
     };
 
-    this.change_payloads.messageArr.push(message);
+    this.change_payloads.push(message);
   }
 
   delete(payload: Payload_Delete) {
@@ -94,23 +98,24 @@ class Backend_State {
       payload,
     };
 
-    this.change_payloads.messageArr.push(message);
+    this.change_payloads.push(message);
   }
 
-  get_full_storage(): Message_Arr_Recieve {
+  get_full_storage(): Message_Recieve[] {
     let message: Message_Recieve;
 
-    for (const [key, value] of Object.entries(this.data)) {
-      for (const v of value) {
+    for (const key of Object.keys(this.data)) {
+      for (const key2 of Object.keys(this.data[key])) {
         message = {
           messageType: "add",
           payload: {
+            object_id: key2,
             object_type: key,
-            object: v,
+            object: { [key2]: this.data[key][key2] },
           },
         };
 
-        this.change_payloads.messageArr.push(message);
+        this.change_payloads.push(message);
       }
     }
 
@@ -118,9 +123,7 @@ class Backend_State {
   }
 
   clearChanges(): void {
-    this.change_payloads = {
-      messageArr: [],
-    };
+    this.change_payloads = [];
   }
 }
 
