@@ -44,7 +44,7 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
       ? `parent_data: {${this.schema.parent_object_names_list
           .map(
             (parent) => `
-${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: "",`
+${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: ${this.name_as_lower}.parent_data.${parent.toLocaleLowerCase()}_id,`
           )
           .join("")}
 ${this.tab_indent}}`

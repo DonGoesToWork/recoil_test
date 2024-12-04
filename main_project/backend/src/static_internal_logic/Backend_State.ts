@@ -111,7 +111,7 @@ class Backend_State {
           payload: {
             object_id: key2,
             object_type: key,
-            object: { [key2]: this.data[key][key2] },
+            object: this.data[key][key2],
           },
         };
 
@@ -128,3 +128,12 @@ class Backend_State {
 }
 
 export default Backend_State;
+
+// message = {
+//   messageType: "add",
+//   payload: {
+//     object_type: key,
+//     object: value,
+//   },
+// };
+// this.change_payloads.push(message);
