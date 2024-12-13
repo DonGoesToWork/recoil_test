@@ -2,13 +2,19 @@ To actually finish project:
 
 Highest Prio don't forget midway status
 
-- Finish state update from [ any -> object ] to [ any -> id -> object ].
+- Finish state update from [ any [ object ] ] to [ any { id -> object } ]. ( O(n) to O(1) performance improvement!)
+
   - Test later.
 
 * Finish implementing two-way data set and removal of parents/children and clubs/members.
+
 * Create convenience functions to interact with state object id objects as arrays for use on front-backend.
+
   - /z_generated_utils ?
+
 * Update Hive_Component to support new state and convenience function changes.
+
+- Need to update club data behave like child data in terms of storing lists of items...
 
 ---
 

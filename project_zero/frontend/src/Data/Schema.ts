@@ -10,7 +10,7 @@ export type Schema_Property = {
   do_gen_ia_get: boolean;
 };
 
-export type Child_Schema = {
+export type Sub_Schema = {
   name: string;
   id_list_start_size: number;
   id_list_max_size: number;
@@ -29,9 +29,9 @@ export type Schema = {
   object_name: string;
   parent_object_names_list: string[]; // gets set by fix_schema
   club_object_names_list: string[]; // gets set by fix_schema
-  member_object_names_list: string[];
+  member_object_names_list: Sub_Schema[];
   do_gen_ia_create_new: boolean;
-  child_list: Child_Schema[];
+  child_schema_arr: Sub_Schema[];
   property_list: Schema_Property[];
   user_interaction_list: User_Interaction[];
   date: string;
@@ -50,7 +50,7 @@ export const get_default_user_interaction = (): User_Interaction => {
   };
 };
 
-export const get_default_child_schema = (_name: string): Child_Schema => {
+export const get_default_sub_schema = (_name: string): Sub_Schema => {
   return {
     name: _name,
     id_list_start_size: 0,
@@ -99,7 +99,7 @@ export const get_bee_object = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [],
+    child_schema_arr: [],
     property_list: [get_default_string_property("Name")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -116,7 +116,7 @@ export const get_bee_hive_object = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [get_default_child_schema(`Bee`)],
+    child_schema_arr: [get_default_sub_schema(`Bee`)],
     property_list: [get_default_string_property("Name")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -133,7 +133,7 @@ export const get_bee_farm_object = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [get_default_child_schema(`Bee_Hive`)],
+    child_schema_arr: [get_default_sub_schema(`Bee_Hive`)],
     property_list: [get_default_string_property("Name")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -150,7 +150,7 @@ export const get_farmer_object = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [get_default_child_schema(`Bee_Farm`)],
+    child_schema_arr: [get_default_sub_schema(`Bee_Farm`)],
     property_list: [get_default_string_property("Name")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -167,7 +167,7 @@ export const get_nature_object = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [get_default_child_schema(`Bee_Farm`)],
+    child_schema_arr: [get_default_sub_schema(`Bee_Farm`)],
     property_list: [get_default_string_property("Name")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -182,9 +182,9 @@ export const get_guild_object = (id?: string): Schema => {
     object_name: "Guild",
     parent_object_names_list: [],
     club_object_names_list: [],
-    member_object_names_list: ["Player", "Inventory"],
+    member_object_names_list: [get_default_sub_schema("Player"), get_default_sub_schema("Inventory")],
     do_gen_ia_create_new: true,
-    child_list: [],
+    child_schema_arr: [],
     property_list: [get_default_string_property("Name"), get_default_number_property("treasury")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -199,9 +199,9 @@ export const get_party_object = (id?: string): Schema => {
     object_name: "Party",
     parent_object_names_list: [],
     club_object_names_list: [],
-    member_object_names_list: ["Player"],
+    member_object_names_list: [get_default_sub_schema("Player")],
     do_gen_ia_create_new: true,
-    child_list: [],
+    child_schema_arr: [],
     property_list: [get_default_string_property("Name"), get_default_number_property("treasury")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -218,7 +218,7 @@ export const get_player_object = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [get_default_child_schema(`Inventory`)],
+    child_schema_arr: [get_default_sub_schema(`Inventory`)],
     property_list: [
       get_default_string_property("Name"),
       get_default_number_property("Gold"),
@@ -253,9 +253,9 @@ export const get_entity_inventory_schema = (id?: string): Schema => {
     object_name: "Entity_Inventory",
     parent_object_names_list: [],
     club_object_names_list: [],
-    member_object_names_list: ["Inventory"],
+    member_object_names_list: [get_default_sub_schema("Inventory")],
     do_gen_ia_create_new: true,
-    child_list: [],
+    child_schema_arr: [],
     property_list: [get_default_string_property("Name")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -270,9 +270,9 @@ export const get_player_inventory_schema = (id?: string): Schema => {
     object_name: "Player_Inventory",
     parent_object_names_list: [],
     club_object_names_list: [],
-    member_object_names_list: ["Inventory"],
+    member_object_names_list: [get_default_sub_schema("Inventory")],
     do_gen_ia_create_new: true,
-    child_list: [],
+    child_schema_arr: [],
     property_list: [get_default_string_property("Name")],
     user_interaction_list: [],
     date: get_current_date(),
@@ -289,8 +289,13 @@ export const get_inventory_schema = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [get_default_child_schema(`Rpg_Item`)],
-    property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path")],
+    child_schema_arr: [get_default_sub_schema(`Rpg_Item`)],
+    property_list: [
+      get_default_string_property("Name"),
+      get_default_string_property("Description"),
+      get_default_string_property("Type"),
+      get_default_string_property("Image_Path"),
+    ],
     user_interaction_list: [
       {
         function_name: "add_rpg_item",
@@ -317,8 +322,15 @@ export const get_item_schema = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [],
-    property_list: [get_default_string_property("Name"), get_default_string_property("Description"), get_default_string_property("Type"), get_default_string_property("Image_Path"), get_default_string_property("Flag_Quest_Item"), get_default_string_property("Flag_Cursed")],
+    child_schema_arr: [],
+    property_list: [
+      get_default_string_property("Name"),
+      get_default_string_property("Description"),
+      get_default_string_property("Type"),
+      get_default_string_property("Image_Path"),
+      get_default_string_property("Flag_Quest_Item"),
+      get_default_string_property("Flag_Cursed"),
+    ],
     user_interaction_list: [],
     date: get_current_date(),
   };
@@ -334,7 +346,7 @@ export const get_default_schema = (id?: string): Schema => {
     club_object_names_list: [],
     member_object_names_list: [],
     do_gen_ia_create_new: true,
-    child_list: [get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word()), get_default_child_schema(get_random_word())],
+    child_schema_arr: [get_default_sub_schema(get_random_word()), get_default_sub_schema(get_random_word()), get_default_sub_schema(get_random_word())],
     property_list: [
       get_default_string_property(get_random_word()),
       get_default_string_property(get_random_word()),

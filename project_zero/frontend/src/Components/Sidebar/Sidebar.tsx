@@ -13,7 +13,11 @@ const Sidebar: React.FC<SidebarProps> = ({ third_column_view, set_third_column_v
   const buttonIcons = ["🎹", "💾", "⚡", "👌", "👁️", "👑", "❔", "💭"];
 
   return (
-    <div className={`schemas-container-col-sidebar ${isHovered ? "expanded" : "collapsed"}`} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+    <div
+      className={`schemas-container-col-sidebar ${isHovered ? "expanded" : "collapsed"}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {buttonLabels.map((label, index) => (
         <button key={index} onClick={() => set_third_column_view(index)} className={third_column_view === index ? "active" : ""}>
           {isHovered ? label : buttonIcons[index]}

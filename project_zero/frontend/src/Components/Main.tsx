@@ -1,9 +1,10 @@
 import "./Main.css";
 
+import React, { useEffect, useState } from "react";
 import {
-  Child_Schema,
   Schema,
   Schema_Property,
+  Sub_Schema,
   User_Interaction,
   get_bee_farm_object,
   get_bee_hive_object,
@@ -18,7 +19,6 @@ import {
   get_player_object,
   get_item_schema as get_rpg_item_schema,
 } from "../Data/Schema";
-import React, { useEffect, useState } from "react";
 
 import Manage_Page from "./Manage/Manage_Page";
 import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
@@ -67,7 +67,7 @@ const update_output = (select_schema_data: Select_RpgClass_Props) => {
   }
 };
 
-export type Update_Schema_Params = string | boolean | string[] | Schema_Property[] | Child_Schema[] | User_Interaction[];
+export type Update_Schema_Params = string | boolean | string[] | Schema_Property[] | Sub_Schema[] | User_Interaction[];
 
 const App: React.FC = () => {
   const firstId = generate_unique_id();
@@ -152,7 +152,14 @@ const App: React.FC = () => {
   let item_2;
   let schema_list = (
     <div>
-      <Schema_List schemas={schemas} selected_schema_id={selected_schema_id} set_selected_schema_id={set_selected_schema_id} set_myclasses={set_schemas} current_page={current_page} set_current_page={set_current_page} />
+      <Schema_List
+        schemas={schemas}
+        selected_schema_id={selected_schema_id}
+        set_selected_schema_id={set_selected_schema_id}
+        set_myclasses={set_schemas}
+        current_page={current_page}
+        set_current_page={set_current_page}
+      />
     </div>
   );
   let schema_form = (

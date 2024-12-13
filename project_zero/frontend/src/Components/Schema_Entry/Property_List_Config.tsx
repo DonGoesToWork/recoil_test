@@ -59,10 +59,19 @@ const Property_List_Config: React.FC<Property_List_Config_Props> = ({ selected_s
                 <input type="text" value={property.name} onChange={(e) => handle_edit_property(index, "name", get_snake_case_lowercase_input(e.target.value))} />
               </td>
               <td>
-                <input type="text" value={property.default_value} onChange={(e) => handle_edit_property(index, "default_value", get_snake_case_lowercase_input(e.target.value))} />
+                <input
+                  type="text"
+                  value={property.default_value}
+                  onChange={(e) => handle_edit_property(index, "default_value", get_snake_case_lowercase_input(e.target.value))}
+                />
               </td>
               <td className="radio-column">
-                <input type="checkbox" checked={property.do_gen_ia_set} onClick={() => {}} onChange={() => handle_edit_property(index, "do_gen_ia_set", !property.do_gen_ia_set)} />
+                <input
+                  type="checkbox"
+                  checked={property.do_gen_ia_set}
+                  onClick={() => {}}
+                  onChange={() => handle_edit_property(index, "do_gen_ia_set", !property.do_gen_ia_set)}
+                />
               </td>
               <td>
                 <button className="delete-btn" onClick={() => handle_delete_property(index)}>

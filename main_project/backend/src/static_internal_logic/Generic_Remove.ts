@@ -1,37 +1,24 @@
-import { Group_Class_Data, Metadata_Object_Base } from "../z_generated/Shared_Misc/Metadata_Object_Base";
 import { Payload_Delete, Payload_Set, Pre_Message_Action_Send } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 import Backend_State from "./Backend_State";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
+import { Metadata_Object_Base } from "../z_generated/Shared_Misc/Metadata_Object_Base";
 
+// tdoo, try to get function to fewer lines....
 const get_parent_object_array_from_child = (state: Backend_State, metadata_object: Metadata_Object_Base, stateful_object: any): any => {
-  const parent_data = metadata_object.parent_data;
-
+  const parent_data = metadata_object.parent_class_data;
   if (!parent_data) return null;
+  console.log("DATA: ", stateful_object.parent_id_data);
 
-  // If our metadata object has a non-null parent_data field, then our stateful object MUST have parent-related fields too.
-  // This is a safe assumption to make given the logic of the application.
-  let parent_class_name = stateful_object.parent_class_name;
-
-  // We still do sanity checks anyway though...
-  if (!parent_class_name) {
-    console.log("Fatal error: failed to find parent class name for parent object: " + stateful_object.class_name + " child object: " + metadata_object.class_name + " stateful object: " + stateful_object.class_name);
-    return null;
+  let entries: [string, string][] = Object.entries(stateful_object.parent_id_data);
+  for (let [class_name, id] of entries) {
+    if (id !== "") return state.get_object(class_name, id);
   }
-
-  let parent_object_array = state.data[parent_class_name];
-
-  if (!parent_object_array) {
-    console.log("Fatal error: failed to find parent object array for string: " + parent_class_name);
-    return null;
-  }
-
-  return parent_object_array;
 };
 
 // Supplamental method to clear gaps in a parent id list. (Compacts it).
 export const clear_parent_id_list_gaps = (state: Backend_State, metadata_object: Metadata_Object_Base, stateful_object: any): void => {
-  const parent_data = metadata_object.parent_data;
+  const parent_data = metadata_object.parent_class_data;
   let parent_object_array = get_parent_object_array_from_child(state, metadata_object, stateful_object);
 
   if (!parent_data) {
@@ -58,84 +45,67 @@ export const clear_parent_id_list_gaps = (state: Backend_State, metadata_object:
 
 // Delete from parent(s)
 let delete_from_parent = (state: Backend_State, metadata_object: Metadata_Object_Base, stateful_object: any) => {
-  const parent_data = metadata_object.parent_data;
-  let parent_object_array = get_parent_object_array_from_child(state, metadata_object, stateful_object);
+  let parent_id_data = stateful_object.parent_id_data;
+  let child_class_name = stateful_object.class_name;
 
-  // Warn when objects with no parents are deleted as they are likely to be very important.
-  // - ie. a root-level application state object
-  if (!parent_data) {
-    console.log("Warning: Deleting object with no parents: " + metadata_object.class_name);
-    return;
-  }
+  for (const parent_class_name of Object.keys(parent_id_data)) {
+    let parent_id = parent_id_data[parent_class_name];
+    const parent_object = state.data[parent_class_name][parent_id];
+    parent_object.parent_id_data[child_class_name] = "-1";
 
-  if (!parent_object_array) {
-    return;
-  }
-
-  let parent_id_list_name = parent_data.id_list_name;
-  let stateful_object_id = stateful_object.id;
-
-  // Find the first parent object that includes our child object id and then filter out our child id from its property list.
-  parent_object_array.some((parent_object: any) => {
-    const id_list: string[] = parent_object[parent_id_list_name];
-
-    // return false when parent object does not include our child id
-    if (!id_list || id_list.indexOf(stateful_object_id) === -1) {
-      return false;
-    }
-
-    // filter id_list to no longer include our child (the base object id)
-    // We always clear fields. Never delete. (This is to preserve spaces).
-    id_list.some((id: string) => {
-      if (id === stateful_object_id) {
-        id = "";
-        return true;
-      }
-      return false;
-    });
-
-    // sent the payload
+    // create set payloads
     const payload: Payload_Set = {
       object_type: parent_object.class_name,
-      id: parent_object.id,
-      property_name: parent_id_list_name,
-      property_value: id_list,
+      id: parent_id,
+      property_name: parent_id_data,
+      property_value: parent_object.parent_id_data, // DAR TOOD -> Future optimization -> only set/send sub-property rather than whole array.
     };
 
     state.set(payload);
-    return true; // only 1 parent per object, so return on first success
-  });
+  }
 };
 
 let delete_children_recursively = (state: Backend_State, metadata_object: Metadata_Object_Base, object_id: string) => {
   // Var inits
-  let child_class_data_list: Group_Class_Data[] = metadata_object.child_class_data_list;
+  let child_class_data_list: string[] = metadata_object.child_class_data_list;
 
   // If no children, then delete the object.
   if (child_class_data_list == undefined || child_class_data_list == null || child_class_data_list.length == 0) {
     return;
   }
 
-  child_class_data_list.forEach((child_class_data: Group_Class_Data) => {
-    let children_objects = state.data[child_class_data.class_name];
+  child_class_data_list.forEach((child_class_name: string) => {
+    let children_objects = state.data[child_class_name];
 
     if (children_objects == undefined || children_objects == null) {
       return;
     }
 
     // Recursively delete children
-    children_objects.forEach((child: any) => {
-      // Skip non-children.
-      if (child.parent_id !== object_id) {
-        return;
+    let children_objects_entries: [string, any][] = Object.entries(children_objects);
+
+    children_objects_entries.forEach(([id, object]: [string, any]) => {
+      console.log("OBJECT PARENT ID: ", object.parent_id);
+
+      if (object.parent_id === object_id) {
+        delete_children_recursively(state, GLOBAL_CLASS_MAP[object.class_name], id);
+        delete_object(state, object.class_name, id);
       }
-
-      // Remove children recursively.
-      delete_children_recursively(state, GLOBAL_CLASS_MAP[child_class_data.class_name], child.id);
-
-      // Delete this object.
-      delete_object(state, child_class_data.class_name, child.id);
     });
+
+    // Old, todo remove after more validation.
+    // children_objects_entries.forEach((child: any) => {
+    //   // Skip non-children.
+    //   if (child.parent_id !== object_id) {
+    //     return;
+    //   }
+
+    //   // Remove children recursively.
+    //   delete_children_recursively(state, GLOBAL_CLASS_MAP[child_class_data.class_name], child.id);
+
+    //   // Delete this object.
+    //   delete_object(state, child_class_data.class_name, child.id);
+    // });
   });
 };
 
@@ -160,16 +130,21 @@ export let delete_object_and_relations = (message_action: Pre_Message_Action_Sen
 
     // Sanity check.
     if (!object_array) {
-      console.log("Fatal error: Can't delete object " + metadata_object_name + " - Object array not found.");
+      console.log("Fatal error: Can't delete object - " + metadata_object_name + " - Object array not found.");
+      return;
+    }
+
+    if (!data.id) {
+      console.log("Fatal error: Can't delete object - " + metadata_object_name + " - Object has no id.");
       return;
     }
 
     // find so object using id:
-    let so_object: any = object_array.find((object: any) => object.id === metadata_object_id);
+    let so_object: any = object_array[data.id]; // .find((object: any) =>  === metadata_object_id)
 
     // Sanity check.
     if (!so_object) {
-      console.log("Fatal error: Can't delete object " + metadata_object_name + " - Object not found at id: " + metadata_object_id);
+      console.log("Fatal error: Can't delete object - " + metadata_object_name + " - Object not found at id: " + metadata_object_id);
       return;
     }
 

@@ -10,7 +10,7 @@ export default class Preview_Shared_DM_Lib extends Base_Generator {
   }
 
   get_imports_definitions(): string {
-    return `import { Group_Class_Data, Group_Container_Class_Data, Metadata_Object_Base } from "../Shared_Misc/Metadata_Object_Base";
+    return `import {  Metadata_Object_Base } from "../Shared_Misc/Metadata_Object_Base";
 import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";`;
   }
 
@@ -23,10 +23,10 @@ import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces
       return "";
     }
 
-    let parent_str = `\n${this.tab_indent}parent_data: {`;
+    let parent_str = `\n${this.tab_indent}parent_id_data: {`;
 
-    this.schema.parent_object_names_list.forEach((x) => {
-      parent_str += `\n${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`;
+    this.parent_object_names_list_lower.forEach((x) => {
+      parent_str += `\n${this.tab_indent}${this.tab_indent}${x}: string;`;
     });
 
     parent_str += `\n${this.tab_indent}}`;
@@ -39,7 +39,7 @@ import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces
       return "";
     }
 
-    return `\n${this.tab_indent}child_data: {${this.child_property_name_list
+    return `\n${this.tab_indent}child_id_data: {${this.child_object_names_list_lower
       .map(
         (x) => `
 ${this.tab_indent}${this.tab_indent}${x}: {
@@ -57,10 +57,10 @@ ${this.tab_indent}${this.tab_indent}};`
       return "";
     }
 
-    let club_str = `\n${this.tab_indent}club_data: {`;
+    let club_str = `\n${this.tab_indent}club_id_data: {`;
 
-    this.schema.club_object_names_list.forEach((x) => {
-      club_str += `\n${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`;
+    this.club_object_names_list_lower.forEach((x) => {
+      club_str += `\n${this.tab_indent}${this.tab_indent}${x}: string;`;
     });
 
     club_str += `\n${this.tab_indent}}`;
@@ -69,14 +69,14 @@ ${this.tab_indent}${this.tab_indent}};`
   }
 
   get_member_str(): string {
-    if (this.schema.member_object_names_list.length === 0) {
+    if (this.member_object_names_list_lower.length === 0) {
       return "";
     }
 
-    let member_str = `\n${this.tab_indent}member_data: {`;
+    let member_str = `\n${this.tab_indent}member_id_data: {`;
 
-    this.schema.member_object_names_list.forEach((x) => {
-      member_str += `\n${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`;
+    this.member_object_names_list_lower.forEach((x) => {
+      member_str += `\n${this.tab_indent}${this.tab_indent}${x}: string;`;
     });
 
     member_str += `\n${this.tab_indent}}`;
@@ -87,11 +87,13 @@ ${this.tab_indent}${this.tab_indent}};`
   get_object_interface(): string {
     return `
   
-  // SO = Stateful Object
-  // SO_[object] holds real information that is manipulated and changed over time.
+// SO = Stateful Object
+// SO_[object] holds real information that is manipulated and changed over time.
   
-  export interface SO_${this.schema.object_name} {
-${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}: string;`).join(`\n${this.tab_indent}`)}${this.get_parent_str()}${this.get_child_str()}${this.get_club_str()}${this.get_member_str()}
+export interface SO_${this.schema.object_name} {
+${this.tab_indent}${[...this.base_property_name_list, "id"]
+      .map((x) => `${x}: string;`)
+      .join(`\n${this.tab_indent}`)}${this.get_parent_str()}${this.get_child_str()}${this.get_club_str()}${this.get_member_str()}
 }
   `;
   }
@@ -101,8 +103,12 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}: st
    */
 
   get_interface_type_section(): string {
-    let base_property_list = this.base_property_name_list.length == 0 ? "" : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: string;`).join("\n");
-    let user_generation: string = this.schema.user_interaction_list.length == 0 ? "" : "\n" + this.schema.user_interaction_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.function_name}: string;`).join("\n");
+    let base_property_list =
+      this.base_property_name_list.length == 0 ? "" : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: string;`).join("\n");
+    let user_generation: string =
+      this.schema.user_interaction_list.length == 0
+        ? ""
+        : "\n" + this.schema.user_interaction_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.function_name}: string;`).join("\n");
 
     const template = `
 // IMO = Metadata Object
@@ -110,10 +116,10 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}: st
 
 export interface IMO_${this.schema.object_name} extends Metadata_Object_Base {
   class_name: string;
-  parent_data: Group_Container_Class_Data;
-  child_class_data_list: Group_Class_Data[];
-  club_class_data_list: Group_Container_Class_Data;
-  member_class_data_list: Group_Class_Data[];
+  parent_class_data: string[];
+  child_class_data_list: string[];
+  club_class_data: string[];
+  member_class_data_list: string[];
   functions: {
 ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${user_generation}
   };
@@ -124,59 +130,51 @@ ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${us
 
   get_plain_object_definition(): string {
     const parent_data = this.has_parent()
-      ? `,\n${this.tab_indent}parent_data: {
-    class_names: [${this.schema.parent_object_names_list.map((x) => `"${x}"`).join(", ")}], 
-    id_list_name: "${this.name}_ids",
-  }`
-      : `,\n${this.tab_indent}parent_data: null`;
+      ? `,\n${this.tab_indent}parent_class_data: [${this.parent_object_names_list_lower.map((x) => `"${x}"`).join(", ")}]`
+      : `,\n${this.tab_indent}parent_class_data: []`;
 
     const child_object_list =
-      this.child_property_name_list.length == 0
+      this.child_object_names_list_lower.length == 0
         ? ""
-        : "\n" +
-          this.child_property_name_list
-            .map((child: string, i: number) => {
-              return `${this.tab_indent}${this.tab_indent}{
-      class_name: \"${this.child_property_list[i].name}\",
-      id_list_name: \"${child}\",
-    },`;
+        : this.child_object_names_list_lower
+            .map((name: string) => {
+              return `\"${name}\"`;
             })
-            .join("\n") +
-          "\n" +
-          this.tab_indent;
+            .join(",");
+    "\n" + this.tab_indent;
 
     // club versions
     const club_data = this.has_club()
-      ? `,\n${this.tab_indent}club_class_data_list: {
-    class_names: [${this.schema.club_object_names_list.map((x) => `"${x}"`).join(", ")}], 
-    id_list_name: "${this.name}_ids",
-  }`
-      : `,\n${this.tab_indent}club_class_data_list: null`;
+      ? `,\n${this.tab_indent}club_class_data: [${this.club_object_names_list_lower.map((x) => `"${x}"`).join(", ")}]`
+      : `,\n${this.tab_indent}club_class_data: []`;
 
     const member_object_list =
-      this.schema.member_object_names_list.length == 0
+      this.member_object_names_list_lower.length == 0
+        ? ""
+        : this.member_object_names_list_lower
+            .map((member: string) => {
+              return `"${member}"`;
+            })
+            .join(",");
+
+    const function_list =
+      this.base_property_name_list.length == 0
+        ? ""
+        : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: "ia_set_${this.name_as_lower}_${x}",`).join("\n");
+    const user_interaction_function_list =
+      this.schema.user_interaction_list.length == 0
         ? ""
         : "\n" +
-          this.schema.member_object_names_list
-            .map((child: string) => {
-              return `${this.tab_indent}${this.tab_indent}{
-      class_name: \"${child}\",
-      id_list_name: \"${child}_ids\",
-    },`;
-            })
-            .join("\n") +
-          "\n" +
-          this.tab_indent;
-
-    const function_list = this.base_property_name_list.length == 0 ? "" : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: "ia_set_${this.name_as_lower}_${x}",`).join("\n");
-    const user_interaction_function_list = this.schema.user_interaction_list.length == 0 ? "" : "\n" + this.schema.user_interaction_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.function_name}: "ia_${this.name_as_lower}_${x.function_name}",`).join("\n");
+          this.schema.user_interaction_list
+            .map((x) => `${this.tab_indent}${this.tab_indent}${x.function_name}: "ia_${this.name_as_lower}_${x.function_name}",`)
+            .join("\n");
 
     return `
 // Interface that represents all metadata properties of an object.
 // - These properties are all hardcoded and do not change over time.
 
 export const MO_${this.name}: IMO_${this.name} = {
-  class_name: \"${this.schema.object_name}\"${parent_data},
+  class_name: \"${this.name_as_lower}\"${parent_data},
   child_class_data_list: [${child_object_list}]${club_data},
   member_class_data_list: [${member_object_list}],
   functions: {
@@ -195,15 +193,18 @@ export const MO_${this.name}: IMO_${this.name} = {
       return "";
     }
 
-    return `\n${this.tab_indent}parent_data: {\n${this.schema.parent_object_names_list.map((x) => `${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`).join("\n")}\n${this.tab_indent}};`;
+    return `\n${this.tab_indent}parent_id_data: {\n${this.parent_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string;`).join("\n")}\n${
+      this.tab_indent
+    }};`;
   }
 
   get_create_child_str(): string {
-    if (this.child_property_name_list.length === 0) {
+    if (this.child_object_names_list_lower.length === 0) {
       return "";
     }
 
-    return `\n${this.tab_indent}child_data?: {${this.child_property_name_list
+    // Must be '?' to support front to back-end ia interaction.
+    return `\n${this.tab_indent}child_id_data?: {${this.child_object_names_list_lower
       .map(
         (x) => `
 ${this.tab_indent}${this.tab_indent}${x}: {
@@ -221,33 +222,40 @@ ${this.tab_indent}${this.tab_indent}};`
       return "";
     }
 
-    return `\n${this.tab_indent}club_data?: {
-${this.tab_indent}${this.tab_indent}guild_id: string;
-${this.tab_indent}${this.tab_indent}player_inventory_id: string;
-${this.tab_indent}${this.tab_indent}entity_inventory_id: string;
-${this.tab_indent}};`;
+    // Must be '?' to support front to back-end ia interaction.
+    return `\n${this.tab_indent}club_id_data?: {\n${this.club_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string;`).join("\n")}\n${
+      this.tab_indent
+    }};`;
   }
 
   get_create_member_str(): string {
-    if (this.schema.member_object_names_list.length === 0) {
+    if (this.member_object_names_list_lower.length === 0) {
       return "";
     }
 
-    return `\n${this.tab_indent}member_data?: {${this.schema.member_object_names_list
+    // Must be '?' to support front to back-end ia interaction.
+    return `\n${this.tab_indent}member_id_data?: {${this.member_object_names_list_lower
       .map(
         (x) => `
-  ${this.tab_indent}${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`
+${this.tab_indent}${this.tab_indent}${x}: {
+${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: string[];
+${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: false;
+${this.tab_indent}${this.tab_indent}};`
       )
       .join("\n")}\n${this.tab_indent}};`;
   }
 
   get_create_object_interface(): string {
     return `
-  // C = Create
-  // Interface for object creation.
+// C = Create
+// Interface for object creation.
   
-  export interface C_${this.schema.object_name} {
-${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}?: string;`).join(`\n${this.tab_indent}`)}${this.get_create_parent_str()}${this.get_create_child_str()}${this.get_create_club_str()}${this.get_create_member_str()}
+export interface C_${this.schema.object_name} {
+${this.tab_indent}${[...this.base_property_name_list, "id"]
+      .map((x) => `${x}?: string;`)
+      .join(`\n${this.tab_indent}`)}${this.get_create_parent_str()}${this.get_create_child_str()}${this.get_create_club_str()}${this.get_create_member_str()}
 }`;
   }
 
@@ -256,7 +264,7 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"].map((x) => `${x}?: s
    */
 
   generate_ia_interfaces() {
-    let parent_schema = this.has_parent() ? this.schema.parent_object_names_list.map((x) => `\n${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`).join("") : "";
+    let parent_schema = this.has_parent() ? this.parent_object_names_list_lower.map((x) => `\n${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`).join("") : "";
     let data_model_entry = `
 
 // Interface Argument(s) - Back-End Function Interfaces.

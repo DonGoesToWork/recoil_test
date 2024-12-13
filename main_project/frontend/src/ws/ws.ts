@@ -4,7 +4,12 @@ class WebSocketClient {
   private reconnectCount: number = 0;
   private reconnectIntervalId: NodeJS.Timeout | null = null;
 
-  constructor(private url: string, private onMessage: (message: string) => void, private setConnected: (connected: boolean) => void, private set_state: (state: any) => void) {
+  constructor(
+    private url: string,
+    private onMessage: (message: string) => void,
+    private setConnected: (connected: boolean) => void,
+    private set_state: (state: any) => void
+  ) {
     this.connect();
   }
 

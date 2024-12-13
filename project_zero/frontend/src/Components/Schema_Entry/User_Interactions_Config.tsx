@@ -59,7 +59,11 @@ const User_Interactions_Config: React.FC<User_Interactions_Config_Props> = ({ se
           {schema_user_interaction_input.map((property, index) => (
             <tr key={index} className={index % 2 === 0 ? "even-row" : "odd-row"}>
               <td>
-                <input type="text" value={property.function_name} onChange={(e) => handle_edit_property(index, "function_name", get_snake_case_lowercase_input(e.target.value))} />
+                <input
+                  type="text"
+                  value={property.function_name}
+                  onChange={(e) => handle_edit_property(index, "function_name", get_snake_case_lowercase_input(e.target.value))}
+                />
               </td>
               <td>
                 <input type="text" value={property.object_1} onChange={(e) => handle_edit_property(index, "object_1", get_snake_case_lowercase_input(e.target.value))} />

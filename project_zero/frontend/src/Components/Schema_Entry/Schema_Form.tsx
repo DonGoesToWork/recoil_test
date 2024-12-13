@@ -19,17 +19,27 @@ const Schema_Form: React.FC<Schema_Form_Props> = ({ selected_schema, update_sche
     <div className="schema-view">
       <label>Class Name</label>
       <h3>The name of this object's class. The object's name.</h3>
-      <input className="schema-title" value={selected_schema.object_name} onChange={(e) => update_schema("object_name", e.target.value, selected_schema.id)} placeholder="Schema Title" />
-
-      <hr />
-      <Member_List_Config selected_schema={selected_schema} update_schema={update_schema} />
+      <input
+        className="schema-title"
+        value={selected_schema.object_name}
+        onChange={(e) => update_schema("object_name", e.target.value, selected_schema.id)}
+        placeholder="Schema Title"
+      />
 
       <hr />
       <label>Generate IA Create Function</label>
       <h3>Create the interaction (ia = Inter-Action) for creating new objects from schema?</h3>
       <span style={{ marginBottom: "10px" }}>
-        <input type="checkbox" checked={selected_schema.do_gen_ia_create_new} onClick={() => update_schema("do_gen_ia_create_new", !selected_schema.do_gen_ia_create_new, selected_schema.id)} onChange={() => {}} />
+        <input
+          type="checkbox"
+          checked={selected_schema.do_gen_ia_create_new}
+          onClick={() => update_schema("do_gen_ia_create_new", !selected_schema.do_gen_ia_create_new, selected_schema.id)}
+          onChange={() => {}}
+        />
       </span>
+
+      <hr />
+      <Member_List_Config selected_schema={selected_schema} update_schema={update_schema} />
 
       <hr />
       <Child_List_Config selected_schema={selected_schema} update_schema={update_schema} />

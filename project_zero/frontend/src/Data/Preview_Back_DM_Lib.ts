@@ -1,4 +1,4 @@
-import { Schema, Schema_Property, User_Interaction } from "./Schema";
+import { Schema, Schema_Property, Sub_Schema, User_Interaction } from "./Schema";
 
 import Base_Generator from "./Base_Generator";
 import { fix_schema } from "./Schema_Lib";
@@ -24,8 +24,9 @@ import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Mis
 import Backend_State from "../../static_internal_logic/Backend_State";
 import { Object_Class_Function_Map } from "../Data_Registration/Object_Registration";
 import { generate_unique_id } from "../../utils/utils";
-${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => `import { iam_${this.name_as_lower}_${user_interaction.function_name} } from "../../Interactions/${this.name}";`).join("\n")}
-`;
+${this.schema.user_interaction_list
+  .map((user_interaction: User_Interaction) => `import { iam_${this.name_as_lower}_${user_interaction.function_name} } from "../../Interactions/${this.name}";`)
+  .join("\n")}`;
   }
 
   /**
@@ -41,10 +42,10 @@ ${this.schema.user_interaction_list.map((user_interaction: User_Interaction) => 
 
     // Parent Data
     const parent_data = this.has_parent()
-      ? `parent_data: {${this.schema.parent_object_names_list
+      ? `parent_id_data: {${this.parent_object_names_list_lower
           .map(
             (parent) => `
-${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: ${this.name_as_lower}.parent_data.${parent.toLocaleLowerCase()}_id,`
+${this.tab_indent}${this.tab_indent}${parent}: ${this.name_as_lower}.parent_id_data.${parent},`
           )
           .join("")}
 ${this.tab_indent}}`
@@ -52,10 +53,10 @@ ${this.tab_indent}}`
 
     // Child Data
     const child_data = this.child_property_list.length
-      ? `child_data: {${this.child_property_list
+      ? `child_id_data: {${this.child_property_list
           .map(
-            (child) => `
-${this.tab_indent}${this.tab_indent}${child.name.toLocaleLowerCase()}_ids: {
+            (child: Sub_Schema, i) => `
+${this.tab_indent}${this.tab_indent}${this.child_object_names_list_lower[i]}: {
 ${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: [],
 ${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: ${child.id_list_start_size},
 ${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: ${child.id_list_max_size},
@@ -68,21 +69,21 @@ ${this.tab_indent}}`
 
     // Club Data
     const club_data = this.has_club()
-      ? `club_data: {${this.schema.club_object_names_list
+      ? `club_id_data: {${this.schema.club_object_names_list
           .map(
             (club) => `
-${this.tab_indent}${this.tab_indent}${club.toLocaleLowerCase()}_id: "",`
+${this.tab_indent}${this.tab_indent}${club.toLocaleLowerCase()}: "",`
           )
           .join("")}
 ${this.tab_indent}}`
       : "";
 
     // Member Data
-    const member_data = this.schema.member_object_names_list.length
-      ? `member_data: {${this.schema.member_object_names_list
+    const member_data = this.member_object_names_list_lower.length
+      ? `member_id_data: {${this.member_object_names_list_lower
           .map(
             (member) => `
-${this.tab_indent}${this.tab_indent}${member.toLocaleLowerCase()}_id: "",`
+${this.tab_indent}${this.tab_indent}${member}: "",`
           )
           .join("")}
 ${this.tab_indent}}`
@@ -116,14 +117,14 @@ ${this.tab_indent}}`
 `;
   }
 
-  generate_ia_add_function(): string {
+  generate_ia_create_new_function(): string {
     const { object_name } = this.schema;
 
     const parent_data = this.has_parent()
-      ? `${this.tab_indent}parent_data: {${this.schema.parent_object_names_list
+      ? `${this.tab_indent}parent_id_data: {${this.parent_object_names_list_lower
           .map(
             (parent) => `
-  ${this.tab_indent}${this.tab_indent}${parent.toLocaleLowerCase()}_id: data.${parent.toLocaleLowerCase()}_id,`
+  ${this.tab_indent}${this.tab_indent}${parent}: data.${parent}_id,`
           )
           .join("")}
   ${this.tab_indent}},`
@@ -156,7 +157,9 @@ ${this.tab_indent}}`
     return this.base_property_list
       .map((schema_property: Schema_Property) => {
         const lowerCaseProperty = schema_property.name.toLowerCase();
-        return `export let set_${this.name_as_lower}_${lowerCaseProperty} = (state: Backend_State, ${this.name_as_lower}_id: string, new_${lowerCaseProperty}: string): void => {
+        return `export let set_${this.name_as_lower}_${lowerCaseProperty} = (state: Backend_State, ${
+          this.name_as_lower
+        }_id: string, new_${lowerCaseProperty}: string): void => {
   set_${this.name_as_lower}_property(state, ${this.name_as_lower}_id, "${lowerCaseProperty}", new_${lowerCaseProperty});
 };
 ${
@@ -186,15 +189,23 @@ let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Mes
   }
 
   generate_backend_switch_function(): string {
-    const { object_name } = this.schema;
+    let object_name = this.name_as_lower;
+
     const switch_statements = [
       `x['${object_name}'] = {};`,
       `x['${object_name}']['ia_create_new_${this.name_as_lower}'] = ia_create_new_${this.name_as_lower};`,
-      ...this.base_property_name_list.map((property) => `x['${object_name}']['ia_set_${this.name_as_lower}_${property.toLowerCase()}'] = ia_set_${this.name_as_lower}_${property.toLowerCase()};`),
-      ...this.schema.user_interaction_list.map((user_interaction) => `x['${object_name}']['ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()}'] = ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()};`),
+      ...this.base_property_name_list.map(
+        (property) => `x['${object_name}']['ia_set_${this.name_as_lower}_${property.toLowerCase()}'] = ia_set_${this.name_as_lower}_${property.toLowerCase()};`
+      ),
+      ...this.schema.user_interaction_list.map(
+        (user_interaction) =>
+          `x['${object_name}']['ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()}'] = ia_${
+            this.name_as_lower
+          }_${user_interaction.function_name.toLowerCase()};`
+      ),
     ].join("\n  ");
 
-    return `export let Register_${object_name} = (x: Object_Class_Function_Map): void => {
+    return `export let Register_${this.name} = (x: Object_Class_Function_Map): void => {
   ${switch_statements}
 };
 `;
@@ -206,7 +217,7 @@ ${this.generate_create_set_payload_function()}
 ${this.generate_set_property_function()}
 ${this.generate_initialize_object_function()}
 ${this.generate_add_function()}
-${this.generate_ia_add_function()}
+${this.generate_ia_create_new_function()}
 ${this.generate_set_functions()}
 ${this.generate_ia_user_interaction_functions()}
 ${this.generate_backend_switch_function()}`;

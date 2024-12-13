@@ -88,10 +88,14 @@ export let set_${this.name_as_lower}_${property} = (function_send_message: Funct
     return this.schema.user_interaction_list
       .map((user_interaction) => {
         return `
-export let ${this.name_as_lower}_${user_interaction.function_name} = (function_send_message: Function, ${user_interaction.object_1.toLocaleLowerCase()}_id: string, ${user_interaction.object_2.toLocaleLowerCase()}_id: string): void => {
+export let ${this.name_as_lower}_${
+          user_interaction.function_name
+        } = (function_send_message: Function, ${user_interaction.object_1.toLocaleLowerCase()}_id: string, ${user_interaction.object_2.toLocaleLowerCase()}_id: string): void => {
   let data: IA_${this.name_as_lower}_${user_interaction.function_name} = {
     object_class: MO_${this.name}.class_name,
-    function_name: MO_${this.name}.functions.${user_interaction.function_name},${get_user_interaction_object_line(user_interaction.object_1)}${get_user_interaction_object_line(user_interaction.object_2)}
+    function_name: MO_${this.name}.functions.${user_interaction.function_name},${get_user_interaction_object_line(
+          user_interaction.object_1
+        )}${get_user_interaction_object_line(user_interaction.object_2)}
   };
   function_send_message(data);
 };

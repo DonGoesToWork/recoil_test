@@ -37,8 +37,14 @@ router.post("/", (req: any, res: any) => {
   // * Move all files to their relevant locations within the frontend and backend folders one-level down from project root.
 
   // Clear generated folders.
-  fs.rmSync(root_project_path + "\\main_project\\frontend\\src\\z_generated", { recursive: true, force: true });
-  fs.rmSync(root_project_path + "\\main_project\\backend\\src\\z_generated", { recursive: true, force: true });
+  fs.rmSync(root_project_path + "\\main_project\\frontend\\src\\z_generated", {
+    recursive: true,
+    force: true,
+  });
+  fs.rmSync(root_project_path + "\\main_project\\backend\\src\\z_generated", {
+    recursive: true,
+    force: true,
+  });
 
   copy_folder_to_folder(output_paths.backend_data_model, main_project_paths.backend_data_models);
   copy_folder_to_folder(output_paths.frontend_data_model, main_project_paths.frontend_data_models);

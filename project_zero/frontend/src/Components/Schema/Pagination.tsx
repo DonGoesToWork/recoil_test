@@ -9,7 +9,12 @@ interface PaginationProps {
   set_current_page: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ total_schemas: total_schemas, schemas_per_page: schemas_per_page, current_page: current_page, set_current_page: set_current_page }) => {
+const Pagination: React.FC<PaginationProps> = ({
+  total_schemas: total_schemas,
+  schemas_per_page: schemas_per_page,
+  current_page: current_page,
+  set_current_page: set_current_page,
+}) => {
   const total_pages = Math.ceil(total_schemas / schemas_per_page);
 
   // Function to handle setting page safely within bounds
@@ -36,7 +41,11 @@ const Pagination: React.FC<PaginationProps> = ({ total_schemas: total_schemas, s
   const get_plus_button = (val: number) => {
     return (
       <span className="right_button">
-        <button onClick={() => handle_set_page(current_page + val)} disabled={current_page + val > total_pages} className={current_page + val > total_pages ? "disabled" : ""}>
+        <button
+          onClick={() => handle_set_page(current_page + val)}
+          disabled={current_page + val > total_pages}
+          className={current_page + val > total_pages ? "disabled" : ""}
+        >
           +{val}
         </button>
       </span>

@@ -37,18 +37,54 @@ interface Client_Return_object {
   error_message?: string;
 }
 
-const clients = [
+type Client_Object = {
+  username: string;
+  password: string;
+  security_level: string;
+  connected: {
+    [client_id: string]: boolean;
+  };
+  last_request_id: string;
+};
+
+type Client_Objects = [Client_Object];
+
+const clients: Client_Objects = [
   {
     username: "donald",
     password: "robinson",
     security_level: "root",
-    connected: false,
+    connected: {},
     last_request_id: "",
   },
 ];
 
 // Function to get user_object from client map.
-function get_user_object(ws: any, token: string | string[] | undefined) {
+function get_user_object(ws: any, username: string, password: string, client_id: string): Client_Object | null {
+  let user_object: Client_Object | undefined = clients.find((client) => client.username === username && client.password === password);
+
+  if (!user_object) {
+    ws.close(1008, "Authentication failed");
+    console.log("Authentication failed");
+    return null;
+  }
+
+  if (user_object.connected[client_id] === undefined) {
+    user_object.connected[client_id] = true;
+  } else if (user_object.connected[client_id]) {
+    ws.close(1008, "Client already connected.");
+    console.log("Client already connected.");
+    return null;
+  }
+
+  return user_object;
+}
+
+wss.on("connection", (ws: any, req: any) => {
+  // Evaluate request
+  const query = parse(req.url, true).query;
+  const token = query.token;
+
   if (!token) {
     ws.close(1008, "Token missing");
     console.log("Token missing");
@@ -61,42 +97,26 @@ function get_user_object(ws: any, token: string | string[] | undefined) {
     return null;
   }
 
-  let [username, password] = token;
-
-  let user_object = clients.find((client) => client.username === username && client.password === password);
-
-  if (!user_object) {
-    ws.close(1008, "Authentication failed");
-    console.log("Authentication failed");
+  if (token[2] === undefined || token[2] === "") {
+    ws.close(1008, "Token 3 missing.");
+    console.log("Token 3 missing.");
     return null;
   }
 
-  return user_object;
-}
-
-wss.on("connection", (ws: any, req: any) => {
-  const query = parse(req.url, true).query;
-  const token = query.token;
+  let [username, password, client_id] = token;
 
   // Authenticate.
-  let user_object = get_user_object(ws, token);
+  let user_object: Client_Object | null = get_user_object(ws, username, password, client_id);
 
   if (!user_object) {
-    return;
-  }
-
-  if (user_object.connected) {
-    ws.close(1008, "Client already connected.");
-    console.log("Client already connected.");
     return;
   }
 
   // Officially connect user.
-  user_object.connected = true;
   console.log(`Client connected: ${token}`);
 
   ws.on("close", () => {
-    user_object.connected = false;
+    user_object.connected[client_id] = false;
     console.log(`Client disconnected: ${token}`);
   });
 
@@ -118,7 +138,13 @@ wss.on("connection", (ws: any, req: any) => {
 
     if (message_action.server_state_ref !== state.server_state_ref) {
       console.log("[Error] Out of sync client request rejected. Expected: ", state.server_state_ref, " Received: ", message_action.server_state_ref);
-      ws.send(JSON.stringify({ message_type: Message_Type.ERROR, server_state_ref: "", message_array: [] }));
+      ws.send(
+        JSON.stringify({
+          message_type: Message_Type.ERROR,
+          server_state_ref: "",
+          message_array: [],
+        })
+      );
       return;
     }
 
@@ -148,7 +174,11 @@ wss.on("connection", (ws: any, req: any) => {
     // Send changes to all other clients.
     state.randomize_server_state_ref(); // always randomize state before sending changes to clients
     user_object.last_request_id = message_action.request_id; // update the last request id too
-    let client_return_object: Client_Return_object = { message_type: Message_Type.CHANGE_PAYLOADS, server_state_ref: state.server_state_ref, message_array: state.change_payloads };
+    let client_return_object: Client_Return_object = {
+      message_type: Message_Type.CHANGE_PAYLOADS,
+      server_state_ref: state.server_state_ref,
+      message_array: state.change_payloads,
+    };
 
     wss.clients.forEach((client) => {
       client.send(JSON.stringify(client_return_object));
@@ -160,7 +190,11 @@ wss.on("connection", (ws: any, req: any) => {
 
   // Send full storage to newly connected clients.
   state.randomize_server_state_ref(); // always randomize state before sending changes to clients
-  let client_return_object: Client_Return_object = { message_type: Message_Type.FULL_STORAGE, server_state_ref: state.server_state_ref, message_array: state.get_full_storage() };
+  let client_return_object: Client_Return_object = {
+    message_type: Message_Type.FULL_STORAGE,
+    server_state_ref: state.server_state_ref,
+    message_array: state.get_full_storage(),
+  };
   ws.send(JSON.stringify(client_return_object));
   state.clearChanges(); // Always clear changes post-transmission.
 });

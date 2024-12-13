@@ -25,8 +25,8 @@ const Schema_Grid: React.FC<Schema_Grid_Props> = ({ schemas, selected_schema_id:
           }}
         >
           <div className="schema-title-preview">{schema.object_name}</div>
-          <div className="schema-preview">{truncated("PA: " + schema.parent)}</div>
-          <div className="schema-preview">{truncated("CH: " + `${schema.child_list.map((child) => child.name)}`)}</div>
+          <div className="schema-preview">{truncated("PA: " + schema.parent_object_names_list.join(","))}</div>
+          <div className="schema-preview">{truncated("CH: " + `${schema.child_schema_arr.map((child) => child.name)}`)}</div>
           <div className="schema-preview">{truncated("PR: " + `${schema.property_list.map((property) => property.name)}`)}</div>
           {/* TODO ADD INTERFACE FUNCTIONS HERE */}
           <div className="schema-date-preview">{schema.date}</div>

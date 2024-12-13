@@ -28,19 +28,26 @@ export let inventory_get = (state: Backend_State, inventory_id: string): SO_Inve
 };
 
 export let inventory_delete = (state: Backend_State, inventory_id: string) => {
-  delete_object_and_relations({ object_class: MO_Inventory.class_name, function_name: DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME, id: inventory_id }, state);
+  delete_object_and_relations(
+    {
+      object_class: MO_Inventory.class_name,
+      function_name: DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME,
+      id: inventory_id,
+    },
+    state
+  );
 };
 
 // Parent add/remove functions
 
 export let inventory_set_player = (state: Backend_State, inventory_id: string, player_id: string): void => {
   let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  inventory.parent_data.player_id = player_id;
+  inventory.parent_id_data.player = player_id;
 };
 
 export let inventory_remove_player = (state: Backend_State, inventory_id: string): void => {
   let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  inventory.parent_data.player_id = "";
+  inventory.parent_id_data.player = "";
 };
 
 // Club add/remove functions.
@@ -49,7 +56,7 @@ export let inventory_get_player_inventory = (state: Backend_State, inventory_id:
   let inventory: SO_Inventory = inventory_get(state, inventory_id);
 
   for (let so_player_inventory of state.data[MO_Player_Inventory.class_name]) {
-    if (inventory.club_data.player_inventory_id === so_player_inventory.id) {
+    if (inventory.club_id_data.player_inventory === so_player_inventory.id) {
       return so_player_inventory;
     }
   }
@@ -72,7 +79,7 @@ export let inventory_remove_player_inventory = (state: Backend_State, inventory_
 
 export let inventory_set_player_inventory = (state: Backend_State, inventory_id: string, player_inventory_id: string): void => {
   let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  inventory.club_data.player_inventory_id = player_inventory_id;
+  inventory.club_id_data.player_inventory = player_inventory_id;
 };
 
 // Inventory can have Player and House as parent at same time.
@@ -112,5 +119,5 @@ export let inventory_replace_rpg_item = (state: Backend_State, inventory_id: str
 
 export let inventory_is_full_rpg_items = (state: Backend_State, inventory_id: string) => {
   let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  return inventory.child_data.rpg_item_ids.ids.length >= inventory.child_data.rpg_item_ids.max_size;
+  return inventory.child_id_data.rpg_item.ids.length >= inventory.child_id_data.rpg_item.max_size;
 };
