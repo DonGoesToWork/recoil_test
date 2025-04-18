@@ -3,8 +3,8 @@
 import { Class_Function, Object_Class_Function_Map, Register_Objects } from "./z_generated/Data_Registration/Object_Registration";
 import { Message_Action_Send, Message_Recieve } from "./z_generated/Shared_Misc/Communication_Interfaces";
 
-import Backend_State from "./static_internal_logic/Backend_State";
 import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "./utils/IA_Remove";
+import Shared_State from "./static_internal_logic/Shared_State";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import { delete_object_and_relations } from "./static_internal_logic/Generic_Remove";
@@ -18,7 +18,7 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
 // Create our main state object.
-const state = new Backend_State();
+const state = new Shared_State();
 
 // Initialize references to all object class functions.
 let object_class_function_map: Object_Class_Function_Map = {};

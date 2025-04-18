@@ -27,8 +27,8 @@ export type User_Interaction = {
 export type Schema = {
   id: string;
   object_name: string;
-  parent_object_names_list: string[]; // gets set by fix_schema
-  club_object_names_list: string[]; // gets set by fix_schema
+  parent_object_names_list: string[]; // gets set by fix_schema()
+  club_object_names_list: string[]; // gets set by fix_schema()
   member_object_names_list: Sub_Schema[];
   do_gen_ia_create_new: boolean;
   child_schema_arr: Sub_Schema[];
@@ -287,7 +287,7 @@ export const get_inventory_schema = (id?: string): Schema => {
     object_name: "Inventory",
     parent_object_names_list: [],
     club_object_names_list: [],
-    member_object_names_list: [],
+    member_object_names_list: [get_default_sub_schema(`Inventory_Accessory`)],
     do_gen_ia_create_new: true,
     child_schema_arr: [get_default_sub_schema(`Rpg_Item`)],
     property_list: [
@@ -308,6 +308,29 @@ export const get_inventory_schema = (id?: string): Schema => {
         object_2: "rpg_item",
       },
     ],
+    date: get_current_date(),
+  };
+};
+
+export const get_inventory_accesory_schema = (id?: string): Schema => {
+  let finalId = id === undefined ? generate_unique_id() : id;
+
+  return {
+    id: finalId,
+    object_name: "Inventory_Accessory",
+    parent_object_names_list: [],
+    club_object_names_list: [],
+    member_object_names_list: [],
+    do_gen_ia_create_new: true,
+    child_schema_arr: [],
+    property_list: [
+      get_default_string_property("Name"),
+      get_default_string_property("Description"),
+      get_default_string_property("Type"),
+      get_default_string_property("Image_Path"),
+      get_default_string_property("Style"),
+    ],
+    user_interaction_list: [],
     date: get_current_date(),
   };
 };

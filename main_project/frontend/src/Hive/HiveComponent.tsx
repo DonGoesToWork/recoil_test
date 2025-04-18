@@ -144,7 +144,7 @@ const HiveComponent: React.FC = () => {
     }
 
     let bee_farm_entries = Object.entries(state[MO_Bee_Farm.class_name]) as [string, SO_Bee_Farm][];
-    bee_farm_entries = bee_farm_entries.filter(([bee_farm_id, bee_farm]: [string, SO_Bee_Farm]) => bee_farm.parent_id_data.nature === nature_id);
+    bee_farm_entries = bee_farm_entries.filter(([bee_farm_id, bee_farm]: [string, SO_Bee_Farm]) => bee_farm.parent_id_data.nature.indexOf(nature_id) != -1);
     return bee_farm_entries;
   }
 
@@ -189,7 +189,7 @@ const HiveComponent: React.FC = () => {
     }
 
     let bee_farm_entries = Object.entries(state[MO_Bee_Farm.class_name]) as [string, SO_Bee_Farm][];
-    bee_farm_entries = bee_farm_entries.filter(([bee_farm_id, bee_farm]: [string, SO_Bee_Farm]) => bee_farm.parent_id_data.farmer == farmer_id);
+    bee_farm_entries = bee_farm_entries.filter(([bee_farm_id, bee_farm]: [string, SO_Bee_Farm]) => bee_farm.parent_id_data.farmer.indexOf(farmer_id) != -1);
     return bee_farm_entries;
   }
 
@@ -199,7 +199,7 @@ const HiveComponent: React.FC = () => {
     }
 
     let bee_hive_entries = Object.entries(state[MO_Bee_Hive.class_name]) as [string, SO_Bee_Hive][];
-    bee_hive_entries = bee_hive_entries.filter(([bee_hive_id, bee_hive]: [string, SO_Bee_Hive]) => bee_hive.parent_id_data.bee_farm == bee_farm_id);
+    bee_hive_entries = bee_hive_entries.filter(([bee_hive_id, bee_hive]: [string, SO_Bee_Hive]) => bee_hive.parent_id_data.bee_farm.indexOf(bee_farm_id) != -1);
     return bee_hive_entries;
   }
 
@@ -209,7 +209,7 @@ const HiveComponent: React.FC = () => {
     }
 
     let bee_entries = Object.entries(state[MO_Bee.class_name]) as [string, SO_Bee][];
-    bee_entries = bee_entries.filter(([bee_id, bee]: [string, SO_Bee]) => bee.parent_id_data.bee_hive == bee_hive_id);
+    bee_entries = bee_entries.filter(([bee_id, bee]: [string, SO_Bee]) => bee.parent_id_data.bee_hive.indexOf(bee_hive_id) != -1);
     return bee_entries;
   }
 

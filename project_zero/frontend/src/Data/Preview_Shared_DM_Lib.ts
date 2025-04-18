@@ -10,8 +10,9 @@ export default class Preview_Shared_DM_Lib extends Base_Generator {
   }
 
   get_imports_definitions(): string {
-    return `import {  Metadata_Object_Base } from "../Shared_Misc/Metadata_Object_Base";
-import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";`;
+    return `import { Metadata_Object_Base } from "../Shared_Misc/Metadata_Object_Base";
+import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
+import { SO_Object } from "../Shared_Misc/Sub_Schema";`;
   }
 
   /**
@@ -26,10 +27,10 @@ import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces
     let parent_str = `\n${this.tab_indent}parent_id_data: {`;
 
     this.parent_object_names_list_lower.forEach((x) => {
-      parent_str += `\n${this.tab_indent}${this.tab_indent}${x}: string;`;
+      parent_str += `\n${this.tab_indent}${this.tab_indent}${x}: string[];`;
     });
 
-    parent_str += `\n${this.tab_indent}}`;
+    parent_str += `\n${this.tab_indent}};`;
 
     return parent_str;
   }
@@ -49,7 +50,7 @@ ${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: number;
 ${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: false;
 ${this.tab_indent}${this.tab_indent}};`
       )
-      .join("\n")}\n${this.tab_indent}}`;
+      .join("\n")}\n${this.tab_indent}};`;
   }
 
   get_club_str(): string {
@@ -60,10 +61,10 @@ ${this.tab_indent}${this.tab_indent}};`
     let club_str = `\n${this.tab_indent}club_id_data: {`;
 
     this.club_object_names_list_lower.forEach((x) => {
-      club_str += `\n${this.tab_indent}${this.tab_indent}${x}: string;`;
+      club_str += `\n${this.tab_indent}${this.tab_indent}${x}: string[];`;
     });
 
-    club_str += `\n${this.tab_indent}}`;
+    club_str += `\n${this.tab_indent}};`;
 
     return club_str;
   }
@@ -76,10 +77,10 @@ ${this.tab_indent}${this.tab_indent}};`
     let member_str = `\n${this.tab_indent}member_id_data: {`;
 
     this.member_object_names_list_lower.forEach((x) => {
-      member_str += `\n${this.tab_indent}${this.tab_indent}${x}: string;`;
+      member_str += `\n${this.tab_indent}${this.tab_indent}${x}: string[];`;
     });
 
-    member_str += `\n${this.tab_indent}}`;
+    member_str += `\n${this.tab_indent}};`;
 
     return member_str;
   }
@@ -90,7 +91,7 @@ ${this.tab_indent}${this.tab_indent}};`
 // SO = Stateful Object
 // SO_[object] holds real information that is manipulated and changed over time.
   
-export interface SO_${this.schema.object_name} {
+export interface SO_${this.schema.object_name} extends SO_Object {
 ${this.tab_indent}${[...this.base_property_name_list, "id"]
       .map((x) => `${x}: string;`)
       .join(`\n${this.tab_indent}`)}${this.get_parent_str()}${this.get_child_str()}${this.get_club_str()}${this.get_member_str()}
@@ -193,7 +194,7 @@ export const MO_${this.name}: IMO_${this.name} = {
       return "";
     }
 
-    return `\n${this.tab_indent}parent_id_data: {\n${this.parent_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string;`).join("\n")}\n${
+    return `\n${this.tab_indent}parent_id_data: {\n${this.parent_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string[];`).join("\n")}\n${
       this.tab_indent
     }};`;
   }
@@ -223,7 +224,7 @@ ${this.tab_indent}${this.tab_indent}};`
     }
 
     // Must be '?' to support front to back-end ia interaction.
-    return `\n${this.tab_indent}club_id_data?: {\n${this.club_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string;`).join("\n")}\n${
+    return `\n${this.tab_indent}club_id_data?: {\n${this.club_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string[];`).join("\n")}\n${
       this.tab_indent
     }};`;
   }
@@ -264,7 +265,7 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"]
    */
 
   generate_ia_interfaces() {
-    let parent_schema = this.has_parent() ? this.parent_object_names_list_lower.map((x) => `\n${this.tab_indent}${x.toLocaleLowerCase()}_id: string;`).join("") : "";
+    let parent_schema = this.has_parent() ? this.parent_object_names_list_lower.map((x) => `\n${this.tab_indent}${x.toLocaleLowerCase()}_ids: string[];`).join("") : "";
     let data_model_entry = `
 
 // Interface Argument(s) - Back-End Function Interfaces.

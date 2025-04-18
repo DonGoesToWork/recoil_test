@@ -1,8 +1,8 @@
-import Backend_State from "../static_internal_logic/Backend_State";
 import { IA_player_attack_target } from "../z_generated/Shared_Data_Models/Player";
+import Shared_State from "../static_internal_logic/Shared_State";
 
 // FUNCTION_DEFINITION_SECTION_1: iam_player_attack_target
-export const iam_player_attack_target = (state: Backend_State, data: IA_player_attack_target): void => {
+export const iam_player_attack_target = (state: Shared_State, data: IA_player_attack_target): void => {
   // FUNCTION_DEFINITION_SECTION_2
   // START CODE:
   // -

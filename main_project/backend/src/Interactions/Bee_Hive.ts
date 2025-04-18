@@ -1,4 +1,4 @@
-import Backend_State from "../static_internal_logic/Backend_State";
+import Shared_State from "../static_internal_logic/Shared_State";
 
 // IO_Bee_Hive Interface Placed Here For Convenience:
 
@@ -10,6 +10,6 @@ import Backend_State from "../static_internal_logic/Backend_State";
 //   parent_id: string;
 // }
 
-let sample_interaction = (state: Backend_State, bee_hive_ids: string[]): void => {
+let sample_interaction = (state: Shared_State, bee_hive_ids: string[]): void => {
   return;
 };

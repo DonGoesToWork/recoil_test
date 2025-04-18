@@ -72,7 +72,7 @@ ${this.tab_indent}}`
       ? `club_id_data: {${this.schema.club_object_names_list
           .map(
             (club) => `
-${this.tab_indent}${this.tab_indent}${club.toLocaleLowerCase()}: "",`
+${this.tab_indent}${this.tab_indent}${club.toLocaleLowerCase()}: [],`
           )
           .join("")}
 ${this.tab_indent}}`
@@ -124,7 +124,7 @@ ${this.tab_indent}}`
       ? `${this.tab_indent}parent_id_data: {${this.parent_object_names_list_lower
           .map(
             (parent) => `
-  ${this.tab_indent}${this.tab_indent}${parent}: data.${parent}_id,`
+  ${this.tab_indent}${this.tab_indent}${parent}: data.${parent}_ids,`
           )
           .join("")}
   ${this.tab_indent}},`

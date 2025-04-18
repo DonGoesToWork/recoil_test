@@ -12,6 +12,7 @@ import {
   get_entity_inventory_schema,
   get_farmer_object,
   get_guild_object,
+  get_inventory_accesory_schema,
   get_inventory_schema as get_inventory_object,
   get_nature_object,
   get_party_object,
@@ -85,6 +86,7 @@ const App: React.FC = () => {
     get_entity_inventory_schema(generate_unique_id()),
     get_inventory_object(generate_unique_id()),
     get_rpg_item_schema(generate_unique_id()),
+    get_inventory_accesory_schema(generate_unique_id()),
   ]);
   const [selected_schema_id, set_selected_schema_id] = useState<string>(firstId);
   const [output_text, set_output_text] = useState<string>(new Preview_Shared_DM_Lib(schemas[0], schemas, true).final_content);
