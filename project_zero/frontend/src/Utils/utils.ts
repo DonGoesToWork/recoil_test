@@ -23,3 +23,7 @@ export const get_snake_case = (input: string): string => {
 export const get_snake_case_lowercase_input = (input: string): string => {
   return input.replace(" ", "_").toLocaleLowerCase();
 };
+
+export const pascal_case = (s: string): string => {
+  return s.replace(/(\w)(\w*)/g, function(_g0,g1,g2) {return g1.toUpperCase() + g2.toLowerCase();});
+}

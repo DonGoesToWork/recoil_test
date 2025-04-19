@@ -1,25 +1,22 @@
 // src/types.ts
 
 export type Schema = {
-  id: string;
-  object_name: string;
-  parent: string;
-  child_list: string;
-  property_list: string;
-  date: string;
+  [key: string]: any;
 };
 
 export interface Client_Message {
   object_file_data: Object_File_Data[];
   object_registration_contents: string;
   global_class_map_contents: string;
-  schemas: Schema[];
+  schemas: Schema[]; // Don't care about type at all here really though
 }
 
+// Must sync with TransmitLib.ts on frontend
 export interface Object_File_Data {
   object_name: string;
   backend_data_model: string;
   frontend_data_model: string;
+  shared_object_state: string;
   shared_data_model: string;
 }
 

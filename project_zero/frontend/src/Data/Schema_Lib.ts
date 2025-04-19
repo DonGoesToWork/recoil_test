@@ -7,7 +7,7 @@ export const get_schema_parent_data = (_schema: Schema, schemas: Schema[]): stri
 
   // Iterate over schemas to find the parent schema.
   schemas.forEach((parent: Schema) => {
-    parent.child_schema_arr.forEach((child: Sub_Schema) => {
+    parent.child_sub_schema_arr.forEach((child: Sub_Schema) => {
       if (child.name === _schema.object_name) {
         parent_class_names.push(parent.object_name);
       }
@@ -22,7 +22,7 @@ export const get_schema_club_data = (_schema: Schema, schemas: Schema[]): string
 
   // Iterate over schemas to find clubs.
   schemas.forEach((club: Schema) => {
-    club.member_object_names_list.forEach((member: Sub_Schema) => {
+    club.member_sub_schema_arr.forEach((member: Sub_Schema) => {
       if (member.name === _schema.object_name) {
         club_class_names.push(club.object_name);
       }
@@ -41,7 +41,7 @@ export const fix_schema = (schema: Schema, schemas: Schema[], create_new_object:
   let club_data: string[] = get_schema_club_data(schema, schemas);
   schema.club_object_names_list = club_data;
 
-  schema.child_schema_arr.forEach((child: Sub_Schema) => {
+  schema.child_sub_schema_arr.forEach((child: Sub_Schema) => {
     if (child.id_list_start_size > 1000) {
       child.id_list_start_size = 1000;
     }

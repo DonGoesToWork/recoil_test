@@ -5,7 +5,7 @@ import { MO_Farmer, SO_Farmer } from "../z_generated/Shared_Data_Models/Farmer";
 import { MO_Nature, SO_Nature } from "../z_generated/Shared_Data_Models/Nature";
 import {
   Message_Action_Send,
-  Message_Recieve,
+  Message_Receive,
   Payload_Add,
   Payload_Delete,
   Payload_Set,
@@ -31,7 +31,7 @@ enum Message_Type {
 interface Client_Return_object {
   message_type: Message_Type;
   server_state_ref: string;
-  message_array: Message_Recieve[];
+  message_array: Message_Receive[];
   error_message?: string;
 }
 
@@ -76,7 +76,7 @@ const HiveComponent: React.FC = () => {
     setState((prev_state) => {
       const new_state = { ...prev_state };
 
-      parsed_message_array.message_array.forEach((parsed_message: Message_Recieve) => {
+      parsed_message_array.message_array.forEach((parsed_message: Message_Receive) => {
         const messageType: string = parsed_message.messageType;
 
         if (messageType === "set") {

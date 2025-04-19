@@ -16,6 +16,9 @@ export default class Base_Generator {
   child_property_list: Sub_Schema[] = [];
   child_property_name_list: string[] = [];
 
+  member_property_list: Sub_Schema[] = [];
+  member_property_name_list: string[] = [];
+
   combined_property_list: string[] = [];
   combined_property_list_no_children: string[] = [];
 
@@ -51,16 +54,19 @@ export default class Base_Generator {
     this.base_property_list = this.schema.property_list.filter((x) => x.name !== ""); // TODO - Do stuff with properties of property_llist.
     this.base_property_name_list = this.schema.property_list.map((x) => `${x.name.toLocaleLowerCase()}`).filter((x) => x !== ""); // TODO - Do stuff with properties of property_llist.
 
-    this.child_property_list = this.schema.child_schema_arr.filter((x) => x.name !== "");
-    this.child_property_name_list = this.schema.child_schema_arr.filter((x) => x.name !== "").map((x) => x.name);
+    this.child_property_list = this.schema.child_sub_schema_arr.filter((x) => x.name !== "");
+    this.child_property_name_list = this.schema.child_sub_schema_arr.filter((x) => x.name !== "").map((x) => x.name);
 
+    this.member_property_list = this.schema.member_sub_schema_arr.filter((x) => x.name !== "");
+    this.member_property_name_list = this.schema.member_sub_schema_arr.filter((x) => x.name !== "").map((x) => x.name);
+    
     this.combined_property_list = this.add_parent_fields_if_present([...this.base_property_name_list, "id", ...this.child_property_name_list]);
     this.combined_property_list_no_children = this.add_parent_fields_if_present([...this.base_property_name_list, "id"]);
 
     this.parent_object_names_list_lower = this.schema.parent_object_names_list.map((x) => x.toLocaleLowerCase());
-    this.child_object_names_list_lower = this.schema.child_schema_arr.map((x) => x.name.toLocaleLowerCase());
+    this.child_object_names_list_lower = this.schema.child_sub_schema_arr.map((x) => x.name.toLocaleLowerCase());
     this.club_object_names_list_lower = this.schema.club_object_names_list.map((x) => x.toLocaleLowerCase());
-    this.member_object_names_list_lower = this.schema.member_object_names_list.map((x) => x.name.toLocaleLowerCase());
+    this.member_object_names_list_lower = this.schema.member_sub_schema_arr.map((x) => x.name.toLocaleLowerCase());
   }
 
   constructor(schema: Schema) {

@@ -40,7 +40,7 @@ A few other reasons for why you might not want to use it are:
 
 # Well, I want to make a small-scale, real-time, synchronized web application!
 
-Then you're in luck! Like how frontend UI libraries make frontend web development a breeze, Project Zero makes full stack development EZ PZ.
+Then you're in luck! Like how frontend UI libraries make frontend web_development a breeze, Project Zero makes full stack development EZ PZ.
 
 There are certainly some architectures that behave 'similarly' to Project Zero. However, in general, they lack features or have limitations such as:
 
@@ -48,7 +48,7 @@ There are certainly some architectures that behave 'similarly' to Project Zero. 
   - More depedency set, configuration, compatibility, h@$$ (bloat) to deal with.
   - Can't modify/maintain npm packages easily (if you want to do that)
   - Low transparency into how project works beyond without substantial research of help docs + reading source code.
-- Will usually only solve one or a few pieces to the puzzle of the full problem: creating an easy, seamless full-stack web development experience.
+- Will usually only solve one or a few pieces to the puzzle of the full problem: creating an easy, seamless full-stack web_development experience.
 - Hard 'lock-in' to whatever 'magic' design the package chooses to implement.
 
 In contrast, Project Zero has none of these issues.
@@ -79,18 +79,23 @@ NOTE: Project searching for 'lootquest8' will help you find these references to 
 
 # To run this project, you'll want to set up 5 Powershell Termainals (Hope you have Windows Explorer!). First, Git:
 
-cd "E:\Web Dev\loot_quest"
+cd "E:\web_dev\loot_quest"
 
 # Next, Main Project (update paths to your root path):
 
-cd "E:\Web Dev\loot_quest\scripts" ; .\start_main_frontend.ps1
-cd "E:\Web Dev\loot_quest\scripts" ; .\start_main_backend.ps1
+cd "E:\web_dev\loot_quest\scripts" ; .\start_main_frontend.ps1
+cd "E:\web_dev\loot_quest\scripts" ; .\start_main_backend.ps1
 
-- NOTE: If you move the project, change the path in ./scripts/project_path.txt to the new location, as well as the above paths.
+# Moving the Project:
+
+Update the paths in the following locations:
+- Above paths mentioned in this readme (most likely).
+- ../scripts/project_path.txt
+- ../project_zero/backend/src/config.ts
 
 # Project Zero:
 
-cd "E:\Web Dev\loot_quest\scripts" ; .\start_project_zero_backend.ps1
-cd "E:\Web Dev\loot_quest\scripts" ; .\start_project_zero_frontend.ps1
+cd "E:\web_dev\loot_quest\scripts" ; .\start_project_zero_backend.ps1
+cd "E:\web_dev\loot_quest\scripts" ; .\start_project_zero_frontend.ps1
 
 - NOTE: I recommend just making your own scripts and process for maximum efficienty. The above is stated to get you started.

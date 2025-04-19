@@ -1,6 +1,6 @@
 // src/routes/export.ts
 
-import { Client_Message, state } from "../types";
+import { Client_Message, Object_File_Data, state } from "../types";
 import { copy_folder_to_folder, create_folders, write_file } from "../utils/fileUtils";
 import { main_project_paths, output_paths, root_project_path } from "../config";
 
@@ -24,9 +24,10 @@ router.post("/", (req: any, res: any) => {
 
   // Write all of the main objects to .ts files.
 
-  state.object_file_data.forEach((item) => {
+  state.object_file_data.forEach((item: Object_File_Data) => {
     write_file(res, output_paths.backend_data_model + item.object_name + ".ts", item.backend_data_model);
     write_file(res, output_paths.frontend_data_model + item.object_name + ".ts", item.frontend_data_model);
+    write_file(res, output_paths.shared_object_state + item.object_name + ".ts", item.shared_object_state);
     write_file(res, output_paths.shared_data_model + item.object_name + ".ts", item.shared_data_model);
   });
 
@@ -53,6 +54,8 @@ router.post("/", (req: any, res: any) => {
   copy_folder_to_folder(output_paths.shared_data_model, main_project_paths.backend_data_models_shared);
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.frontend_shared);
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.backend_shared);
+  copy_folder_to_folder(output_paths.shared_object_state, main_project_paths.frontend_shared_object_state);
+  copy_folder_to_folder(output_paths.shared_object_state, main_project_paths.backend_shared_object_state);
 
   res.status(200).json({ status: "ok" });
 });

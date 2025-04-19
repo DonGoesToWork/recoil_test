@@ -19,6 +19,8 @@ export default class Preview_Back_DM_Lib extends Base_Generator {
       ...this.base_property_name_list.map((property) => `IA_set_${this.name_as_lower}_${property}`),
     ].join(", ");
 
+    // TODO -> Soon, backend_state will be '[ object_state ] '
+    
     return `import { ${imports}, SO_${object_name}, C_${object_name}, MO_${object_name} } from "../Shared_Data_Models/${object_name}";
 import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 import Backend_State from "../../static_internal_logic/Backend_State";
@@ -79,11 +81,16 @@ ${this.tab_indent}}`
       : "";
 
     // Member Data
-    const member_data = this.member_object_names_list_lower.length
-      ? `member_id_data: {${this.member_object_names_list_lower
+    const member_data = this.member_property_list.length
+      ? `member_id_data: {${this.member_property_list
           .map(
-            (member) => `
-${this.tab_indent}${this.tab_indent}${member}: "",`
+            (member: Sub_Schema, i) => `
+${this.tab_indent}${this.tab_indent}${this.member_object_names_list_lower[i]}: {
+${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: [],
+${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: ${member.id_list_start_size},
+${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: ${member.id_list_max_size},
+${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: ${member.id_list_allow_empty_indexes}
+${this.tab_indent}${this.tab_indent}},`
           )
           .join("")}
 ${this.tab_indent}}`

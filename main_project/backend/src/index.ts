@@ -1,7 +1,7 @@
 // index.ts (back-end)
 
 import { Class_Function, Object_Class_Function_Map, Register_Objects } from "./z_generated/Data_Registration/Object_Registration";
-import { Message_Action_Send, Message_Recieve } from "./z_generated/Shared_Misc/Communication_Interfaces";
+import { Message_Action_Send, Message_Receive } from "./z_generated/Shared_Misc/Communication_Interfaces";
 
 import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "./utils/IA_Remove";
 import Shared_State from "./static_internal_logic/Shared_State";
@@ -33,7 +33,7 @@ enum Message_Type {
 interface Client_Return_object {
   message_type: Message_Type;
   server_state_ref: string;
-  message_array: Message_Recieve[];
+  message_array: Message_Receive[];
   error_message?: string;
 }
 

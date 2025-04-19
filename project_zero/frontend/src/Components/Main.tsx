@@ -26,6 +26,7 @@ import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
 import Preview_Front_DM_Lib from "../Data/Preview_Front_DM_Lib";
 import Preview_Global_Class_Map_Lib from "../Data/Preview_Global_Class_Map";
 import Preview_Shared_DM_Lib from "../Data/Preview_Shared_DM_Lib";
+import Preview_Shared_OS_Lib from "../Data/Preview_Shared_OS_Lib";
 import Preview_Singles_DM_Lib from "../Data/Preview_Object_Registration_DM_Lib";
 import Schema_Form from "./Schema_Entry/Schema_Form";
 import Schema_List from "./Schema/Schema_List";
@@ -43,23 +44,28 @@ export interface Select_RpgClass_Props {
   selected_schema: Schema;
 }
 
+// must sync order of libs shown with function in Tabs.tsx
 const update_output = (select_schema_data: Select_RpgClass_Props) => {
   const { set_output_text, selected_tab, schemas, selected_schema } = select_schema_data;
+  let i = 0;
 
   switch (selected_tab) {
-    case 0:
+    case i++:
       set_output_text(new Preview_Shared_DM_Lib(selected_schema, schemas, true).final_content);
       break;
-    case 1:
+    case i++:
+      set_output_text(new Preview_Shared_OS_Lib(selected_schema, schemas, true).final_content);
+      break;
+    case i++:
       set_output_text(new Preview_Front_DM_Lib(selected_schema, schemas, true).final_content);
       break;
-    case 2:
+    case i++:
       set_output_text(new Preview_Back_DM_Lib(selected_schema, schemas, true).final_content);
       break;
-    case 3:
+    case i++:
       set_output_text(new Preview_Singles_DM_Lib(schemas, true).final_content);
       break;
-    case 4:
+    case i++:
       set_output_text(new Preview_Global_Class_Map_Lib(schemas, true).finalContent);
       break;
     default:
@@ -92,7 +98,7 @@ const App: React.FC = () => {
   const [output_text, set_output_text] = useState<string>(new Preview_Shared_DM_Lib(schemas[0], schemas, true).final_content);
   const [selected_tab, set_selected_tab] = useState<number>(0);
   const [current_page, set_current_page] = useState(1);
-  const [third_column_view, set_third_column_view] = useState(5); // in prod, we use 6
+  const [third_column_view, set_third_column_view] = useState(5); // in prod, we use 6 - changes our 'main view layout' based on sidebar (left) selection.
 
   const { add_toast: add_toast } = useToast();
 
@@ -241,7 +247,7 @@ const App: React.FC = () => {
       item_1 = (
         <div className="schemas-container-col-view my-card">
           <h1>About</h1>
-          <p>Project Zero made by Donald Abdullah-Robinson for the purposes of evolving the web development ecosystem.</p>
+          <p>Project Zero made by Donald Abdullah-Robinson for the purposes of evolving the web_development ecosystem.</p>
           <p>Github: TODO</p>
         </div>
       );

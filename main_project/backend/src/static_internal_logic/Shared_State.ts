@@ -1,5 +1,5 @@
 import { I_Data, get_data_base } from "../Backend_State/Shared_State_Types";
-import { Message_Recieve, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
+import { Message_Receive, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
 import { SO_Object, Sub_Schema } from "../z_generated/Shared_Misc/Sub_Schema";
 
 import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
@@ -152,7 +152,7 @@ class Shared_State {
    */
 
   public server_state_ref: string = generate_unique_id();
-  public change_payloads: Message_Recieve[] = [];
+  public change_payloads: Message_Receive[] = [];
 
   public randomize_server_state_ref(): void {
     this.server_state_ref = generate_unique_id();
@@ -192,7 +192,7 @@ class Shared_State {
     target_object[payload.property_name] = payload.property_value;
 
     // Create payload to send to front-end.
-    let message: Message_Recieve;
+    let message: Message_Receive;
 
     message = {
       messageType: "set",
@@ -226,7 +226,7 @@ class Shared_State {
     this.data[object_type][payload.object_id] = payload.object;
 
     // Create payload to send to front-end.
-    let message: Message_Recieve;
+    let message: Message_Receive;
 
     message = {
       messageType: "add",
@@ -249,7 +249,7 @@ class Shared_State {
     this.data[object_type] = Object.fromEntries(Object.entries(this.data[object_type]).filter(([key]) => key !== payload.objectId));
 
     // Create payload to send to front-end.
-    let message: Message_Recieve;
+    let message: Message_Receive;
 
     message = {
       messageType: "delete",
@@ -259,8 +259,8 @@ class Shared_State {
     this.change_payloads.push(message);
   }
 
-  get_full_storage(): Message_Recieve[] {
-    let message: Message_Recieve;
+  get_full_storage(): Message_Receive[] {
+    let message: Message_Receive;
 
     for (const key of Object.keys(this.data) as (keyof I_Data)[]) {
       for (const key2 of Object.keys(this.data[key])) {

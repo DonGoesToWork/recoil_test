@@ -8,7 +8,7 @@ F3::reload
 return
 
 create_tab(title, create_tab) {
-	Send, cd "E:\Web Dev\loot_quest\scripts"{Enter}
+	Send, cd "E:\web_dev\loot_quest\scripts"{Enter}
 	Sleep 100
 	; requires powershell hotkey to be set to rename tabs via ctrl+shift+r
 	Send, ^+r
@@ -36,7 +36,7 @@ main() {
 	Sleep 100
 	Send ^{Tab}
 	
-	Send, cd "E:\Web Dev\loot_quest\"
+	Send, cd "E:\web_dev\loot_quest\"
 	Sleep 10
 	Send, {Enter}
 	Sleep 100

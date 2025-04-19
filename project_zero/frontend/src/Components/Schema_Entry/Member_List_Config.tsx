@@ -1,6 +1,6 @@
 import "./List_Config_Base.css";
 
-import { Schema, Sub_Schema, get_default_sub_schema } from "../../Data/Schema";
+import { SCHEMA_PROPERTY_MEMBER, Schema, Sub_Schema, get_default_sub_schema } from "../../Data/Schema";
 import { get_snake_case, get_snake_case_lowercase_input } from "../../Utils/utils";
 import { useEffect, useState } from "react";
 
@@ -12,33 +12,33 @@ interface Member_List_Config_Props {
 }
 
 const Member_List_Config: React.FC<Member_List_Config_Props> = ({ selected_schema, update_schema }): JSX.Element => {
-  const [schema_member_list_input, set_schema_member_input_list] = useState<Sub_Schema[]>(() => [...selected_schema.member_object_names_list]);
+  const [schema_member_list_input, set_schema_member_input_list] = useState<Sub_Schema[]>(() => [...selected_schema.member_sub_schema_arr]);
 
   useEffect(() => {
-    set_schema_member_input_list([...selected_schema.member_object_names_list]);
-  }, [selected_schema.member_object_names_list]);
+    set_schema_member_input_list([...selected_schema.member_sub_schema_arr]);
+  }, [selected_schema.member_sub_schema_arr]);
 
   const handle_edit_property = (index: number, field: keyof Sub_Schema, value: string | boolean) => {
     const updated_member_list = schema_member_list_input.map((prop, i) => (i === index ? { ...prop, [field]: value } : prop));
     set_schema_member_input_list(updated_member_list);
-    update_schema("member_object_names_list", updated_member_list, selected_schema.id);
+    update_schema(SCHEMA_PROPERTY_MEMBER, updated_member_list, selected_schema.id);
 
     // let copy = [...schema_member_list_input];
     // copy[index] = value;
     // set_schema_member_input_list(copy);
-    // update_schema("member_object_names_list", copy, selected_schema.id);
+    // update_schema(SCHEMA_PROPERTY_MEMBER, copy, selected_schema.id);
   };
 
   const handle_delete_property = (index: number) => {
     const updated_member_list = schema_member_list_input.filter((_, i) => i !== index);
     set_schema_member_input_list(updated_member_list);
-    update_schema("member_object_names_list", updated_member_list, selected_schema.id);
+    update_schema(SCHEMA_PROPERTY_MEMBER, updated_member_list, selected_schema.id);
   };
 
   const handle_add_property = () => {
     const updated_member_list = [...schema_member_list_input, get_default_sub_schema("")];
     set_schema_member_input_list(updated_member_list);
-    update_schema("member_object_names_list", updated_member_list, selected_schema.id);
+    update_schema(SCHEMA_PROPERTY_MEMBER, updated_member_list, selected_schema.id);
   };
 
   return (
@@ -54,6 +54,9 @@ const Member_List_Config: React.FC<Member_List_Config_Props> = ({ selected_schem
         <thead>
           <tr>
             <th>Name</th>
+            <th>Start Size</th>
+            <th>Max Size</th>
+            <th>Allow Empty Indexes</th>
             <th>Delete</th>
           </tr>
         </thead>

@@ -7,26 +7,21 @@ interface TabsProps {
   handle_tab_change: (tabIndex: number) => void;
 }
 
+function get_button(selected_tab: number, index: number, text: string, handle_tab_change: (tabIndex: number) => void) {
+  return <button className={`tab ${selected_tab === index ? "active" : ""}`} onClick={() => handle_tab_change(index)}>
+    {text}
+  </button>
+}
+
 const Tabs: React.FC<TabsProps> = ({ selected_tab, handle_tab_change }) => {
+  let tab_text = ["Shared Data Model", "Shared Object State", "Front-End Data Model", "Back-End Data Model", "Object Registration", "Global Class Map"];
+
+  // Loop over tabs and create buttons
   return (
     <div className="tabs">
-      <button className={`tab ${selected_tab === 0 ? "active" : ""}`} onClick={() => handle_tab_change(0)}>
-        Shared Data Model
-      </button>
-      <button className={`tab ${selected_tab === 1 ? "active" : ""}`} onClick={() => handle_tab_change(1)}>
-        Front-End Data Model
-      </button>
-      <button className={`tab ${selected_tab === 2 ? "active" : ""}`} onClick={() => handle_tab_change(2)}>
-        Back-End Data Model
-      </button>
-      <button className={`tab ${selected_tab === 3 ? "active" : ""}`} onClick={() => handle_tab_change(3)}>
-        Object Registration
-      </button>
-      <button className={`tab ${selected_tab === 4 ? "active" : ""}`} onClick={() => handle_tab_change(4)}>
-        Global Class Map
-      </button>
+      {tab_text.map((text, index) => get_button(selected_tab, index, text, handle_tab_change))}
     </div>
-  );
+  )
 };
 
 export default Tabs;

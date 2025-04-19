@@ -1,7 +1,9 @@
-import { Schema, User_Interaction } from "./Schema";
+import { Schema, User_Interaction } from "./Schema"; // Assuming SubSchema is exported from Schema or its own file
 
 import Base_Generator from "./Base_Generator";
 import { fix_schema } from "./Schema_Lib";
+
+// DM = Data Model
 
 export default class Preview_Shared_DM_Lib extends Base_Generator {
   constructor(schema: Schema, schemas: Schema[], do_fix_schemas: boolean) {
@@ -74,23 +76,27 @@ ${this.tab_indent}${this.tab_indent}};`
       return "";
     }
 
-    let member_str = `\n${this.tab_indent}member_id_data: {`;
-
-    this.member_object_names_list_lower.forEach((x) => {
-      member_str += `\n${this.tab_indent}${this.tab_indent}${x}: string[];`;
-    });
-
-    member_str += `\n${this.tab_indent}};`;
-
-    return member_str;
+    // Generate structure similar to get_child_str
+    return `\n${this.tab_indent}member_id_data: {${this.member_object_names_list_lower
+      .map(
+        (x) => `
+${this.tab_indent}${this.tab_indent}${x}: {
+${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: string[];
+${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: number;
+${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: false;
+${this.tab_indent}${this.tab_indent}};`
+      )
+      .join("\n")}\n${this.tab_indent}};`;
   }
+
 
   get_object_interface(): string {
     return `
-  
+
 // SO = Stateful Object
 // SO_[object] holds real information that is manipulated and changed over time.
-  
+
 export interface SO_${this.schema.object_name} extends SO_Object {
 ${this.tab_indent}${[...this.base_property_name_list, "id"]
       .map((x) => `${x}: string;`)
@@ -118,9 +124,9 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"]
 export interface IMO_${this.schema.object_name} extends Metadata_Object_Base {
   class_name: string;
   parent_class_data: string[];
-  child_class_data_list: string[];
+  child_class_data_list: string[]; // Consider renaming if structure changed (unlikely needed for metadata)
   club_class_data: string[];
-  member_class_data_list: string[];
+  member_class_data_list: string[]; // Consider renaming if structure changed (unlikely needed for metadata)
   functions: {
 ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${user_generation}
   };
@@ -154,6 +160,7 @@ ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${us
         ? ""
         : this.member_object_names_list_lower
             .map((member: string) => {
+              // This likely still just needs the name for the metadata list
               return `"${member}"`;
             })
             .join(",");
@@ -170,6 +177,9 @@ ${this.tab_indent}${this.tab_indent}create_new: string;${base_property_list}${us
             .map((x) => `${this.tab_indent}${this.tab_indent}${x.function_name}: "ia_${this.name_as_lower}_${x.function_name}",`)
             .join("\n");
 
+    // Note: The MO object definition still lists members as simple strings in `member_class_data_list`.
+    // This is probably correct, as this metadata likely just needs the *names* of the related member classes,
+    // not their detailed structure definition (which is handled by the SO_ and C_ interfaces).
     return `
 // Interface that represents all metadata properties of an object.
 // - These properties are all hardcoded and do not change over time.
@@ -229,11 +239,13 @@ ${this.tab_indent}${this.tab_indent}};`
     }};`;
   }
 
+  // ***** UPDATED METHOD *****
   get_create_member_str(): string {
     if (this.member_object_names_list_lower.length === 0) {
       return "";
     }
 
+    // Generate structure similar to get_create_child_str, including the optional '?'
     // Must be '?' to support front to back-end ia interaction.
     return `\n${this.tab_indent}member_id_data?: {${this.member_object_names_list_lower
       .map(
@@ -243,20 +255,22 @@ ${this.tab_indent}${this.tab_indent}${this.tab_indent}ids: string[];
 ${this.tab_indent}${this.tab_indent}${this.tab_indent}start_size: number;
 ${this.tab_indent}${this.tab_indent}${this.tab_indent}max_size: number;
 ${this.tab_indent}${this.tab_indent}${this.tab_indent}allow_empty_indexes: false;
-${this.tab_indent}${this.tab_indent}};`
+${this.tab_indent}${this.tab_indent}};` // Note: Added semicolon inside generated block
       )
       .join("\n")}\n${this.tab_indent}};`;
   }
+  // ***** END OF UPDATED METHOD *****
+
 
   get_create_object_interface(): string {
     return `
 // C = Create
 // Interface for object creation.
-  
+
 export interface C_${this.schema.object_name} {
 ${this.tab_indent}${[...this.base_property_name_list, "id"]
       .map((x) => `${x}?: string;`)
-      .join(`\n${this.tab_indent}`)}${this.get_create_parent_str()}${this.get_create_child_str()}${this.get_create_club_str()}${this.get_create_member_str()}
+      .join(`\n${this.tab_indent}`)}${this.get_create_parent_str()}${this.get_create_child_str()}${this.get_create_club_str()}${this.get_create_member_str()} // Uses updated get_create_member_str
 }`;
   }
 

@@ -5,6 +5,7 @@ import Preview_Front_DM_Lib from "./Preview_Front_DM_Lib";
 import Preview_Global_Class_Map_Lib from "./Preview_Global_Class_Map";
 import Preview_Object_Registration_DM_Lib from "./Preview_Object_Registration_DM_Lib";
 import Preview_Shared_DM_Lib from "./Preview_Shared_DM_Lib";
+import Preview_Shared_OS_Lib from "./Preview_Shared_OS_Lib";
 import { Schema } from "./Schema";
 import { fix_schemas } from "./Schema_Lib";
 
@@ -15,10 +16,12 @@ interface Client_Message {
   schemas: Schema[];
 }
 
+// Must sync with version in types.ts on backend.
 interface Object_File_Data {
   object_name: string;
   backend_data_model: string;
   frontend_data_model: string;
+  shared_object_state: string;
   shared_data_model: string;
 }
 
@@ -57,6 +60,7 @@ export const export_schemas = (schemas: Schema[]) => {
       object_name: schema.object_name,
       backend_data_model: new Preview_Back_DM_Lib(schema, schemas, false).final_content,
       frontend_data_model: new Preview_Front_DM_Lib(schema, schemas, false).final_content,
+      shared_object_state: new Preview_Shared_OS_Lib(schema, schemas, false).final_content,
       shared_data_model: new Preview_Shared_DM_Lib(schema, schemas, false).final_content,
     })),
     object_registration_contents: new Preview_Object_Registration_DM_Lib(schemas, false).final_content,

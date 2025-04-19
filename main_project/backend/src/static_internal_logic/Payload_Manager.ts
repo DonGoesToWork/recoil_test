@@ -1,4 +1,4 @@
-import { Message_Recieve, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
+import { Message_Receive, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
 
 import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
 import Shared_State from "./Shared_State";
@@ -7,7 +7,7 @@ import { generate_unique_id } from "../utils/utils";
 // In-memory storage for simplicity; replace with a database in production
 export class Backend_State extends Shared_State {
   public server_state_ref: string = generate_unique_id();
-  public change_payloads: Message_Recieve[] = [];
+  public change_payloads: Message_Receive[] = [];
 
   public randomize_server_state_ref(): void {
     this.server_state_ref = generate_unique_id();
@@ -32,7 +32,7 @@ export class Backend_State extends Shared_State {
     target_object[payload.property_name] = payload.property_value;
 
     // Create payload to send to front-end.
-    let message: Message_Recieve;
+    let message: Message_Receive;
 
     message = {
       messageType: "set",
@@ -66,7 +66,7 @@ export class Backend_State extends Shared_State {
     this.set_object(object_type, object_id, payload.object);
 
     // Create payload to send to front-end.
-    let message: Message_Recieve;
+    let message: Message_Receive;
 
     message = {
       messageType: "add",
@@ -89,7 +89,7 @@ export class Backend_State extends Shared_State {
     this.data[object_type] = Object.fromEntries(Object.entries(this.data[object_type]).filter(([key]) => key !== payload.objectId));
 
     // Create payload to send to front-end.
-    let message: Message_Recieve;
+    let message: Message_Receive;
 
     message = {
       messageType: "delete",
@@ -99,8 +99,8 @@ export class Backend_State extends Shared_State {
     this.change_payloads.push(message);
   }
 
-  get_full_storage(): Message_Recieve[] {
-    let message: Message_Recieve;
+  get_full_storage(): Message_Receive[] {
+    let message: Message_Receive;
 
     for (const key of Object.keys(this.data)) {
       for (const key2 of Object.keys(this.data[key])) {
@@ -143,7 +143,7 @@ export default Shared_State;
 //  */
 
 // public server_state_ref: string = generate_unique_id();
-// public change_payloads: Message_Recieve[] = [];
+// public change_payloads: Message_Receive[] = [];
 
 // public randomize_server_state_ref(): void {
 //   this.server_state_ref = generate_unique_id();
@@ -183,7 +183,7 @@ export default Shared_State;
 //   target_object[payload.property_name] = payload.property_value;
 
 //   // Create payload to send to front-end.
-//   let message: Message_Recieve;
+//   let message: Message_Receive;
 
 //   message = {
 //     messageType: "set",
@@ -217,7 +217,7 @@ export default Shared_State;
 //   this.data[object_type][payload.object_id] = payload.object;
 
 //   // Create payload to send to front-end.
-//   let message: Message_Recieve;
+//   let message: Message_Receive;
 
 //   message = {
 //     messageType: "add",
@@ -240,7 +240,7 @@ export default Shared_State;
 //   this.data[object_type] = Object.fromEntries(Object.entries(this.data[object_type]).filter(([key]) => key !== payload.objectId));
 
 //   // Create payload to send to front-end.
-//   let message: Message_Recieve;
+//   let message: Message_Receive;
 
 //   message = {
 //     messageType: "delete",
@@ -250,8 +250,8 @@ export default Shared_State;
 //   this.change_payloads.push(message);
 // }
 
-// get_full_storage(): Message_Recieve[] {
-//   let message: Message_Recieve;
+// get_full_storage(): Message_Receive[] {
+//   let message: Message_Receive;
 
 //   for (const key of Object.keys(this.data) as (keyof I_Data)[]) {
 //     for (const key2 of Object.keys(this.data[key])) {

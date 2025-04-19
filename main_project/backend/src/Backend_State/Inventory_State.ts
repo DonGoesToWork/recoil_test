@@ -65,8 +65,8 @@ export class Inventory_State {
 
   get_members_inventory_accessory(all_state: All_State, object_id: string): SO_Inventory_Accessory[] {
     const object = this.get_object(object_id);
-    return object?.member_id_data?.inventory_accessory
-      ? object.member_id_data.inventory_accessory.map((inventory_accessory_id: string) =>
+    return object?.member_id_data?.inventory_accessory?.ids
+      ? object.member_id_data.inventory_accessory.ids.map((inventory_accessory_id: string) =>
           all_state.get_object(MO_Inventory_Accessory.class_name, inventory_accessory_id)
         )
       : [];

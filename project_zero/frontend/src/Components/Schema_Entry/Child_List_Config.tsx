@@ -1,6 +1,6 @@
 import "./List_Config_Base.css";
 
-import { Schema, Sub_Schema, get_default_sub_schema } from "../../Data/Schema";
+import { SCHEMA_PROPERTY_CHILDREN, Schema, Sub_Schema, get_default_sub_schema } from "../../Data/Schema";
 import { get_snake_case, get_snake_case_lowercase_input } from "../../Utils/utils";
 import { useEffect, useState } from "react";
 
@@ -12,28 +12,28 @@ interface Child_List_Config_Props {
 }
 
 const Child_List_Config: React.FC<Child_List_Config_Props> = ({ selected_schema, update_schema }): JSX.Element => {
-  const [schema_child_list_input, set_schema_child_input_list] = useState<Sub_Schema[]>(() => [...selected_schema.child_schema_arr]);
+  const [schema_child_list_input, set_schema_child_input_list] = useState<Sub_Schema[]>(() => [...selected_schema.child_sub_schema_arr]);
 
   useEffect(() => {
-    set_schema_child_input_list([...selected_schema.child_schema_arr]);
-  }, [selected_schema.child_schema_arr]);
+    set_schema_child_input_list([...selected_schema.child_sub_schema_arr]);
+  }, [selected_schema.child_sub_schema_arr]);
 
   const handle_edit_property = (index: number, field: keyof Sub_Schema, value: string | boolean) => {
     const updated_child_list = schema_child_list_input.map((prop, i) => (i === index ? { ...prop, [field]: value } : prop));
     set_schema_child_input_list(updated_child_list);
-    update_schema("child_list", updated_child_list, selected_schema.id);
+    update_schema(SCHEMA_PROPERTY_CHILDREN, updated_child_list, selected_schema.id);
   };
 
   const handle_delete_property = (index: number) => {
     const updated_child_list = schema_child_list_input.filter((_, i) => i !== index);
     set_schema_child_input_list(updated_child_list);
-    update_schema("child_list", updated_child_list, selected_schema.id);
+    update_schema(SCHEMA_PROPERTY_CHILDREN, updated_child_list, selected_schema.id);
   };
 
   const handle_add_property = () => {
     const updated_child_list = [...schema_child_list_input, get_default_sub_schema("")];
     set_schema_child_input_list(updated_child_list);
-    update_schema("child_list", updated_child_list, selected_schema.id);
+    update_schema(SCHEMA_PROPERTY_CHILDREN, updated_child_list, selected_schema.id);
   };
 
   return (
