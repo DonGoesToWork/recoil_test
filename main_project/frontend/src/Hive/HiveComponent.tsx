@@ -1,8 +1,3 @@
-import { MO_Bee, SO_Bee } from "../z_generated/Shared_Data_Models/Bee";
-import { MO_Bee_Farm, SO_Bee_Farm } from "../z_generated/Shared_Data_Models/Bee_Farm";
-import { MO_Bee_Hive, SO_Bee_Hive } from "../z_generated/Shared_Data_Models/Bee_Hive";
-import { MO_Farmer, SO_Farmer } from "../z_generated/Shared_Data_Models/Farmer";
-import { MO_Nature, SO_Nature } from "../z_generated/Shared_Data_Models/Nature";
 import {
   Message_Action_Send,
   Message_Receive,
@@ -18,7 +13,13 @@ import { create_new_farmer_wo_parent, remove_farmer } from "../z_generated/Data_
 import { create_new_nature_wo_parent, remove_nature } from "../z_generated/Data_Models/Nature";
 import { useEffect, useState } from "react";
 
+import { App_State } from "../z_generated/App_State/App_State";
 import { I_Message_Sender } from "../utils/I_Message_Sender";
+import { SO_Bee } from "../z_generated/Shared_Data_Models/Bee_Interfaces";
+import { SO_Bee_Farm } from "../z_generated/Shared_Data_Models/Bee_Farm_Interfaces";
+import { SO_Bee_Hive } from "../z_generated/Shared_Data_Models/Bee_Hive_Interfaces";
+import { SO_Farmer } from "../z_generated/Shared_Data_Models/Farmer_Interfaces";
+import { SO_Nature } from "../z_generated/Shared_Data_Models/Nature_Interfaces";
 import WebSocketClient from "../ws/ws";
 import generate_unique_id from "../utils/utils";
 
@@ -36,7 +37,7 @@ interface Client_Return_object {
 }
 
 const HiveComponent: React.FC = () => {
-  const [state, setState] = useState<Record<string, any>>({});
+  const [state, setState] = useState<App_State>(new App_State());
   const [wsClient, setWsClient] = useState<WebSocketClient | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
   const [unique_client_id, set_unique_client_id] = useState<string>(generate_unique_id());
@@ -70,7 +71,7 @@ const HiveComponent: React.FC = () => {
       }
     } else if (parsed_message_array.message_type === Message_Type.FULL_STORAGE) {
       console.log("Clear");
-      setState({});
+      setState(new App_State());
     }
 
     setState((prev_state) => {
@@ -131,26 +132,26 @@ const HiveComponent: React.FC = () => {
   }
 
   function get_nature_entires(): [string, SO_Nature][] {
-    if (state[MO_Nature.class_name] === undefined) {
+    if (state.nature === undefined) {
       return [];
     }
 
-    let nature_entries = Object.entries(state[MO_Nature.class_name]) as [string, SO_Nature][];
+    let nature_entries = Object.entries(state.nature) as [string, SO_Nature][];
     return nature_entries;
   }
   function get_bee_farm_for_nature_entries(nature_id: string): [string, SO_Bee_Farm][] {
-    if (state[MO_Bee_Farm.class_name] === undefined) {
+    if (state.bee_farm === undefined) {
       return [];
     }
 
-    let bee_farm_entries = Object.entries(state[MO_Bee_Farm.class_name]) as [string, SO_Bee_Farm][];
+    let bee_farm_entries = Object.entries(state.bee_farm) as [string, SO_Bee_Farm][];
     bee_farm_entries = bee_farm_entries.filter(([bee_farm_id, bee_farm]: [string, SO_Bee_Farm]) => bee_farm.parent_id_data.nature.indexOf(nature_id) != -1);
     return bee_farm_entries;
   }
 
   let nature_display;
 
-  if (state[MO_Nature.class_name]) {
+  if (state.nature) {
     nature_display = get_nature_entires().map(([nature_id, nature]) => (
       <div key={nature.id}>
         <h2>{nature.name}</h2>
@@ -174,43 +175,28 @@ const HiveComponent: React.FC = () => {
   console.log("STATE: ", state);
 
   function get_farmer_entries(): [string, SO_Farmer][] {
-    if (state[MO_Farmer.class_name] === undefined) {
+    if (state.farmer === undefined) {
       return [];
     }
 
-    let farmer_entries = Object.entries(state[MO_Farmer.class_name]) as [string, SO_Farmer][];
+    let farmer_entries = Object.entries(state.farmer) as [string, SO_Farmer][];
 
     return farmer_entries;
   }
 
   function get_bee_farm_entries(farmer_id: string): [string, SO_Bee_Farm][] {
-    if (state[MO_Bee_Farm.class_name] === undefined) {
+    if (state.bee_farm === undefined) {
       return [];
     }
 
-    let bee_farm_entries = Object.entries(state[MO_Bee_Farm.class_name]) as [string, SO_Bee_Farm][];
+    let bee_farm_entries = Object.entries(state.bee_farm) as [string, SO_Bee_Farm][];
     bee_farm_entries = bee_farm_entries.filter(([bee_farm_id, bee_farm]: [string, SO_Bee_Farm]) => bee_farm.parent_id_data.farmer.indexOf(farmer_id) != -1);
     return bee_farm_entries;
   }
 
-  function get_bee_hive_entries(bee_farm_id: string): [string, SO_Bee_Hive][] {
-    if (state[MO_Bee_Hive.class_name] === undefined) {
-      return [];
-    }
-
-    let bee_hive_entries = Object.entries(state[MO_Bee_Hive.class_name]) as [string, SO_Bee_Hive][];
-    bee_hive_entries = bee_hive_entries.filter(([bee_hive_id, bee_hive]: [string, SO_Bee_Hive]) => bee_hive.parent_id_data.bee_farm.indexOf(bee_farm_id) != -1);
-    return bee_hive_entries;
-  }
-
-  function get_bee_entries(bee_hive_id: string): [string, SO_Bee][] {
-    if (state[MO_Bee.class_name] === undefined) {
-      return [];
-    }
-
-    let bee_entries = Object.entries(state[MO_Bee.class_name]) as [string, SO_Bee][];
-    bee_entries = bee_entries.filter(([bee_id, bee]: [string, SO_Bee]) => bee.parent_id_data.bee_hive.indexOf(bee_hive_id) != -1);
-    return bee_entries;
+  function get_bee_entries(bee_hive_id: string): SO_Bee[] {
+    let bee_ids = state.bee_hive.get_object(bee_hive_id)?.child_id_data.bee.ids;
+    return state.bee.get_objects(bee_ids).filter((bee: SO_Bee) => bee.parent_id_data.bee_hive.indexOf(bee_hive_id) != -1);
   }
 
   return (
@@ -224,28 +210,28 @@ const HiveComponent: React.FC = () => {
       <hr />
 
       <button onClick={() => create_new_farmer_wo_parent(__SM__)}>Add Farmer</button>
-      {get_farmer_entries().map(([farmer_id, farmer]: [string, SO_Farmer]) => (
-        <div key={farmer_id}>
+      {Object.values(state.farmer.get_data()).map((farmer: SO_Farmer) => (
+        <div key={farmer.id}>
           <h2>{farmer.name}</h2>
-          <h3>{farmer_id}</h3>
-          <button onClick={() => remove_farmer(__SM__, farmer_id)}>Remove Farmer</button>
+          <h3>{farmer.id}</h3>
+          <button onClick={() => remove_farmer(__SM__, farmer.id)}>Remove Farmer</button>
           💩
-          <button onClick={() => create_new_bee_farm_w_parents(__SM__, farmer_id, "-1")}>Add Bee Farm</button>
-          {get_bee_farm_entries(farmer.id).map(([bee_farm_id, farm]: [string, SO_Bee_Farm]) => (
+          <button onClick={() => create_new_bee_farm_w_parents(__SM__, farmer.id, "-1")}>Add Bee Farm</button>
+          {state.farmer.get_child_bee_farm(state, farmer.id).map((farm: SO_Bee_Farm) => (
             <div key={farm.id}>
               <h2>{farm.name}</h2>
               <h3>{farm.id}</h3>
               <button onClick={() => remove_bee_farm(__SM__, farm.id)}>Remove Farm</button>
               💩
               <button onClick={() => create_new_bee_hive_w_parents(__SM__, farm.id)}>Add Hive</button>
-              {get_bee_hive_entries(farm.id).map(([hive_id, hive]: [string, SO_Bee_Hive]) => (
+              {state.bee_farm.get_child_bee_hive(state, farm.id).map((hive: SO_Bee_Hive) => (
                 <div key={hive.id}>
                   <h3>{hive.name}</h3>
                   <h3>{hive.id}</h3>
                   <button onClick={() => remove_bee_hive(__SM__, hive.id)}>Remove Hive</button>
                   💩
                   <button onClick={() => create_new_bee_w_parents(__SM__, hive.id)}>Add Bee</button>
-                  {get_bee_entries(hive.id).map(([bee_id, bee]: [string, SO_Bee]) => (
+                  {state.bee_hive.get_child_bee(state, hive.id).map((bee: SO_Bee) => (
                     <div key={bee.id}>
                       <p>{bee.name}</p>
                       <p>{bee.id}</p>

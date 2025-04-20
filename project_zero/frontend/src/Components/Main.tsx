@@ -22,6 +22,7 @@ import {
 } from "../Data/Schema";
 
 import Manage_Page from "./Manage/Manage_Page";
+import Preview_App_State_Lib from "../Data/Preview_All_State_Lib";
 import Preview_Back_DM_Lib from "../Data/Preview_Back_DM_Lib";
 import Preview_Front_DM_Lib from "../Data/Preview_Front_DM_Lib";
 import Preview_Global_Class_Map_Lib from "../Data/Preview_Global_Class_Map";
@@ -68,6 +69,9 @@ const update_output = (select_schema_data: Select_RpgClass_Props) => {
     case i++:
       set_output_text(new Preview_Global_Class_Map_Lib(schemas, true).finalContent);
       break;
+    case i++:
+      set_output_text(new Preview_App_State_Lib(schemas).final_content);
+      break;
     default:
       set_output_text("");
       break;
@@ -78,7 +82,6 @@ export type Update_Schema_Params = string | boolean | string[] | Schema_Property
 
 const App: React.FC = () => {
   const firstId = generate_unique_id();
-
   const [schemas, set_schemas] = useState<Schema[]>([
     get_bee_object(firstId),
     get_bee_hive_object(generate_unique_id()),

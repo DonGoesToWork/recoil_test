@@ -20,10 +20,10 @@ export default class Preview_Back_DM_Lib extends Base_Generator {
     ].join(", ");
 
     // TODO -> Soon, backend_state will be '[ object_state ] '
-    
-    return `import { ${imports}, SO_${object_name}, C_${object_name}, MO_${object_name} } from "../Shared_Data_Models/${object_name}";
+
+    return `import { ${imports}, SO_${object_name}, C_${object_name}, MO_${object_name} } from "../Shared_Data_Models/${object_name}_Interfaces";
 import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
-import Backend_State from "../../static_internal_logic/Backend_State";
+import Backend_State from "../../static_internal_logic/Payload_Manager";
 import { Object_Class_Function_Map } from "../Data_Registration/Object_Registration";
 import { generate_unique_id } from "../../utils/utils";
 ${this.schema.user_interaction_list
@@ -186,7 +186,9 @@ let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Mes
   generate_ia_user_interaction_functions(): string {
     return this.schema.user_interaction_list
       .map((user_interaction: User_Interaction) => {
-        return `let ia_${this.name_as_lower}_${user_interaction.function_name.toLowerCase()} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+        return `let ia_${
+          this.name_as_lower
+        }_${user_interaction.function_name.toLowerCase()} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
   const data = message_action as IA_${this.name_as_lower}_${user_interaction.function_name};
   iam_${this.name_as_lower}_${user_interaction.function_name}(state, data);
 };

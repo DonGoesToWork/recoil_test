@@ -90,7 +90,6 @@ ${this.tab_indent}${this.tab_indent}};`
       .join("\n")}\n${this.tab_indent}};`;
   }
 
-
   get_object_interface(): string {
     return `
 
@@ -111,7 +110,9 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"]
 
   get_interface_type_section(): string {
     let base_property_list =
-      this.base_property_name_list.length == 0 ? "" : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: string;`).join("\n");
+      this.base_property_name_list.length == 0
+        ? ""
+        : "\n" + this.base_property_name_list.map((x) => `${this.tab_indent}${this.tab_indent}set_${x}: string;`).join("\n");
     let user_generation: string =
       this.schema.user_interaction_list.length == 0
         ? ""
@@ -204,9 +205,9 @@ export const MO_${this.name}: IMO_${this.name} = {
       return "";
     }
 
-    return `\n${this.tab_indent}parent_id_data: {\n${this.parent_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string[];`).join("\n")}\n${
-      this.tab_indent
-    }};`;
+    return `\n${this.tab_indent}parent_id_data: {\n${this.parent_object_names_list_lower
+      .map((x) => `${this.tab_indent}${this.tab_indent}${x}: string[];`)
+      .join("\n")}\n${this.tab_indent}};`;
   }
 
   get_create_child_str(): string {
@@ -234,9 +235,9 @@ ${this.tab_indent}${this.tab_indent}};`
     }
 
     // Must be '?' to support front to back-end ia interaction.
-    return `\n${this.tab_indent}club_id_data?: {\n${this.club_object_names_list_lower.map((x) => `${this.tab_indent}${this.tab_indent}${x}: string[];`).join("\n")}\n${
-      this.tab_indent
-    }};`;
+    return `\n${this.tab_indent}club_id_data?: {\n${this.club_object_names_list_lower
+      .map((x) => `${this.tab_indent}${this.tab_indent}${x}: string[];`)
+      .join("\n")}\n${this.tab_indent}};`;
   }
 
   // ***** UPDATED METHOD *****
@@ -261,7 +262,6 @@ ${this.tab_indent}${this.tab_indent}};` // Note: Added semicolon inside generate
   }
   // ***** END OF UPDATED METHOD *****
 
-
   get_create_object_interface(): string {
     return `
 // C = Create
@@ -270,7 +270,9 @@ ${this.tab_indent}${this.tab_indent}};` // Note: Added semicolon inside generate
 export interface C_${this.schema.object_name} {
 ${this.tab_indent}${[...this.base_property_name_list, "id"]
       .map((x) => `${x}?: string;`)
-      .join(`\n${this.tab_indent}`)}${this.get_create_parent_str()}${this.get_create_child_str()}${this.get_create_club_str()}${this.get_create_member_str()} // Uses updated get_create_member_str
+      .join(
+        `\n${this.tab_indent}`
+      )}${this.get_create_parent_str()}${this.get_create_child_str()}${this.get_create_club_str()}${this.get_create_member_str()} // Uses updated get_create_member_str
 }`;
   }
 
@@ -279,7 +281,9 @@ ${this.tab_indent}${[...this.base_property_name_list, "id"]
    */
 
   generate_ia_interfaces() {
-    let parent_schema = this.has_parent() ? this.parent_object_names_list_lower.map((x) => `\n${this.tab_indent}${x.toLocaleLowerCase()}_ids: string[];`).join("") : "";
+    let parent_schema = this.has_parent()
+      ? this.parent_object_names_list_lower.map((x) => `\n${this.tab_indent}${x.toLocaleLowerCase()}_ids: string[];`).join("")
+      : "";
     let data_model_entry = `
 
 // Interface Argument(s) - Back-End Function Interfaces.

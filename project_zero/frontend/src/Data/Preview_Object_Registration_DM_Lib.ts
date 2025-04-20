@@ -13,11 +13,13 @@ export default class Preview_Object_Registration_DM_Lib {
   get_object_registration() {
     let filtered_schemas = this.schemas.filter((x: Schema) => x.object_name !== "");
 
-    let individual_imports: string = filtered_schemas.map((x: Schema) => `import { Register_${x.object_name} } from "../Data_Models/${x.object_name}";`).join("\n");
+    let individual_imports: string = filtered_schemas
+      .map((x: Schema) => `import { Register_${x.object_name} } from "../Data_Models/${x.object_name}";`)
+      .join("\n");
 
     let global_class_map_entries: string = filtered_schemas.map((x: Schema) => `Register_${x.object_name}(x);`).join(`\n  `);
 
-    return `import Backend_State from "../../static_internal_logic/Backend_State";
+    return `import Backend_State from "../../static_internal_logic/Payload_Manager";
 import { Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
 ${individual_imports}
 

@@ -15,7 +15,7 @@ export interface Message_Action_Send {
 
 // Receive Interfaces
 
-export interface Message_Recieve {
+export interface Message_Receive {
   messageType: string;
   payload: Payload_Add | Payload_Set | Payload_Delete;
 }

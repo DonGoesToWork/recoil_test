@@ -1,152 +1,11 @@
-import { I_Data, get_data_base } from "../Backend_State/Shared_State_Types";
 import { Message_Receive, Payload_Add, Payload_Delete, Payload_Set } from "../z_generated/Shared_Misc/Communication_Interfaces";
-import { SO_Object, Sub_Schema } from "../z_generated/Shared_Misc/Sub_Schema";
 
+import { App_State } from "../z_generated/App_State/App_State";
 import { GLOBAL_CLASS_MAP } from "../z_generated/Data_Registration/Global_Class_Map";
 import { generate_unique_id } from "../utils/utils";
 
 // In-memory storage for simplicity; replace with a database in production
 class Shared_State {
-  protected data: I_Data = get_data_base(); // todo, upgrade to private later on
-
-  /**
-   * Logic for interacting with data on the backend.
-   */
-
-  get_data(): I_Data {
-    return this.data;
-  }
-
-  get_data_record(class_name: keyof I_Data): Record<string, SO_Object> {
-    return this.data[class_name];
-  }
-
-  protected set_data_record<K extends keyof I_Data>(class_name: K, record: I_Data[K]): void {
-    this.data[class_name] = record;
-  }
-
-  get_data_entries(): { [K in keyof I_Data]: [K, I_Data[K]] }[keyof I_Data][] {
-    return Object.entries(this.data) as { [K in keyof I_Data]: [K, I_Data[K]] }[keyof I_Data][];
-  }
-
-  protected set_data_entries(entries: { [K in keyof I_Data]: [K, I_Data[K]] }[keyof I_Data][]): void {
-    const reconstructedData = Object.fromEntries(entries) as I_Data;
-
-    // Basic validation (optional but recommended if using this method)
-    if (!reconstructedData.farmer || !reconstructedData.inventory || Object.keys(reconstructedData).length !== 2) {
-      console.error("set_data_entries received invalid data structure. Aborting update.", entries);
-      return;
-    }
-
-    this.data = reconstructedData;
-  }
-
-  get_object<K extends keyof I_Data>(class_name: K, object_id: string): I_Data[K][string] | undefined {
-    const record = this.data[class_name];
-    return record[object_id] as I_Data[K][string] | undefined;
-  }
-
-  protected set_object<K extends keyof I_Data>(class_name: K, object_id: string, object: I_Data[K][string]): void {
-    this.data[class_name][object_id] = object;
-  }
-
-  /**
-   * Interactions with sub-objects
-   */
-
-  get_parents<K extends keyof I_Data>(class_name: K, object_id: string): SO_Object[] {
-    // Get base object using class_name and object_id.
-    let object = this.get_object(class_name, object_id);
-
-    if (object === undefined || !object.parent_id_data) {
-      return [];
-    }
-
-    // get parent id data
-    let parent_id_data: [string, string[]][] = Object.entries(object.parent_id_data);
-    let parent_objects: SO_Object[] = [];
-
-    // loop through parent id data
-    for (let [parent_class_name, parent_ids] of parent_id_data) {
-      // loop through parent ids
-      for (let parent_id of parent_ids) {
-        // get parent object
-        let parent_object = this.get_object(parent_class_name as keyof I_Data, parent_id);
-        if (parent_object !== undefined) {
-          parent_objects.push(parent_object);
-        }
-      }
-    }
-
-    return parent_objects;
-  }
-
-  get_clubs<K extends keyof I_Data>(class_name: K, object_id: string): SO_Object[] {
-    let object = this.get_object(class_name, object_id);
-
-    if (object === undefined || !object.parent_id_data) {
-      return [];
-    }
-
-    let club_id_data: [string, string[]][] = Object.entries(object.parent_id_data);
-    let club_objects: SO_Object[] = [];
-
-    for (let [club_class_name, club_ids] of club_id_data) {
-      for (let club_id of club_ids) {
-        let club_object = this.get_object(club_class_name as keyof I_Data, club_id);
-        if (club_object !== undefined) {
-          club_objects.push(club_object);
-        }
-      }
-    }
-
-    return club_objects;
-  }
-
-  get_children<K extends keyof I_Data>(class_name: K, object_id: string): SO_Object[] {
-    let object = this.get_object(class_name, object_id);
-
-    if (object === undefined || !object.child_id_data) {
-      return [];
-    }
-
-    let children_id_data: [string, Sub_Schema][] = Object.entries(object.child_id_data);
-    let children_objects: SO_Object[] = [];
-
-    for (let [child_class_name, child_ids] of children_id_data) {
-      for (let child_id of child_ids.ids) {
-        let child_object = this.get_object(child_class_name as keyof I_Data, child_id);
-        if (child_object !== undefined) {
-          children_objects.push(child_object);
-        }
-      }
-    }
-
-    return children_objects;
-  }
-
-  get_members(class_name: string, object_id: string): SO_Object[] {
-    let object = this.get_object(class_name as keyof I_Data, object_id);
-
-    if (object === undefined || !object.member_id_data) {
-      return [];
-    }
-
-    let member_id_data: [string, Sub_Schema][] = Object.entries(object.member_id_data);
-    let member_objects: SO_Object[] = [];
-
-    for (let [member_class_name, member_ids] of member_id_data) {
-      for (let member_id of member_ids.ids) {
-        let member_object = this.get_object(member_class_name as keyof I_Data, member_id);
-        if (member_object !== undefined) {
-          member_objects.push(member_object);
-        }
-      }
-    }
-
-    return member_objects;
-  }
-
   /**
    * Logic managing payloads to send data back to front-end.
    */
@@ -158,38 +17,32 @@ class Shared_State {
     this.server_state_ref = generate_unique_id();
   }
 
-  set(payload: Payload_Set) {
-    let object_type = payload.object_type as keyof I_Data;
-
-    // validity check
-    if (GLOBAL_CLASS_MAP[object_type] === undefined) {
-      console.log("Fatal error: Tried to add object of unsupported type: " + object_type);
+  set(app_state: App_State, payload: Payload_Set) {
+    // ensure payload object type is a member of app state.
+    if (!(payload.object_type in app_state)) {
+      console.log("Fatal error: Payload object type is not a member of app state.");
       return;
     }
 
-    let object_list = this.data[object_type];
+    switch (payload.object_type) {
+      case "Inventory":
+        app_state.inventory.get_object(payload.id)?.[payload.property_name] = payload.property_value;
 
-    // validity check
-    if (object_list === null || object_list === undefined) {
-      console.log("Fatal error: Object type " + object_type + " not found.");
-      return;
+        /**
+         * 
+        let obj = app_state.inventory.get_object(payload.id);
+        obj[payload.property_name] = payload.property_value;
+
+        
+        break;
+        if (obj === undefined) {
+          console.log("Fatal error: Object type " + payload.object_type + " not found.");
+          return;
+        }
+        obj[payload.property_name] = payload.property_value;
+         */
+        break;
     }
-
-    const target_object = object_list[payload.id];
-
-    // validity checks
-    if (!target_object) {
-      console.log("Fatal error: Object type " + object_type + " not found.");
-      return;
-    }
-
-    if (!target_object[payload.property_name]) {
-      console.log("Fatal error: Property " + payload.property_name + " not found.");
-      return;
-    }
-
-    // Change internal state
-    target_object[payload.property_name] = payload.property_value;
 
     // Create payload to send to front-end.
     let message: Message_Receive;
@@ -200,6 +53,40 @@ class Shared_State {
     };
 
     this.change_payloads.push(message);
+
+    // let object_list = this.data[object_type];
+
+    // // validity check
+    // if (object_list === null || object_list === undefined) {
+    //   console.log("Fatal error: Object type " + object_type + " not found.");
+    //   return;
+    // }
+
+    // const target_object = object_list[payload.id];
+
+    // // validity checks
+    // if (!target_object) {
+    //   console.log("Fatal error: Object type " + object_type + " not found.");
+    //   return;
+    // }
+
+    // if (!target_object[payload.property_name]) {
+    //   console.log("Fatal error: Property " + payload.property_name + " not found.");
+    //   return;
+    // }
+
+    // // Change internal state
+    // target_object[payload.property_name] = payload.property_value;
+
+    // // Create payload to send to front-end.
+    // let message: Message_Receive;
+
+    // message = {
+    //   messageType: "set",
+    //   payload,
+    // };
+
+    // this.change_payloads.push(message);
   }
 
   add(payload: Payload_Add) {

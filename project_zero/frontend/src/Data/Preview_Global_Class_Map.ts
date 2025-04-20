@@ -12,7 +12,9 @@ export default class Preview_Global_Class_Map_Lib {
 
   get_object_registration() {
     let filtered_schemas = this.schemas.filter((x: Schema) => x.object_name !== "");
-    let individual_imports: string = filtered_schemas.map((x: Schema) => `import { MO_${x.object_name} } from "../Shared_Data_Models/${x.object_name}";`).join("\n");
+    let individual_imports: string = filtered_schemas
+      .map((x: Schema) => `import { MO_${x.object_name} } from "../Shared_Data_Models/${x.object_name}_Interfaces";`)
+      .join("\n");
     let global_class_map_entries: string = filtered_schemas.map((x: Schema) => `GLOBAL_CLASS_MAP[\'${x.object_name}\'] = MO_${x.object_name};`).join("\n");
 
     return `${individual_imports}
