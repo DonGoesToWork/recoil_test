@@ -8,11 +8,28 @@ This project generates code that is intended for flat, global state objects that
 
 \*-----\* Hierarchy Related Terms: \*-----\*
 
+Parent -> Object -> Child:
+
 - Parent: An object that owns children. If a parent is deleted, all of its children are deleted. If a child is deleted, it's reference is removed from its parent.
 - Child: An object that is owned by a parent and dependent on its existance.
 
+Club -> Object -> Child:
+
 - Club: Clubs are object containers that can hold members in a 1:many relationship. Clubs and Members are only loosely related. This means that removing a member from a club does not delete a Member. Likewise, deleting a Club only removes the Club reference from the Member. They are only associated with each other via id references to illustrate affiliation.
 - Member: An object that is associated with a Club.
+
+\*-----\* Hierarchy Examples: \*-----\*
+
+In a game, there exists the objects: guild, guild treasury, player and player inventory.
+
+You would want the player to be the parent of the player inventory, making the player inventory a child of the parent. You'd do this so that if the player is deleted, then their inventory is automatically cleaned up too, without needing to worry about manually handling it.
+
+As for the guild and guild treasury, you'd do the same, as once the guild is gone, the treasure should go away.
+
+To have the pla
+Then, you may want to make to make the guild treasury the child of the guild, guild, a guild treasury, a player and a player inventory.
+
+You would
 
 \*-----\* Parent Object Specifications: \*-----\*
 

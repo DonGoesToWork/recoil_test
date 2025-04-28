@@ -77,25 +77,46 @@ NOTE: Project searching for 'lootquest8' will help you find these references to 
 - Run npm install in four locations: Project Zero's front-end and back-end and the Main Project's front-end and back-end.
 - Optionally go to the /scripts/starT_project.ahk script if you use Autohotkey and update its paths too. (Very convenient script btw!)
 
-# To run this project, you'll want to set up 5 Powershell Termainals (Hope you have Windows Explorer!). First, Git:
+# To run this project, you'll want to set up 5 Powershell Termainals (Hope you have Windows Terminal!).
+
+## First, a Git focused tab:
 
 cd "E:\web_dev\loot_quest"
 
-# Next, Main Project (update paths to your root path):
+## Next, Main Project (update paths to your root path) tabs:
 
 cd "E:\web_dev\loot_quest\scripts" ; .\start_main_frontend.ps1
 cd "E:\web_dev\loot_quest\scripts" ; .\start_main_backend.ps1
 
-# Moving the Project:
-
-Update the paths in the following locations:
-- Above paths mentioned in this readme (most likely).
-- ../scripts/project_path.txt
-- ../project_zero/backend/src/config.ts
-
-# Project Zero:
+## Finally, Project Zero tabs:
 
 cd "E:\web_dev\loot_quest\scripts" ; .\start_project_zero_backend.ps1
 cd "E:\web_dev\loot_quest\scripts" ; .\start_project_zero_frontend.ps1
 
 - NOTE: I recommend just making your own scripts and process for maximum efficienty. The above is stated to get you started.
+
+# Moving the Project:
+
+Update the paths in the following locations:
+
+- Above paths mentioned in this readme (most likely).
+- ../scripts/project_path.txt
+- ../project_zero/backend/src/config.ts
+
+# A Brief Note on the History/Logic of why I made Project Zero :
+
+(tl;dr: generate code instead of wrtiting it by hand = good)
+
+Imagine this: Let's say you are making a game and using the standard route, a large javascript object blob that has game: { player: { inventory: new Inventory() } }. In this situation, it is obviously clear that the inventory is a child of player, and, if you delete the player object, the inventory object will go away.
+
+The problem with this implementation however is simple. When you have a child object that needs to be jointly owned by two different parents, this hierarchy doesn't work. If we expand the game to have a 'Pet' object that can be owned by two people, then suddenly, you can't put the pet under both players and would need to opt for workarounds like designating one player as the 'Primary Owner' or something of that sort.
+
+These kinds of situations are partially why nested structures are bad. Though, when dealing with React's state management in general, there are plenty of other reasons for why nested hierarchies are bad from a design perspective. (React officially doesn't recommend nested object states either btw)
+
+So, instead, you might choose to create a flat architecture instead, using properties like 'player-keys: []' in the pet and 'pet-key' in for the player. However, already, you can probably see the problems with this kind of structure. If you were to have something like a City object associated with Building objects that have Office Equipment objects, then deleting the city would mean deleting all of the Building objects and their associated Office Equipment objects. This isn't an impossible task and is exactly what you need to do in a flat hierarchy to perform this operation, however, actually writing this code is an exercise of tedius boiler-plate code writing that must be conducted for every object relationship that you intend to implement.
+
+This second level of problem-solving works, but has caveats, which might lead you to the third-level, what if it you didn't have to write any hierarchy managing code? What if you only had to define the association between City, Building and Office Equipment and then adding or removing any of those objects will intelligently update their associations for you?
+
+Meet Project Zero, that third and final level of problem-solving solution that allows you to define relationships between objects to have the code necessary to maintain those relationships be automatically generated for you.
+
+And, since I was already generating that code, I decided to just generate everything else that I could, like standardized object interfaces, class definitions, api calls, etc., because why not?

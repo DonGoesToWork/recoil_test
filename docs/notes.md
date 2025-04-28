@@ -42,7 +42,7 @@ let change_multiple_hive_names_to_ted = (state: Backend_State, bee_hive_ids: str
 };
 // Sample contents:
 
-// For every bee hive in state at bee_hive_id, change property_name to property_value.
+// For every bee hive in state at bee_hive_id, change property_l1_name to property_value.
 // bee_hive_ids.forEach((bee_hive_id: string) => {
 //     set_bee_hive_name_direct(state, bee_hive_id, "Ted");
 //   });

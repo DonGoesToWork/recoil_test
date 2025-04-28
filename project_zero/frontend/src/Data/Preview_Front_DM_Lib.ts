@@ -16,7 +16,7 @@ export default class Preview_Front_DM_Lib extends Base_Generator {
       ...this.base_property_name_list.map((property) => `IA_set_${this.name_as_lower}_${property}`),
     ].join(", ");
 
-    return `import { MO_${this.schema.object_name}, ${interface_imports} } from "../Shared_Data_Models/${this.schema.object_name}";
+    return `import { MO_${this.schema.object_name}, ${interface_imports} } from "../Shared_Data_Models/${this.schema.object_name}_Interfaces";
 
 import { GET_NEW_DEFAULT_REMOVAL_MESSAGE_OBJECT } from "../../utils/IA_Remove";
 import { I_Message_Sender } from "../../utils/I_Message_Sender";
@@ -28,7 +28,7 @@ import { I_Message_Sender } from "../../utils/I_Message_Sender";
     // tODO, macro rename these
     const createFunction = (withParent: boolean, parentNames?: string[]): string => {
       const parentArgs = withParent ? parentNames!.map((parent) => `${parent.toLowerCase()}_id: string`).join(", ") : "";
-      const parentFields = withParent ? parentNames!.map((parent) => `${parent.toLowerCase()}_id: ${parent.toLowerCase()}_id`).join(",\n    ") : "";
+      const parentFields = withParent ? parentNames!.map((parent) => `${parent.toLowerCase()}_ids: [${parent.toLowerCase()}_id]`).join(",\n    ") : "";
       const functionNameSuffix = withParent ? `_w_parents` : `_wo_parent`;
 
       return `

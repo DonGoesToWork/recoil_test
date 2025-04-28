@@ -19,11 +19,14 @@ export default class Preview_Back_DM_Lib extends Base_Generator {
       ...this.base_property_name_list.map((property) => `IA_set_${this.name_as_lower}_${property}`),
     ].join(", ");
 
-    // TODO -> Soon, backend_state will be '[ object_state ] '
+    // TODO -> Soon, App_State will be '[ object_state ] '
 
-    return `import { ${imports}, SO_${object_name}, C_${object_name}, MO_${object_name} } from "../Shared_Data_Models/${object_name}_Interfaces";
+    return `import {
+  ${imports}, SO_${object_name}, C_${object_name}, MO_${object_name}
+  } from "../Shared_Data_Models/${object_name}_Interfaces";
 import { Payload_Add, Payload_Set, Pre_Message_Action_Send } from "../Shared_Misc/Communication_Interfaces";
-import Backend_State from "../../static_internal_logic/Payload_Manager";
+
+import App_State from "../App_State/App_State";
 import { Object_Class_Function_Map } from "../Data_Registration/Object_Registration";
 import { generate_unique_id } from "../../utils/utils";
 ${this.schema.user_interaction_list
@@ -115,7 +118,7 @@ ${this.tab_indent}}`
   generate_add_function(): string {
     const { object_name } = this.schema;
 
-    return `export let create_new_${this.name_as_lower} = (state: Backend_State, ${this.name_as_lower}: C_${object_name}, _func_callback?: (state: Backend_State, new_${this.name_as_lower}: SO_${object_name}) => void): void => {
+    return `export let create_new_${this.name_as_lower} = (state: App_State, ${this.name_as_lower}: C_${object_name}, _func_callback?: (state: App_State, new_${this.name_as_lower}: SO_${object_name}) => void): void => {
   const new_${this.name_as_lower} = initialize_${this.name_as_lower}(${this.name_as_lower});
   if (_func_callback) _func_callback(state, new_${this.name_as_lower});
   const payload: Payload_Add = { object_id: new_${this.name_as_lower}.id, object_type: MO_${object_name}.class_name, object: new_${this.name_as_lower} };
@@ -138,7 +141,7 @@ ${this.tab_indent}}`
       : "";
 
     return this.schema.do_gen_ia_create_new
-      ? `let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+      ? `let ia_create_new_${this.name_as_lower} = (message_action: Pre_Message_Action_Send, state: App_State): void => {
   const data = message_action as IA_create_new_${this.name_as_lower};
   const new_${this.name_as_lower}: C_${object_name} = {${parent_data ? `\n${this.tab_indent}${parent_data}` : ""}
   };
@@ -149,13 +152,13 @@ ${this.tab_indent}}`
   }
 
   generate_create_set_payload_function(): string {
-    return `const create_set_payload = (object_type: string, id: string, property_name: string, property_value: string): Payload_Set => ({ object_type, id, property_name, property_value });\n`;
+    return `const create_set_payload = (object_type: string, id: string, property_l1_name: string, property_value: string): Payload_Set => ({ object_type, id, property_l1_name, property_value });\n`;
   }
 
   generate_set_property_function(): string {
-    return `const set_${this.name_as_lower}_property = (state: Backend_State, ${this.name_as_lower}_id: string, property_name: string, property_value: string): void => {
-  const payload = create_set_payload(MO_${this.schema.object_name}.class_name, ${this.name_as_lower}_id, property_name, property_value);
-  state.set(payload);
+    return `const set_${this.name_as_lower}_property = (state: App_State, ${this.name_as_lower}_id: string, property_l1_name: string, property_value: string): void => {
+  const payload = create_set_payload(MO_${this.schema.object_name}.class_name, ${this.name_as_lower}_id, property_l1_name, property_value);
+  state.change_payload_manager.add_set_payload(payload);
 };
 `;
   }
@@ -164,7 +167,7 @@ ${this.tab_indent}}`
     return this.base_property_list
       .map((schema_property: Schema_Property) => {
         const lowerCaseProperty = schema_property.name.toLowerCase();
-        return `export let set_${this.name_as_lower}_${lowerCaseProperty} = (state: Backend_State, ${
+        return `export let set_${this.name_as_lower}_${lowerCaseProperty} = (state: App_State, ${
           this.name_as_lower
         }_id: string, new_${lowerCaseProperty}: string): void => {
   set_${this.name_as_lower}_property(state, ${this.name_as_lower}_id, "${lowerCaseProperty}", new_${lowerCaseProperty});
@@ -172,7 +175,7 @@ ${this.tab_indent}}`
 ${
   schema_property.do_gen_ia_set
     ? `
-let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Message_Action_Send, state: App_State): void => {
   const data = message_action as IA_set_${this.name_as_lower}_${lowerCaseProperty};
   set_${this.name_as_lower}_${lowerCaseProperty}(state, data.${this.name_as_lower}_id, data.new_${lowerCaseProperty});
 };
@@ -188,7 +191,7 @@ let ia_set_${this.name_as_lower}_${lowerCaseProperty} = (message_action: Pre_Mes
       .map((user_interaction: User_Interaction) => {
         return `let ia_${
           this.name_as_lower
-        }_${user_interaction.function_name.toLowerCase()} = (message_action: Pre_Message_Action_Send, state: Backend_State): void => {
+        }_${user_interaction.function_name.toLowerCase()} = (message_action: Pre_Message_Action_Send, state: App_State): void => {
   const data = message_action as IA_${this.name_as_lower}_${user_interaction.function_name};
   iam_${this.name_as_lower}_${user_interaction.function_name}(state, data);
 };

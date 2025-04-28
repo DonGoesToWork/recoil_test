@@ -59,7 +59,7 @@ export default class Base_Generator {
 
     this.member_property_list = this.schema.member_sub_schema_arr.filter((x) => x.name !== "");
     this.member_property_name_list = this.schema.member_sub_schema_arr.filter((x) => x.name !== "").map((x) => x.name);
-    
+
     this.combined_property_list = this.add_parent_fields_if_present([...this.base_property_name_list, "id", ...this.child_property_name_list]);
     this.combined_property_list_no_children = this.add_parent_fields_if_present([...this.base_property_name_list, "id"]);
 

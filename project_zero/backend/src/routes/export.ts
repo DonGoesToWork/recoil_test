@@ -34,7 +34,8 @@ router.post("/", (req: any, res: any) => {
   write_file(res, output_paths.data_registration + "/Global_Class_Map.ts", state.global_class_map_contents);
   write_file(res, output_paths.data_registration + "/Object_Registration.ts", state.object_registration_contents);
 
-  write_file(res, output_paths.app_state + "/App_State.ts", state.app_state);
+  write_file(res, output_paths.frontend_app_state + "/App_State.ts", state.frontend_app_state);
+  write_file(res, output_paths.backend_app_state + "/App_State.ts", state.backend_app_state);
 
   write_file(res, output_paths.schemas + "/schemas.ts", JSON.stringify(state.schemas));
 
@@ -61,11 +62,14 @@ router.post("/", (req: any, res: any) => {
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.frontend_shared);
   copy_folder_to_folder(output_paths.output_static_shared, main_project_paths.backend_shared);
 
+  copy_folder_to_folder(output_paths.output_static_object_state_back, main_project_paths.backend_app_state);
+  copy_folder_to_folder(output_paths.output_static_object_state_front, main_project_paths.frontend_app_state);
+
   copy_folder_to_folder(output_paths.shared_object_state, main_project_paths.frontend_shared_object_state);
   copy_folder_to_folder(output_paths.shared_object_state, main_project_paths.backend_shared_object_state);
 
-  copy_folder_to_folder(output_paths.app_state, main_project_paths.frontend_app_state);
-  copy_folder_to_folder(output_paths.app_state, main_project_paths.backend_app_state);
+  copy_folder_to_folder(output_paths.frontend_app_state, main_project_paths.frontend_app_state);
+  copy_folder_to_folder(output_paths.backend_app_state, main_project_paths.backend_app_state);
 
   res.status(200).json({ status: "ok" });
 });

@@ -6,14 +6,14 @@ import {
   Payload_Set,
   Pre_Message_Action_Send,
 } from "../z_generated/Shared_Misc/Communication_Interfaces";
-import { create_new_bee_farm_w_parents, remove_bee_farm } from "../z_generated/Data_Models/Bee_Farm";
-import { create_new_bee_hive_w_parents, remove_bee_hive } from "../z_generated/Data_Models/Bee_Hive";
-import { create_new_bee_w_parents, remove_bee, set_bee_name } from "../z_generated/Data_Models/Bee";
-import { create_new_farmer_wo_parent, remove_farmer } from "../z_generated/Data_Models/Farmer";
-import { create_new_nature_wo_parent, remove_nature } from "../z_generated/Data_Models/Nature";
+import { create_new_bee_farm_w_parents, remove_bee_farm } from "../z_generated/Frontend_Data_Models/Bee_Farm";
+import { create_new_bee_hive_w_parents, remove_bee_hive } from "../z_generated/Frontend_Data_Models/Bee_Hive";
+import { create_new_bee_w_parents, remove_bee, set_bee_name } from "../z_generated/Frontend_Data_Models/Bee";
+import { create_new_farmer_wo_parent, remove_farmer } from "../z_generated/Frontend_Data_Models/Farmer";
+import { create_new_nature_wo_parent, remove_nature } from "../z_generated/Frontend_Data_Models/Nature";
 import { useEffect, useState } from "react";
 
-import { App_State } from "../z_generated/App_State/App_State";
+import App_State from "../z_generated/App_State/App_State";
 import { I_Message_Sender } from "../utils/I_Message_Sender";
 import { SO_Bee } from "../z_generated/Shared_Data_Models/Bee_Interfaces";
 import { SO_Bee_Farm } from "../z_generated/Shared_Data_Models/Bee_Farm_Interfaces";
@@ -75,7 +75,7 @@ const HiveComponent: React.FC = () => {
     }
 
     setState((prev_state) => {
-      const new_state = { ...prev_state };
+      const new_state: any = { ...prev_state }; // TODO: Find some way to not have to use 'any'.
 
       parsed_message_array.message_array.forEach((parsed_message: Message_Receive) => {
         const messageType: string = parsed_message.messageType;
@@ -83,10 +83,10 @@ const HiveComponent: React.FC = () => {
         if (messageType === "set") {
           const payload_set = parsed_message.payload as Payload_Set;
 
-          const existing = new_state[payload_set.object_type][payload_set.id];
+          const existing: any = new_state[payload_set.object_type][payload_set.id];
 
           if (existing) {
-            existing[payload_set.property_name] = payload_set.property_value;
+            existing[payload_set.property_l1_name] = payload_set.property_value;
           }
         } else if (messageType === "add") {
           const payload_add = parsed_message.payload as Payload_Add;
@@ -173,31 +173,6 @@ const HiveComponent: React.FC = () => {
 
   // Show state debug.
   console.log("STATE: ", state);
-
-  function get_farmer_entries(): [string, SO_Farmer][] {
-    if (state.farmer === undefined) {
-      return [];
-    }
-
-    let farmer_entries = Object.entries(state.farmer) as [string, SO_Farmer][];
-
-    return farmer_entries;
-  }
-
-  function get_bee_farm_entries(farmer_id: string): [string, SO_Bee_Farm][] {
-    if (state.bee_farm === undefined) {
-      return [];
-    }
-
-    let bee_farm_entries = Object.entries(state.bee_farm) as [string, SO_Bee_Farm][];
-    bee_farm_entries = bee_farm_entries.filter(([bee_farm_id, bee_farm]: [string, SO_Bee_Farm]) => bee_farm.parent_id_data.farmer.indexOf(farmer_id) != -1);
-    return bee_farm_entries;
-  }
-
-  function get_bee_entries(bee_hive_id: string): SO_Bee[] {
-    let bee_ids = state.bee_hive.get_object(bee_hive_id)?.child_id_data.bee.ids;
-    return state.bee.get_objects(bee_ids).filter((bee: SO_Bee) => bee.parent_id_data.bee_hive.indexOf(bee_hive_id) != -1);
-  }
 
   return (
     <div>

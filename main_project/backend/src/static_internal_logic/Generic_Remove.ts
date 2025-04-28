@@ -54,13 +54,15 @@ let delete_from_parent = (state: Shared_State, metadata_object: Metadata_Object_
       return;
     }
 
-    parent.child_id_data[metadata_object.class_name].ids = parent.child_id_data[metadata_object.class_name].ids.filter((id: string) => id !== stateful_object.id);
+    parent.child_id_data[metadata_object.class_name].ids = parent.child_id_data[metadata_object.class_name].ids.filter(
+      (id: string) => id !== stateful_object.id
+    );
 
     // create set payloads
     const payload: Payload_Set = {
       object_type: parent.class_name as string,
       id: parent.id,
-      property_name: "child_id_data",
+      property_l1_name: "child_id_data",
       property_value: parent.child_id_data, // DAR TOOD -> Future optimization -> only set/send sub-property rather than whole array.
     };
 

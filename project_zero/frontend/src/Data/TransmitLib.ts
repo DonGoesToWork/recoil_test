@@ -1,7 +1,8 @@
 // Handle schema import functionality.
 
-import Preview_App_State_Lib from "./Preview_All_State_Lib";
+import Preview_App_State_Front_Lib from "./Preview_App_State_Front_Lib";
 import Preview_Back_DM_Lib from "./Preview_Back_DM_Lib";
+import Preview_Backend_App_State from "./Preview_App_State_Back_Lib";
 import Preview_Front_DM_Lib from "./Preview_Front_DM_Lib";
 import Preview_Global_Class_Map_Lib from "./Preview_Global_Class_Map";
 import Preview_Object_Registration_DM_Lib from "./Preview_Object_Registration_DM_Lib";
@@ -15,7 +16,8 @@ interface Client_Message {
   object_file_data: Object_File_Data[];
   object_registration_contents: string;
   global_class_map_contents: string;
-  app_state: string;
+  frontend_app_state: string;
+  backend_app_state: string;
   schemas: Schema[];
 }
 
@@ -68,7 +70,8 @@ export const export_schemas = (schemas: Schema[]) => {
     })),
     object_registration_contents: new Preview_Object_Registration_DM_Lib(schemas, false).final_content,
     global_class_map_contents: new Preview_Global_Class_Map_Lib(schemas, false).finalContent,
-    app_state: new Preview_App_State_Lib(schemas).final_content,
+    frontend_app_state: new Preview_App_State_Front_Lib(schemas).final_content,
+    backend_app_state: new Preview_Backend_App_State(schemas).final_content,
     schemas: schemas,
   };
 

@@ -3,8 +3,9 @@
 import { Class_Function, Object_Class_Function_Map, Register_Objects } from "./z_generated/Data_Registration/Object_Registration";
 import { Message_Action_Send, Message_Receive } from "./z_generated/Shared_Misc/Communication_Interfaces";
 
+import App_State from "./z_generated/App_State/App_State";
 import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "./utils/IA_Remove";
-import Shared_State from "./static_internal_logic/Shared_State";
+import { Server_State_Ref_Manager } from "./static_internal_logic/Server_State_Ref_Manager";
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import { delete_object_and_relations } from "./static_internal_logic/Generic_Remove";
@@ -18,7 +19,10 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
 // Create our main state object.
-const state = new Shared_State();
+const state = new App_State();
+const server_state_ref_manager = new Server_State_Ref_Manager();
+
+// Create a few back-end state variable references.
 
 // Initialize references to all object class functions.
 let object_class_function_map: Object_Class_Function_Map = {};
@@ -134,10 +138,15 @@ wss.on("connection", (ws: any, req: any) => {
     }
 
     // Check server state ref second.
-    console.log(message_action.server_state_ref, " ", state.server_state_ref, " ", message_action.request_id);
+    console.log(message_action.server_state_ref, " ", server_state_ref_manager.server_state_ref, " ", message_action.request_id);
 
-    if (message_action.server_state_ref !== state.server_state_ref) {
-      console.log("[Error] Out of sync client request rejected. Expected: ", state.server_state_ref, " Received: ", message_action.server_state_ref);
+    if (message_action.server_state_ref !== server_state_ref_manager.server_state_ref) {
+      console.log(
+        "[Error] Out of sync client request rejected. Expected: ",
+        server_state_ref_manager.server_state_ref,
+        " Received: ",
+        message_action.server_state_ref
+      );
       ws.send(
         JSON.stringify({
           message_type: Message_Type.ERROR,
@@ -163,7 +172,12 @@ wss.on("connection", (ws: any, req: any) => {
       let class_function: Class_Function = class_function_list[message_action.function_name];
 
       if (class_function === undefined || class_function === null) {
-        console.log("[Error 2] Bad Object Transmitted. Function name is invalid.", message_action.function_name, " Object Class: ", message_action.object_class);
+        console.log(
+          "[Error 2] Bad Object Transmitted. Function name is invalid.",
+          message_action.function_name,
+          " Object Class: ",
+          message_action.object_class
+        );
         return;
       }
 
@@ -172,12 +186,12 @@ wss.on("connection", (ws: any, req: any) => {
     }
 
     // Send changes to all other clients.
-    state.randomize_server_state_ref(); // always randomize state before sending changes to clients
+    server_state_ref_manager.randomize_server_state_ref(); // always randomize state before sending changes to clients
     user_object.last_request_id = message_action.request_id; // update the last request id too
     let client_return_object: Client_Return_object = {
       message_type: Message_Type.CHANGE_PAYLOADS,
-      server_state_ref: state.server_state_ref,
-      message_array: state.change_payloads,
+      server_state_ref: server_state_ref_manager.server_state_ref,
+      message_array: state.change_payload_manager.change_payloads,
     };
 
     wss.clients.forEach((client) => {
@@ -185,18 +199,18 @@ wss.on("connection", (ws: any, req: any) => {
       console.log("Sending");
     });
 
-    state.clearChanges(); // Always clear changes post-transmission.
+    state.change_payload_manager.clear(); // Always clear changes post-transmission.
   });
 
   // Send full storage to newly connected clients.
-  state.randomize_server_state_ref(); // always randomize state before sending changes to clients
+  server_state_ref_manager.randomize_server_state_ref(); // always randomize state before sending changes to clients
   let client_return_object: Client_Return_object = {
     message_type: Message_Type.FULL_STORAGE,
-    server_state_ref: state.server_state_ref,
-    message_array: state.get_full_storage(),
+    server_state_ref: server_state_ref_manager.server_state_ref,
+    message_array: state.get_full_storage(state).change_payloads,
   };
   ws.send(JSON.stringify(client_return_object));
-  state.clearChanges(); // Always clear changes post-transmission.
+  state.change_payload_manager.clear(); // Always clear changes post-transmission.
 });
 
 server.listen(PORT, () => {

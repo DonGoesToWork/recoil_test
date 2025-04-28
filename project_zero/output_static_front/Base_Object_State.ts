@@ -1,14 +1,14 @@
-export default class Shared_Object_State<T> {
+// Object_State_Front.ts
+
+export default class Base_Object_State<T> {
   protected data: Record<string, T> = {};
 
-  // * Logic for interacting with data on the backend.
+  set_record(id: string, inventory: T): void {
+    this.data[id] = inventory;
+  }
 
   get_data(): Record<string, T> {
     return this.data;
-  }
-
-  protected set_record(id: string, inventory: T): void {
-    this.data[id] = inventory;
   }
 
   get_entries(): [string, T][] {

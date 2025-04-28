@@ -5,55 +5,6 @@ import { DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME } from "../utils/IA_Remove
 import Shared_State from "../static_internal_logic/Shared_State";
 import { delete_object_and_relations } from "../static_internal_logic/Generic_Remove";
 
-// interaction middleware function to fill
-
-export const iam_inventory_add_rpg_item = (state: Shared_State, data: IA_inventory_add_rpg_item): void => {
-  // Sample Snippets:
-  // let inventory: SO_Inventory = inventory_get(state, data.inventory_id);
-  // let rpg_item: SO_Rpg_Item = rpg_item_get(state, data.rpg_item_id);
-  // inventory_add_rpg_item(state, data.inventory_id, data.rpg_item_id);
-};
-
-export const iam_inventory_remove_rpg_item = (state: Shared_State, data: IA_inventory_remove_rpg_item): void => {
-  // Sample Snippets:
-  // let inventory: SO_Inventory = inventory_get(state, data.inventory_id);
-  // let rpg_item: SO_Rpg_Item = rpg_item_get(state, data.rpg_item_id);
-  // inventory_add_rpg_item(state, data.inventory_id, data.rpg_item_id);
-};
-
-// More Default Generated Functions
-
-export let inventory_get_all = (state: Shared_State): I_Data["inventory"] => {
-  return state.get_data_record("inventory");
-};
-
-export let inventory_get = (state: Shared_State, inventory_id: string): SO_Inventory => {
-  return inventory_get_all(state)[inventory_id];
-};
-
-export let inventory_delete = (state: Shared_State, inventory_id: string) => {
-  delete_object_and_relations(
-    {
-      object_class: MO_Inventory.class_name,
-      function_name: DEFAULT_REMOVAL_MESSAGE_OBJECT_FUNCTION_NAME,
-      id: inventory_id,
-    },
-    state
-  );
-};
-
-// Parent add/remove functions
-
-export let inventory_set_player = (state: Shared_State, inventory_id: string, player_id: string): void => {
-  let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  inventory.parent_id_data.player.push(player_id);
-};
-
-export let inventory_remove_player = (state: Shared_State, inventory_id: string): void => {
-  let inventory: SO_Inventory = inventory_get(state, inventory_id);
-  inventory.parent_id_data.player.filter((player_id: string) => player_id !== "");
-};
-
 // Club add/remove functions.
 
 export let inventory_get_player_inventory = (state: Shared_State, inventory_id: string): SO_Player_Inventory | null => {
