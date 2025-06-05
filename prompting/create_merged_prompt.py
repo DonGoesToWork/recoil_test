@@ -27,7 +27,8 @@ files_to_combine = [
 
 # f"{root_path}/tests",
 folders_to_combine = [
-    f"{root_path}",
+    f"{root_path}/backend/src",
+    f"{root_path}/frontend/src",
 ]
 
 def combine_files():
@@ -90,7 +91,7 @@ def combine_files():
                     print(f"File not found or is a directory: {current_filepath}. Skipping.")
 
 
-        # --- 2. Process Python files from folders_to_combine ---
+        # --- 2. Process Web files from folders_to_combine ---
         if folders_to_combine:
             for folder_path in folders_to_combine:
                 if os.path.exists(folder_path) and os.path.isdir(folder_path):
@@ -99,15 +100,15 @@ def combine_files():
                         # Sort filenames to ensure a consistent order (optional, but good practice)
                         filenames.sort()
                         for filename in filenames:
-                            if filename.endswith(".tsx") or filename.endswith(".css"):
-                                py_filepath = os.path.join(dirpath, filename)
-                                print(f"  Processing Python file: {py_filepath}")
+                            if filename.endswith(".ts") or filename.endswith(".tsx") or filename.endswith(".css"):
+                                web_filepath = os.path.join(dirpath, filename)
+                                print(f"  Processing Web file: {web_filepath}")
                                 try:
-                                    with open(py_filepath, 'r', encoding='utf-8') as infile_handle:
-                                        outfile_handle.write(f"\n# {filename}\n") # Using just filename for .py files from folders
+                                    with open(web_filepath, 'r', encoding='utf-8') as infile_handle:
+                                        outfile_handle.write(f"\n# {filename}\n")
                                         outfile_handle.write(infile_handle.read())
                                 except Exception as e:
-                                    print(f"  Error reading Python file {py_filepath}: {e}. Skipping.")
+                                    print(f"  Error reading Web file {web_filepath}: {e}. Skipping.")
                 else:
                     print(f"Folder not found: {folder_path}. Skipping.")
 
