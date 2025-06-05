@@ -1,0 +1,161 @@
+* Intro:
+
+I am working on a python script that will bot Siralim Ultimate and want you to help me to create the prompt that I will send to an AI system to solve my problem.
+
+* Some background:
+
+The script 'minimap_module' scans the tiles of the 2D in-game world grid and uses that data to create an internal world map (minimap) of the game's state.
+The module then runs botting operations that are used to automate gameplay, primarily with a focus on exploring realms to eliminate black fog and interact with realm objects.
+The bot is currently extremely functional, stable and works well. Now, I am creating minimal prompts to refine features.
+
+* Main Goal:
+
+I am going to provide you with 3 resources:
+- My task
+- The 'create_merged_prompt.py' script.
+- The codebase for the 'minimap_module'.
+
+What I want you to do with this information is to provide me with 2 items:
+- Briefly state the solution to the problem in the simplest, most concise terms.
+- Give me a new value for 'files_to_combine' that references ONLY the files necessary to implement the solution.
+
+This is purely a prompt-development phase. So:
+- DO NOT CODE THE SOLUTION.
+- DO NOT MODIFY ANY FILES.
+- ONLY PROVIDE THE REQUESTED ITEMS (solution / files_to_combine)
+
+* Requirements:
+
+- Make sure that you think through your solution step by step.
+- Do not include files that aren't modified in your response.
+- Prioritize solving issues using logic, deducation, meaningful action and creative insights rather than speculation, avoidance and laizness.
+- Never include changes into your solution beyond the scope of any given big fix, feature implementation or stated task.
+
+------------------------
+
+Task:
+
+Add more persistent_data priority type support to the bot.
+I want my '4', '5' and '6' hotkeys to toggle between a variety of new custom selection modes.
+In general, each mode should have three states that the hotkey cycles through: 'select mode (click tiles to select), deselect mode (click tiles to deselect) and disabled mode (return the script back to idle mode).
+Currently, we use seperate hotkeys to enable/disable modes. This needs to be changed changed!
+
+The new modes to implement are:
+The '4' hotkey should cycle through the 'priority: walk_into' mode. When a tile is set to 'priority: walk_into', our character should prioritize walking into the tile (also known as 'bump'). The current priority field sometimes does this, but not always, so we should look into refining this feature.
+The '5' hotkey should mark a tile as 'priority: interact'. These are tiles that our character should not expect to be able to walk into, but can interact with them by pressing 'e'. So, our character will 'walk in the direction of the tile' (forcing him to face it) and then press 'e' to interact with the object. This is an entirely feature that needs coded in from scratch.
+The '6' hotkey should mark a tile as 'walkable: walkable / unwalkable'. This new property will allow me to manually set the walkability of a tile with priority over the walkability settings in the temporary fingerprint database. Setting this field manually will ensure that certain critical tiles, like floors and walls, are always marked properly.
+
+------------------------
+
+import os
+
+this_folder = "C:/Users/Donald/Desktop/siralim/siralim_bot/tools/merged_prompt_gen"
+root_path = "C:/Users/Donald/Desktop/siralim/siralim_bot/app_bot"
+
+output_file = f"{this_folder}/merged_prompt.txt"
+
+# Example for first N lines:
+# (f"{this_folder}/some_other_large_file.log", {"lines": 50, "mode": "first"}),
+
+# Example for last N lines:
+# (f"{this_folder}/some_other_large_file.log", {"lines": 50, "mode": "last"}),
+
+# f"{this_folder}/test_errors.txt",
+# f"{this_folder}/merged_prompt_template_divider.txt",
+
+"""
+    f"{this_folder}/merged_prompt_template.txt",
+    f"{root_path}/minimap_module/temp/minimap_vision.log",
+
+    f"{root_path}/minimap_module/app_setup.py",
+    f"{root_path}/minimap_module/application.py",
+    f"{root_path}/minimap_module/config.py",
+    f"{root_path}/minimap_module/event_handler.py",
+    f"{root_path}/minimap_module/log_aggregator.py",
+    f"{root_path}/minimap_module/random_move_generator.py",
+    f"{root_path}/minimap_module/world_models.py",
+
+    f"{root_path}/minimap_module/components/click_to_move.py",
+    f"{root_path}/minimap_module/components/db_handlers.py",
+    f"{root_path}/minimap_module/components/exploration_handler.py",
+    f"{root_path}/minimap_module/components/move_executer.py",
+    f"{root_path}/minimap_module/components/pathfinding.py",
+    f"{root_path}/minimap_module/components/tile_tester.py",
+    f"{root_path}/minimap_module/components/vision_system.py",
+
+    f"{root_path}/minimap_module/realm/display.py",
+    f"{root_path}/minimap_module/realm/exceptions.py",
+    f"{root_path}/minimap_module/realm/followers.py",
+    f"{root_path}/minimap_module/realm/initialization.py",
+    f"{root_path}/minimap_module/realm/manager.py",
+    f"{root_path}/minimap_module/realm/scanner.py",
+    f"{root_path}/minimap_module/realm/state.py",
+    f"{root_path}/minimap_module/realm/updates.py",
+    f"{root_path}/minimap_module/realm/utils.py",
+"""
+
+"""
+    f"{root_path}/minimap_module/temp/minimap_vision.log",
+
+    (f"{root_path}/minimap_module/temp/minimap_vision.log", {"lines": 400, "mode": "first"}),
+    f"{this_folder}/merged_prompt_template_divider.txt",
+    (f"{root_path}/minimap_module/temp/minimap_vision.log", {"lines": 1250, "mode": "last"}),
+"""
+
+"""
+    f"{this_folder}/merged_prompt_template.txt",
+    (f"{root_path}/minimap_module/temp/minimap_vision.log", {"lines": 200, "mode": "first"}),
+    f"{this_folder}/merged_prompt_template_divider.txt",
+    (f"{root_path}/minimap_module/temp/minimap_vision.log", {"lines": 200, "mode": "last"}),
+
+    f"{root_path}/minimap_module/application.py",
+    f"{root_path}/minimap_module/config.py",
+    f"{root_path}/minimap_module/world_models.py",
+
+    f"{root_path}/minimap_module/components/db_handlers.py",
+    f"{root_path}/minimap_module/components/exploration_handler.py",
+    f"{root_path}/minimap_module/components/move_executer.py",
+    f"{root_path}/minimap_module/components/pathfinding.py",
+    f"{root_path}/minimap_module/components/tile_tester.py",
+    f"{root_path}/minimap_module/components/vision_system.py",
+
+    f"{root_path}/minimap_module/realm/manager.py",
+    f"{root_path}/minimap_module/realm/scanner.py",
+    f"{root_path}/minimap_module/realm/updates.py",
+    f"{root_path}/minimap_module/realm/state.py",
+    f"{root_path}/minimap_module/realm/util.py",
+"""
+
+"""
+    f"{root_path}/minimap_module/application.py",
+    f"{root_path}/minimap_module/config.py",
+    # f"{root_path}/minimap_module/world_models.py",
+
+    # f"{root_path}/minimap_module/components/db_handlers.py",
+    f"{root_path}/minimap_module/components/exploration_handler.py",
+    # f"{root_path}/minimap_module/components/move_executer.py",
+    f"{root_path}/minimap_module/components/pathfinding.py",
+    f"{root_path}/minimap_module/components/tile_tester.py",
+    f"{root_path}/minimap_module/components/vision_system.py",
+
+    f"{root_path}/minimap_module/realm/manager.py",
+    # f"{root_path}/minimap_module/realm/scanner.py",
+    f"{root_path}/minimap_module/realm/updates.py",
+    f"{root_path}/minimap_module/realm/state.py",
+    f"{root_path}/minimap_module/realm/util.py",
+
+    f"{root_path}/minimap_module/log_aggregator.py",
+"""
+
+files_to_combine = [
+    f"{this_folder}/merged_prompt_template.txt",
+
+    f"{root_path}/minimap_module/application.py",
+    f"{root_path}/minimap_module/config.py",
+    f"{root_path}/minimap_module/app_setup.py",
+    f"{root_path}/minimap_module/components/db_handlers.py",
+    f"{root_path}/minimap_module/components/vision_system.py",
+]
+
+    
+------------------------

@@ -1,0 +1,52 @@
+/app_bot/tools/screen_calibration/logs
+/tools/prompt_gen/siralim_ultimate_screenshots
+/tools/prompt_gen/compiled_ai_prompt.txt
+./temp_prompt.txt
+app_bot/minimap_module/temp
+merged_prompt.txt
+test_errors.txt
+persistent_data
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
+pip-freeze.txt
+requirements.txt # If generated from venv, otherwise keep if manually managed
+
+# IDE specific
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Temporary and Log files from your bot
+app_bot/minimap_module/temp/  # UPDATED PATH
+
+# Test artifacts
+temp_test_db_dir_fp/
+temp_test_db_dir_tile/
+temp_test_fp_images_vision/
+htmlcov/
+.coverage*
+nosetests.xml
+coverage.xml
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd

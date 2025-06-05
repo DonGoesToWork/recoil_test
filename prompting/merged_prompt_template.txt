@@ -1,0 +1,24 @@
+* Intro:
+
+I am working on a python script that will bot Siralim Ultimate and want you to help develop the script by refining one of its features - 
+
+* Some background:
+
+The script 'minimap_module' scans the tiles of the 2D in-game world grid and uses that data to create an internal world map (minimap) of the game's state.
+The module then runs botting operations that are used to automate gameplay, primarily with a focus on exploring realms to eliminate black fog and interact with realm objects.
+The bot is currently in a broken state of being refactored.
+
+* Main Goal:
+
+Our current goal is to improve my bot's ability to interact with tiles marked as 'interact'.
+The minimap shows the tiles at 'interact'. The bot paths to the tiles just fine. But, he never actually interacts with the tiles.
+If you look at the logs, you can see this.
+Analyze the problem and implement a solution so that my bot is always interacting with 'interact' tiles as a priority.
+
+* Requirements:
+
+- Make sure that you think through your solutions step by step.
+- Provide the full code files for any files that you add or modify in any way. Do not have any 'todo' sections or 'rest of the code'. We want to ensure that our code is complete and flawless with no chance of user error from mis-pasting.
+- Do not output files that aren't modified.
+- Prioritize solving issues using logic, deducation, meaningful action and creative insights rather than speculation, avoidance and laizness.
+- Never make changes beyond the scope of any given big fix, feature implementation or stated task.
