@@ -22,6 +22,7 @@ f"{this_folder}/merged_prompt_template_divider.txt",
 
 files_to_combine = [
     f"{this_folder}/merged_prompt_template.txt",
+    f"E:/web_dev/loot_quest/docs/architecture_notes.md",
     # f"{root_path}/minimap_module/temp/minimap_vision.log",
 ]
 
@@ -82,7 +83,7 @@ def combine_files():
                                 # No options, read the whole file
                                 content_to_write = infile_handle.read()
 
-                            outfile_handle.write(f"\n# {current_filepath}{header_comment_suffix}\n")
+                            # outfile_handle.write(f"\n// {current_filepath}{header_comment_suffix}\n")
                             outfile_handle.write(content_to_write)
 
                     except Exception as e:
@@ -105,7 +106,7 @@ def combine_files():
                                 print(f"  Processing Web file: {web_filepath}")
                                 try:
                                     with open(web_filepath, 'r', encoding='utf-8') as infile_handle:
-                                        outfile_handle.write(f"\n# {filename}\n")
+                                        # outfile_handle.write(f"\n// {filename}\n")
                                         outfile_handle.write(infile_handle.read())
                                 except Exception as e:
                                     print(f"  Error reading Web file {web_filepath}: {e}. Skipping.")

@@ -26,4 +26,5 @@ Analyze everything and implement improvements.
 - Make sure that you think through your solutions step by step.
 - Provide the full code files for any files that you add or modify in any way. Do not have any 'todo' sections or 'rest of the code'. We want to ensure that our code is complete and flawless with no chance of user error from mis-pasting.
 - Do not output files that aren't modified.
+- Include the relative path to the file as a comment on the first-line of files.
 - Prioritize solving issues using logic, deducation, meaningful action and creative insights rather than speculation, avoidance and laizness.
